@@ -72,56 +72,56 @@ gif_configs = {
         'aliases': {'王境泽'},
         'filename': 'wangjingze.gif',
         'pieces': [(0, 9), (12, 24), (25, 35), (37, 48)],
-        'fontsize': 18
+        'fontsize': 20
     },
     'weisuoyuwei': {
         'aliases': {'为所欲为'},
         'filename': 'weisuoyuwei.gif',
         'pieces': [(11, 14), (27, 38), (42, 61), (63, 81), (82, 95),
                    (96, 105), (111, 131), (145, 157), (157, 167)],
-        'fontsize': 17
+        'fontsize': 19
     },
     'chanshenzi': {
         'aliases': {'馋身子', '馋她身子'},
         'filename': 'chanshenzi.gif',
         'pieces': [(0, 16), (16, 31), (33, 40)],
-        'fontsize': 16
+        'fontsize': 18
     },
     'qiegewala': {
         'aliases': {'切格瓦拉'},
         'filename': 'qiegewala.gif',
         'pieces': [(0, 15), (16, 31), (31, 38), (38, 48), (49, 68), (68, 86)],
-        'fontsize': 18
+        'fontsize': 20
     },
     'shuifandui': {
         'aliases': {'谁赞成谁反对', '谁反对'},
         'filename': 'shuifandui.gif',
         'pieces': [(3, 14), (21, 26), (31, 38), (40, 45)],
-        'fontsize': 17
+        'fontsize': 19
     },
     'zengxiaoxian': {
         'aliases': {'曾小贤', '连连看'},
         'filename': 'zengxiaoxian.gif',
         'pieces': [(3, 15), (24, 30), (30, 46), (56, 63)],
-        'fontsize': 19
+        'fontsize': 21
     },
     'yalidaye': {
         'aliases': {'压力大爷'},
         'filename': 'yalidaye.gif',
         'pieces': [(0, 16), (21, 47), (52, 77)],
-        'fontsize': 19
+        'fontsize': 21
     },
     'nihaosaoa': {
         'aliases': {'你好骚啊'},
         'filename': 'nihaosaoa.gif',
         'pieces': [(0, 14), (16, 26), (42, 61)],
-        'fontsize': 16
+        'fontsize': 17
     },
     'shishilani': {
         'aliases': {'食屎啦你'},
         'filename': 'shishilani.gif',
         'pieces': [(14, 21), (23, 36), (38, 46), (60, 66)],
-        'fontsize': 16
+        'fontsize': 17
     },
     'wunian': {
         'aliases': {'五年怎么过的', '贪玩蓝月'},
@@ -221,7 +221,7 @@ async def make_goodnews(texts: List[str]) -> Union[str, BytesIO]:
 
 async def make_jichou(texts: List[str]) -> Union[str, BytesIO]:
     text = f"{datetime.today().strftime('%Y年%m月%d日')} 晴\n{texts[0]}\n这个仇我先记下了"
-    font = await load_font(DEFAULT_FONT, 40)
+    font = await load_font(DEFAULT_FONT, 45)
     lines = wrap_text(text, font, 440)
     text = '\n'.join(lines)
     spacing = 10

@@ -14,7 +14,7 @@ async def download(url: str) -> bytes:
     async with httpx.AsyncClient() as client:
         for i in range(3):
             try:
-                resp = await client.get(url)
+                resp = await client.get(url, timeout=10)
                 if resp.status_code != 200:
                     continue
                 return resp.content

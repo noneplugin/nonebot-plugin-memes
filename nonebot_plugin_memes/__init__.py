@@ -13,17 +13,19 @@ from .utils import text_to_pic
 __help__plugin_name__ = 'memes'
 __des__ = '表情包制作'
 memes_help = [f"{i}.{'/'.join(list(e['aliases']))}" +
-              (f"，需要输入{e['arg_num']}段文字" if e['arg_num'] > 1 else ' xxx')
+              (f"，需要输入{e['arg_num']}段文字"
+               if e.get('arg_num', 1) > 1 else ' xxx')
               for i, e in enumerate(memes.values(), start=1)]
+meme_help = '\n'.join(memes_help)
 __cmd__ = f'''
 目前支持的表情包：
-{'\n'.join(memes_help)}
+{meme_help}
 '''.strip()
 __example__ = '''
 鲁迅说 我没说过这句话
 王境泽 我就是饿死 死外边 不会吃你们一点东西 真香
 '''.strip()
-__usage__ = f'{__des__}\nUsage:\n{__cmd__}\nExample:\n{__example__}'
+__usage__ = f'{__des__}\n\nUsage:\n{__cmd__}\n\nExamples:\n{__example__}'
 
 
 help_cmd = on_command('表情包制作', priority=12)
@@ -50,16 +52,17 @@ async def handle(matcher: Type[Matcher], event: Event, type: str):
 
     try:
         msg = await make_meme(type, texts)
-        if not msg:
-            await matcher.finish('出错了，请稍后再试')
-        if isinstance(msg, str):
-            await matcher.finish(msg)
-        else:
-            await matcher.finish(MessageSegment.image(msg))
     except DownloadError:
         await matcher.finish('资源下载出错，请稍后再试')
     except:
         await matcher.finish('出错了，请稍后再试')
+
+    if not msg:
+        await matcher.finish('出错了，请稍后再试')
+    if isinstance(msg, str):
+        await matcher.finish(msg)
+    else:
+        await matcher.finish(MessageSegment.image(msg))
 
 
 def create_matchers():
