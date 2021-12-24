@@ -12,7 +12,7 @@ from .utils import text_to_pic
 
 __help__plugin_name__ = 'memes'
 __des__ = '表情包制作'
-memes_help = [f"{i}.{'/'.join(list(e['aliases']))}" +
+memes_help = [f"{i}. {'/'.join(list(e['aliases']))}" +
               (f"，需要输入{e['arg_num']}段文字"
                if e.get('arg_num', 1) > 1 else ' xxx')
               for i, e in enumerate(memes.values(), start=1)]
