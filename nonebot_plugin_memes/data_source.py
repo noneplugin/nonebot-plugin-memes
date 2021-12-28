@@ -220,7 +220,8 @@ async def make_goodnews(texts: List[str]) -> Union[str, BytesIO]:
 
 
 async def make_jichou(texts: List[str]) -> Union[str, BytesIO]:
-    text = f"{datetime.today().strftime('%Y年%m月%d日')} 晴\n{texts[0]}\n这个仇我先记下了"
+    date = datetime.today().strftime('%Y{}%m{}%d{}').format('年', '月', '日')
+    text = f"{date} 晴\n{texts[0]}\n这个仇我先记下了"
     font = await load_font(DEFAULT_FONT, 45)
     lines = wrap_text(text, font, 440)
     text = '\n'.join(lines)
