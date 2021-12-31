@@ -10,7 +10,7 @@
 发送“表情包制作”显示下图的列表：
 
 <div align="left">
-  <img src="./examples/1.jpg" width="500" />
+  <img src="https://s2.loli.net/2021/12/31/Z3btiNa4B92HRcW.jpg" width="500" />
 </div>
 
 
