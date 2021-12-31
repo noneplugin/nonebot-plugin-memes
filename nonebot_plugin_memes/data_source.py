@@ -250,6 +250,24 @@ async def make_fanatic(texts: List[str]) -> Union[str, BytesIO]:
     return save_jpg(frame)
 
 
+async def make_diyu(texts: List[str]) -> Union[str, BytesIO]:
+    frame = await load_image("diyu.png")
+    draw = ImageDraw.Draw(frame)
+    font_size = 40
+    text = texts[0]
+    while True:
+        font = await load_font(DEFAULT_FONT, font_size)
+        stroke_width = font_size // 15
+        text_w, text_h = draw.textsize(text, font=font, stroke_width=stroke_width)
+        if text_w <= 420 and text_h <= 56:
+            break
+        font_size -= 1
+    x = 220 - text_w / 2
+    y = 276 - text_h / 2
+    draw.text((x, y), text, font=font, fill="#000000",align="center")
+    return save_png(frame)
+
+
 memes = {
     'luxunsay': {
         'aliases': {'鲁迅说', '鲁迅说过'},
@@ -270,6 +288,10 @@ memes = {
     'fanatic': {
         'aliases': {'狂爱', '狂粉'},
         'func': make_fanatic
+    },
+    'diyu': {
+        'aliases': {'低语'},
+        'func': make_diyu
     }
 }
 
