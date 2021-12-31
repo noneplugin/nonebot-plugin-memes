@@ -11,7 +11,7 @@ from .download import get_image, get_font
 
 OVER_LENGTH_MSG = '文字长度过长，请适当缩减'
 FIT_FONT_MSG = '单行文字长度过长，请手动换行或适当缩减'
-DEFAULT_FONT = 'msyh.ttc'
+DEFAULT_FONT = 'SourceHanSansSC-Regular.otf'
 
 
 def save_jpg(frame: IMG) -> BytesIO:
