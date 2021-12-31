@@ -1,9 +1,11 @@
 import shlex
+import traceback
 from typing import Type
 from nonebot import on_command
 from nonebot.matcher import Matcher
 from nonebot.typing import T_Handler, T_State
 from nonebot.adapters.cqhttp import Bot, Event, MessageSegment
+from nonebot.log import logger
 
 from .data_source import make_meme, memes
 from .download import DownloadError
@@ -53,8 +55,10 @@ async def handle(matcher: Type[Matcher], event: Event, type: str):
     try:
         msg = await make_meme(type, texts)
     except DownloadError:
+        logger.warning(traceback.format_exc())
         await matcher.finish('资源下载出错，请稍后再试')
     except:
+        logger.warning(traceback.format_exc())
         await matcher.finish('出错了，请稍后再试')
 
     if not msg:

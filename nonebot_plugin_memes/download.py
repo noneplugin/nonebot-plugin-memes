@@ -1,6 +1,7 @@
 import httpx
 from pathlib import Path
 from nonebot.log import logger
+from aiocache import cached
 
 
 data_path = Path() / 'data' / 'memes'
@@ -41,9 +42,11 @@ async def get_resource(path: str, name: str) -> bytes:
     return file_path.read_bytes()
 
 
+@cached(ttl=600)
 async def get_image(name: str) -> bytes:
     return await get_resource('images', name)
 
 
+@cached(ttl=600)
 async def get_font(name: str) -> bytes:
     return await get_resource('fonts', name)

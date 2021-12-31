@@ -10,6 +10,7 @@ from .download import get_image, get_font
 
 
 OVER_LENGTH_MSG = '文字长度过长，请适当缩减'
+FIT_FONT_MSG = '单行文字长度过长，请手动换行或适当缩减'
 DEFAULT_FONT = 'msyh.ttc'
 
 
@@ -55,7 +56,7 @@ async def make_gif(filename: str, texts: List[str], pieces: List[Tuple[int, int]
     parts = [frames[start:end] for start, end in pieces]
     img_w, img_h = frames[0].size
     for part, text in zip(parts, texts):
-        text_w, text_h = font.getsize(text)
+        text_w, text_h = font.getsize(text, stroke_width=1)
         if text_w > img_w - padding_x * 2:
             return OVER_LENGTH_MSG
         x = int((img_w - text_w) / 2)
@@ -138,20 +139,34 @@ def gif_func(config: dict):
     return func
 
 
-def wrap_text(text: str, font: FreeTypeFont, max_width: float) -> List[str]:
+def wrap_text(text: str, font: FreeTypeFont, max_width: float, stroke_width: int = 0) -> List[str]:
     line = ''
     lines = []
     for t in text:
         if t == '\n':
             lines.append(line)
             line = ''
-        elif font.getsize(line + t)[0] > max_width:
+        elif font.getsize(line + t, stroke_width=stroke_width)[0] > max_width:
             lines.append(line)
             line = t
         else:
             line += t
     lines.append(line)
     return lines
+
+
+async def fit_font_size(text: str, max_width: float, fontname: str,
+                        max_fontsize: int, min_fontsize: int,
+                        stroke_ratio: float = 0) -> int:
+    fontsize = max_fontsize
+    while True:
+        font = await load_font(fontname, fontsize)
+        if font.getsize_multiline(text, stroke_width=int(fontsize * stroke_ratio))[0] > max_width:
+            fontsize -= 1
+        else:
+            return fontsize
+        if fontsize < min_fontsize:
+            return 0
 
 
 async def make_luxunsay(texts: List[str]) -> Union[str, BytesIO]:
@@ -199,20 +214,29 @@ async def make_nokia(texts: List[str]) -> Union[str, BytesIO]:
 
 
 async def make_goodnews(texts: List[str]) -> Union[str, BytesIO]:
+    fontname = 'SourceHanSansSC-Regular.otf'
+    text = texts[0]
+    max_w = 460
+    max_h = 280
+    max_size = 80
+    min_size = 25
+    stroke_ratio = 1/15
+    fontsize = await fit_font_size(text, max_w, fontname, max_size, min_size, stroke_ratio)
+    if not fontsize:
+        return FIT_FONT_MSG
+    font = await load_font(fontname, fontsize)
+    stroke_width = int(fontsize * stroke_ratio)
+    text_w, text_h = font.getsize_multiline(text, stroke_width=stroke_width)
+    if text_h > max_h:
+        return OVER_LENGTH_MSG
+
     frame = await load_image('goodnews.jpg')
     draw = ImageDraw.Draw(frame)
-    font_size = 80
-    while True:
-        font = await load_font("SourceHanSansSC-Regular.otf", font_size)
-        text = texts[0]
-        stroke_width = font_size // 15
-        text_w, text_h = draw.textsize(text ,font=font, stroke_width=stroke_width)
-        if text_w <= 450 and text_h <= 280:
-            break
-        font_size -= 1
-    x = 310 - text_w / 2
-    y = 225 - text_h / 2
-    draw.text((x, y), text, font=font,fill=(238, 0, 0),align="center",stroke_width=stroke_width, stroke_fill=(255, 255, 153))
+    img_w, img_h = frame.size
+    x = (img_w - text_w) / 2
+    y = (img_h - text_h) / 2
+    draw.multiline_text((x, y), text, font=font, fill=(238, 0, 0), align="center",
+                        stroke_width=stroke_width, stroke_fill=(255, 255, 153))
     return save_png(frame)
 
 
@@ -251,20 +275,24 @@ async def make_fanatic(texts: List[str]) -> Union[str, BytesIO]:
 
 
 async def make_diyu(texts: List[str]) -> Union[str, BytesIO]:
-    frame = await load_image("diyu.png")
-    draw = ImageDraw.Draw(frame)
-    font_size = 40
     text = texts[0]
-    while True:
-        font = await load_font(DEFAULT_FONT, font_size)
-        stroke_width = font_size // 15
-        text_w, text_h = draw.textsize(text, font=font, stroke_width=stroke_width)
-        if text_w <= 420 and text_h <= 56:
-            break
-        font_size -= 1
+    max_w = 420
+    max_h = 56
+    max_size = 40
+    min_size = 20
+    fontsize = await fit_font_size(text, max_w, DEFAULT_FONT, max_size, min_size)
+    if not fontsize:
+        return OVER_LENGTH_MSG
+    font = await load_font(DEFAULT_FONT, fontsize)
+    text_w, text_h = font.getsize_multiline(text)
+    if text_h > max_h:
+        return OVER_LENGTH_MSG
+
+    frame = await load_image('diyu.png')
+    draw = ImageDraw.Draw(frame)
     x = 220 - text_w / 2
-    y = 276 - text_h / 2
-    draw.text((x, y), text, font=font, fill="#000000",align="center")
+    y = 272 - text_h / 2
+    draw.text((x, y), text, font=font, fill='#000000', align='center')
     return save_png(frame)
 
 
