@@ -199,23 +199,20 @@ async def make_nokia(texts: List[str]) -> Union[str, BytesIO]:
 
 
 async def make_goodnews(texts: List[str]) -> Union[str, BytesIO]:
-    font = await load_font(DEFAULT_FONT, 45)
-    lines = wrap_text(texts[0], font, 480)
-    if len(lines) > 5:
-        return OVER_LENGTH_MSG
-    text = '\n'.join(lines)
-    spacing = 8
-    stroke_width = 3
-    text_w, text_h = font.getsize_multiline(text, spacing=spacing,
-                                            stroke_width=stroke_width)
     frame = await load_image('goodnews.jpg')
-    img_w, img_h = frame.size
-    x = int((img_w - text_w) / 2)
-    y = int((img_h - text_h) / 2)
     draw = ImageDraw.Draw(frame)
-    draw.multiline_text((x, y), text, font=font,
-                        align='center', spacing=spacing, fill=(238, 0, 0),
-                        stroke_width=stroke_width, stroke_fill=(255, 255, 153))
+    font_size = 80
+    while True:
+        font = await load_font("SourceHanSansSC-Regular.otf", font_size)
+        text = texts[0]
+        stroke_width = font_size // 15
+        text_w, text_h = draw.textsize(text ,font=font, stroke_width=stroke_width)
+        if text_w <= 450 and text_h <= 280:
+            break
+        font_size -= 1
+    x = 310 - text_w / 2
+    y = 225 - text_h / 2
+    draw.text((x, y), text, font=font,fill=(238, 0, 0),align="center",stroke_width=stroke_width, stroke_fill=(255, 255, 153))
     return save_png(frame)
 
 
