@@ -10,7 +10,7 @@ from .download import get_image, get_font
 
 
 OVER_LENGTH_MSG = '文字长度过长，请适当缩减'
-FIT_FONT_MSG = '单行文字长度过长，请手动换行或适当缩减'
+BREAK_LINE_MSG = '文字长度过长，请手动换行或适当缩减'
 DEFAULT_FONT = 'SourceHanSansSC-Regular.otf'
 
 
@@ -155,13 +155,15 @@ def wrap_text(text: str, font: FreeTypeFont, max_width: float, stroke_width: int
     return lines
 
 
-async def fit_font_size(text: str, max_width: float, fontname: str,
-                        max_fontsize: int, min_fontsize: int,
+async def fit_font_size(text: str, max_width: float, max_height: float,
+                        fontname: str, max_fontsize: int, min_fontsize: int,
                         stroke_ratio: float = 0) -> int:
     fontsize = max_fontsize
     while True:
         font = await load_font(fontname, fontsize)
-        if font.getsize_multiline(text, stroke_width=int(fontsize * stroke_ratio))[0] > max_width:
+        width, height = font.getsize_multiline(
+            text, stroke_width=int(fontsize * stroke_ratio))
+        if width > max_width or height > max_height:
             fontsize -= 1
         else:
             return fontsize
@@ -214,21 +216,13 @@ async def make_nokia(texts: List[str]) -> Union[str, BytesIO]:
 
 
 async def make_goodnews(texts: List[str]) -> Union[str, BytesIO]:
-    fontname = 'SourceHanSansSC-Regular.otf'
     text = texts[0]
-    max_w = 460
-    max_h = 280
-    max_size = 80
-    min_size = 25
-    stroke_ratio = 1/15
-    fontsize = await fit_font_size(text, max_w, fontname, max_size, min_size, stroke_ratio)
+    fontsize = await fit_font_size(text, 460, 280, DEFAULT_FONT, 80, 25, 1/15)
     if not fontsize:
-        return FIT_FONT_MSG
-    font = await load_font(fontname, fontsize)
-    stroke_width = int(fontsize * stroke_ratio)
+        return BREAK_LINE_MSG
+    font = await load_font(DEFAULT_FONT, fontsize)
+    stroke_width = fontsize // 15
     text_w, text_h = font.getsize_multiline(text, stroke_width=stroke_width)
-    if text_h > max_h:
-        return OVER_LENGTH_MSG
 
     frame = await load_image('goodnews.jpg')
     draw = ImageDraw.Draw(frame)
@@ -259,15 +253,16 @@ async def make_jichou(texts: List[str]) -> Union[str, BytesIO]:
 
 
 async def make_fanatic(texts: List[str]) -> Union[str, BytesIO]:
-    font = await load_font(DEFAULT_FONT, 36)
-    lines = wrap_text(texts[0], font, 180)
-    if len(lines) > 2:
-        return OVER_LENGTH_MSG
-    text = '\n'.join(lines)
+    text = texts[0]
+    fontsize = await fit_font_size(text, 190, 100, DEFAULT_FONT, 70, 30)
+    if not fontsize:
+        return BREAK_LINE_MSG
+    font = await load_font(DEFAULT_FONT, fontsize)
     text_w, text_h = font.getsize_multiline(text)
+
     frame = await load_image('fanatic.jpg')
-    x = 240 - int(text_w / 2)
-    y = 90 - int(text_h / 2)
+    x = 242 - text_w / 2
+    y = 90 - text_h / 2
     draw = ImageDraw.Draw(frame)
     draw.multiline_text((x, y), text, align='center',
                         font=font, fill=(0, 0, 0))
@@ -276,17 +271,11 @@ async def make_fanatic(texts: List[str]) -> Union[str, BytesIO]:
 
 async def make_diyu(texts: List[str]) -> Union[str, BytesIO]:
     text = texts[0]
-    max_w = 420
-    max_h = 56
-    max_size = 40
-    min_size = 20
-    fontsize = await fit_font_size(text, max_w, DEFAULT_FONT, max_size, min_size)
+    fontsize = await fit_font_size(text, 420, 56, DEFAULT_FONT, 40, 20)
     if not fontsize:
         return OVER_LENGTH_MSG
     font = await load_font(DEFAULT_FONT, fontsize)
     text_w, text_h = font.getsize_multiline(text)
-    if text_h > max_h:
-        return OVER_LENGTH_MSG
 
     frame = await load_image('diyu.png')
     draw = ImageDraw.Draw(frame)
