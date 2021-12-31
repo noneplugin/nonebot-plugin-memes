@@ -9,7 +9,7 @@ from nonebot.log import logger
 
 from .data_source import make_meme, memes
 from .download import DownloadError
-from .utils import text_to_pic
+from .functions import text_to_pic
 
 
 __help__plugin_name__ = 'memes'
