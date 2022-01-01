@@ -17,9 +17,8 @@ async def make_luxunsay(texts: List[str]) -> Union[str, BytesIO]:
     spacing = 5
     text_w, text_h = font.getsize_multiline(text, spacing=spacing)
     frame = await load_image('luxunsay.jpg')
-    img_w, img_h = frame.size
-    x = int((img_w - text_w) / 2)
-    y = int((img_h - text_h) / 2) + 110
+    x = 240 - text_w / 2
+    y = 350 - text_h / 2
     draw = ImageDraw.Draw(frame)
     draw.multiline_text((x, y), text, font=font,
                         align='center', spacing=spacing, fill=(255, 255, 255))
