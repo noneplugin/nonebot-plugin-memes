@@ -74,6 +74,8 @@ async def make_jichou(texts: List[str]) -> Union[str, BytesIO]:
     text = f"{date} 晴\n{texts[0]}\n这个仇我先记下了"
     font = await load_font(DEFAULT_FONT, 45)
     lines = wrap_text(text, font, 440)
+    if len(lines) > 10:
+        return OVER_LENGTH_MSG
     text = '\n'.join(lines)
     spacing = 10
     _, text_h = font.getsize_multiline(text, spacing=spacing)
