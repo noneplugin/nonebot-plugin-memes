@@ -46,7 +46,14 @@ async def handle(matcher: Type[Matcher], event: Event, type: str):
         await matcher.finish()
 
     arg_num = memes[type].get('arg_num', 1)
-    texts = [text] if arg_num == 1 else shlex.split(text)
+    if arg_num == 1:
+        texts = [text]
+    else:
+        try:
+            texts = shlex.split(text)
+        except:
+            await matcher.finish(f'参数解析错误，若包含特殊符号请转义或加引号')
+
     if len(texts) < arg_num:
         await matcher.finish(f'该表情包需要输入{arg_num}段文字')
     elif len(texts) > arg_num:
