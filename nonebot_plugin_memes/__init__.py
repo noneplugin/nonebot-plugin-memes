@@ -1,10 +1,10 @@
 import shlex
 import traceback
-from typing import Type
 from nonebot import on_command
 from nonebot.matcher import Matcher
-from nonebot.typing import T_Handler, T_State
-from nonebot.adapters.cqhttp import Bot, Event, MessageSegment
+from nonebot.typing import T_Handler
+from nonebot.params import CommandArg
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from nonebot.log import logger
 
 from .data_source import make_meme, memes
@@ -30,21 +30,17 @@ __example__ = '''
 __usage__ = f'{__des__}\n\nUsage:\n{__cmd__}\n\nExamples:\n{__example__}'
 
 
-help_cmd = on_command('表情包制作', priority=12)
+help_cmd = on_command('表情包制作', block=True, priority=12)
 
 
 @help_cmd.handle()
-async def _(bot: Bot, event: Event, state: T_State):
+async def _():
     img = await text_to_pic(__usage__)
     if img:
         await help_cmd.finish(MessageSegment.image(img))
 
 
-async def handle(matcher: Type[Matcher], event: Event, type: str):
-    text = event.get_plaintext().strip()
-    if not text:
-        await matcher.finish()
-
+async def handle(matcher: Matcher, type: str, text: str):
     arg_num = memes[type].get('arg_num', 1)
     if arg_num == 1:
         texts = [text]
@@ -79,13 +75,14 @@ async def handle(matcher: Type[Matcher], event: Event, type: str):
 def create_matchers():
 
     def create_handler(style: str) -> T_Handler:
-        async def handler(bot: Bot, event: Event, state: T_State):
-            await handle(matcher, event, style)
+        async def handler(msg: Message = CommandArg()):
+            text = msg.extract_plain_text().strip()
+            await handle(matcher, style, text)
         return handler
 
     for type, params in memes.items():
-        matcher = on_command(
-            type, aliases=params['aliases'], priority=13)
+        matcher = on_command(type, aliases=params['aliases'],
+                             block=True, priority=13)
         matcher.append_handler(create_handler(type))
 
 
