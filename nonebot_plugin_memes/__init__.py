@@ -77,6 +77,8 @@ def create_matchers():
     def create_handler(style: str) -> T_Handler:
         async def handler(msg: Message = CommandArg()):
             text = msg.extract_plain_text().strip()
+            if not text:
+                await matcher.finish()
             await handle(matcher, style, text)
         return handler
 
