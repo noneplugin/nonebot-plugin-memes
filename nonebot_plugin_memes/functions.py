@@ -5,7 +5,7 @@ from PIL.Image import Image as IMG
 from PIL.ImageFont import FreeTypeFont
 from PIL import Image, ImageFont, ImageDraw
 
-from .download import get_image, get_font
+from .download import get_image, get_font, get_thumb
 
 
 OVER_LENGTH_MSG = '文字长度过长，请适当缩减'
@@ -41,6 +41,11 @@ async def load_image(name: str) -> IMG:
 async def load_font(name: str, fontsize: int) -> FreeTypeFont:
     font = await get_font(name)
     return ImageFont.truetype(BytesIO(font), fontsize, encoding='utf-8')
+
+
+async def load_thumb(name: str) -> IMG:
+    image = await get_thumb(name)
+    return Image.open(BytesIO(image))
 
 
 def wrap_text(text: str, font: FreeTypeFont, max_width: float, stroke_width: int = 0) -> List[str]:

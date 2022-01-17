@@ -125,26 +125,32 @@ async def make_diyu(texts: List[str]) -> Union[str, BytesIO]:
 static_memes = {
     'luxunsay': {
         'aliases': {'鲁迅说', '鲁迅说过'},
+        'thumbnail': 'luxunsay.jpg',
         'func': make_luxunsay
     },
     'nokia': {
         'aliases': {'诺基亚', '有内鬼'},
+        'thumbnail': 'nokia.jpg',
         'func': make_nokia
     },
     'goodnews': {
         'aliases': {'喜报'},
+        'thumbnail': 'goodnews.jpg',
         'func': make_goodnews
     },
     'jichou': {
         'aliases': {'记仇'},
+        'thumbnail': 'jichou.jpg',
         'func': make_jichou
     },
     'fanatic': {
         'aliases': {'狂爱', '狂粉'},
+        'thumbnail': 'fanatic.jpg',
         'func': make_fanatic
     },
     'diyu': {
         'aliases': {'低语'},
+        'thumbnail': 'diyu.jpg',
         'func': make_diyu
     }
 }

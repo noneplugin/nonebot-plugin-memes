@@ -50,3 +50,8 @@ async def get_image(name: str) -> bytes:
 @cached(ttl=600)
 async def get_font(name: str) -> bytes:
     return await get_resource('fonts', name)
+
+
+@cached(ttl=600)
+async def get_thumb(name: str) -> bytes:
+    return await get_resource('thumbs', name)

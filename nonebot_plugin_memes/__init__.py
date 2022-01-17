@@ -9,20 +9,13 @@ from nonebot.log import logger
 
 from .data_source import make_meme, memes
 from .download import DownloadError
-from .functions import text_to_pic
+from .utils import help_image
 
 
 __help__plugin_name__ = 'memes'
 __des__ = '表情包制作'
-memes_help = [f"{i}. {'/'.join(list(e['aliases']))}" +
-              (f"，需要输入{e['arg_num']}段文字"
-               if e.get('arg_num', 1) > 1 else ' xxx')
-              for i, e in enumerate(memes.values(), start=1)]
-meme_help = '\n'.join(memes_help)
-__cmd__ = f'''
-目前支持的表情包：
-{meme_help}
-'''.strip()
+__cmd__ = '发送“表情包制作”查看表情包列表'
+__short_cmd__ = __cmd__
 __example__ = '''
 鲁迅说 我没说过这句话
 王境泽 我就是饿死 死外边 不会吃你们一点东西 真香
@@ -35,7 +28,7 @@ help_cmd = on_command('表情包制作', block=True, priority=12)
 
 @help_cmd.handle()
 async def _():
-    img = await text_to_pic(__usage__)
+    img = await help_image()
     if img:
         await help_cmd.finish(MessageSegment.image(img))
 
