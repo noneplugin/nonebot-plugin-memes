@@ -10,11 +10,11 @@
 发送“表情包制作”显示下图的列表：
 
 <div align="left">
-  <img src="https://s2.loli.net/2021/12/31/Z3btiNa4B92HRcW.jpg" width="500" />
+  <img src="https://s2.loli.net/2022/01/17/dPVTstyx71BYWrJ.jpg" width="500" />
 </div>
 
 
-每个表情包首次使用时会下载对应的图片和字体，可以手动下载 `resources` 下的 `images` 和 `fonts` 文件夹，放置于机器人运行目录下的 `data/memes/` 文件夹中
+每个表情包首次使用时会下载对应的图片和字体，可以手动下载 `resources` 下的 `images`，`thumbs` 和 `fonts` 文件夹，放置于机器人运行目录下的 `data/memes/` 文件夹中
 
 
 ### 示例
