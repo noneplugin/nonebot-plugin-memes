@@ -30,7 +30,7 @@ async def make_gif(filename: str, texts: List[str], pieces: List[Tuple[int, int]
     return save_gif(frames, img.info['duration'] / 1000)
 
 
-gif_memes = {
+gif_subtitle_memes = {
     'wangjingze': {
         'aliases': {'王境泽'},
         'filename': 'wangjingze.gif',
@@ -175,6 +175,6 @@ def gif_func(config: dict):
     return func
 
 
-for key, config in gif_memes.copy().items():
-    gif_memes[key]['func'] = gif_func(config)
-    gif_memes[key]['arg_num'] = len(config['pieces'])
+for key, config in gif_subtitle_memes.copy().items():
+    gif_subtitle_memes[key]['func'] = gif_func(config)
+    gif_subtitle_memes[key]['arg_num'] = len(config['pieces'])

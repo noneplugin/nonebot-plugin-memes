@@ -155,7 +155,7 @@ async def make_scroll(texts: List[str]) -> Union[str, BytesIO]:
     return save_gif(frames, 0.03)
 
 
-static_memes = {
+normal_memes = {
     'luxunsay': {
         'aliases': {'鲁迅说', '鲁迅说过'},
         'thumbnail': 'luxunsay.jpg',

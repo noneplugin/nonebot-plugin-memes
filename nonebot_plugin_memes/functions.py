@@ -3,7 +3,7 @@ from io import BytesIO
 from typing import List
 from PIL.Image import Image as IMG
 from PIL.ImageFont import FreeTypeFont
-from PIL import Image, ImageFont, ImageDraw
+from PIL import Image, ImageFont
 
 from .download import get_image, get_font, get_thumb
 
