@@ -118,8 +118,42 @@ async def make_diyu(texts: List[str]) -> Union[str, BytesIO]:
     draw = ImageDraw.Draw(frame)
     x = 220 - text_w / 2
     y = 272 - text_h / 2
-    draw.text((x, y), text, font=font, fill='#000000', align='center')
+    draw.text((x, y), text, font=font, fill='#000000')
     return save_png(frame)
+
+
+async def make_shutup(texts: List[str]) -> Union[str, BytesIO]:
+    text = texts[0]
+    fontsize = await fit_font_size(text, 220, 50, DEFAULT_FONT, 40, 18)
+    if not fontsize:
+        return BREAK_LINE_MSG
+    font = await load_font(DEFAULT_FONT, fontsize)
+    text_w, text_h = font.getsize_multiline(text)
+
+    frame = await load_image('shutup.jpg')
+    draw = ImageDraw.Draw(frame)
+    x = 120 - text_w / 2
+    y = 203 - text_h / 2
+    draw.multiline_text((x, y), text, align='center',
+                        font=font, fill=(0, 0, 0))
+    return save_jpg(frame)
+
+
+async def make_slap(texts: List[str]) -> Union[str, BytesIO]:
+    text = texts[0]
+    fontsize = await fit_font_size(text, 600, 180, DEFAULT_FONT, 110, 65)
+    if not fontsize:
+        return BREAK_LINE_MSG
+    font = await load_font(DEFAULT_FONT, fontsize)
+    text_w, text_h = font.getsize_multiline(text)
+
+    frame = await load_image('slap.jpg')
+    draw = ImageDraw.Draw(frame)
+    x = 320 - text_w / 2
+    y = 540 - text_h / 2
+    draw.multiline_text((x, y), text, align='center',
+                        font=font, fill=(0, 0, 0))
+    return save_jpg(frame)
 
 
 async def make_scroll(texts: List[str]) -> Union[str, BytesIO]:
@@ -185,6 +219,16 @@ normal_memes = {
         'aliases': {'低语'},
         'thumbnail': 'diyu.jpg',
         'func': make_diyu
+    },
+    'shutup': {
+        'aliases': {'别说了'},
+        'thumbnail': 'shutup.jpg',
+        'func': make_shutup
+    },
+    'slap': {
+        'aliases': {'一巴掌'},
+        'thumbnail': 'slap.jpg',
+        'func': make_slap
     },
     'scroll': {
         'aliases': {'滚屏'},
