@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import List, Union
 from PIL import Image, ImageDraw
 
-from .functions import load_image, load_font, save_jpg, save_png, \
+from .functions import load_image, load_font, save_gif, save_jpg, save_png, \
     wrap_text, fit_font_size, DEFAULT_FONT, OVER_LENGTH_MSG, BREAK_LINE_MSG
 
 
@@ -122,6 +122,39 @@ async def make_diyu(texts: List[str]) -> Union[str, BytesIO]:
     return save_png(frame)
 
 
+async def make_scroll(texts: List[str]) -> Union[str, BytesIO]:
+    text = texts[0]
+    text = text.replace('\n', ' ')
+    font = await load_font(DEFAULT_FONT, 40)
+    text_w, text_h = font.getsize(text)
+    if text_w > 600:
+        return OVER_LENGTH_MSG
+
+    dialog_left = await load_image('scroll/0.png')
+    dialog_right = await load_image('scroll/1.png')
+    dialog_box = Image.new('RGBA', (text_w + 140, 150), '#eaedf4')
+    dialog_box.paste(dialog_left, (0, 0))
+    dialog_box.paste(Image.new('RGBA', (text_w, 110), '#ffffff'), (70, 20))
+    dialog_box.paste(dialog_right, (text_w + 70, 0))
+    draw = ImageDraw.Draw(dialog_box)
+    draw.text((70, 95 - text_h), text, font=font, fill='#000000')
+
+    dialog_w, dialog_h = dialog_box.size
+    static = Image.new('RGBA', (dialog_w, dialog_h * 4), '#eaedf4')
+    for i in range(4):
+        static.paste(dialog_box, (0, dialog_h * i))
+
+    frames = []
+    num = 15
+    dy = int(dialog_h / num)
+    for i in range(num):
+        frame = Image.new('RGBA', static.size)
+        frame.paste(static, (0, -dy * i))
+        frame.paste(static, (0, static.height - dy * i))
+        frames.append(frame)
+    return save_gif(frames, 0.03)
+
+
 static_memes = {
     'luxunsay': {
         'aliases': {'鲁迅说', '鲁迅说过'},
@@ -152,5 +185,10 @@ static_memes = {
         'aliases': {'低语'},
         'thumbnail': 'diyu.jpg',
         'func': make_diyu
+    },
+    'scroll': {
+        'aliases': {'滚屏'},
+        'thumbnail': 'scroll.jpg',
+        'func': make_scroll
     }
 }
