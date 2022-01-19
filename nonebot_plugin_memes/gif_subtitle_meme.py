@@ -64,7 +64,7 @@ gif_subtitle_memes = {
         ]
     },
     'chanshenzi': {
-        'aliases': {'馋身子', '馋她身子'},
+        'aliases': {'馋身子'},
         'filename': 'chanshenzi.gif',
         'thumbnail': 'chanshenzi.jpg',
         'pieces': [(0, 16), (16, 31), (33, 40)],
@@ -91,7 +91,7 @@ gif_subtitle_memes = {
         ]
     },
     'shuifandui': {
-        'aliases': {'谁赞成谁反对', '谁反对'},
+        'aliases': {'谁反对'},
         'filename': 'shuifandui.gif',
         'thumbnail': 'shuifandui.jpg',
         'pieces': [(3, 14), (21, 26), (31, 38), (40, 45)],
@@ -154,7 +154,7 @@ gif_subtitle_memes = {
         ]
     },
     'wunian': {
-        'aliases': {'五年怎么过的', '贪玩蓝月'},
+        'aliases': {'五年怎么过的'},
         'filename': 'wunian.gif',
         'thumbnail': 'wunian.jpg',
         'pieces': [(11, 20), (35, 50), (59, 77), (82, 95)],

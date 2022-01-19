@@ -14,19 +14,20 @@ async def thumb_image(name: str, thumbnail: str, examples: List[str] = []) -> IM
     thumb = await load_thumb(thumbnail)
     img_w, img_h = thumb.size
     frame.paste(thumb, (100 - int(img_w / 2), 100 - int(img_h / 2)))
-    font = await load_font(DEFAULT_FONT, 16)
+    font = await load_font(DEFAULT_FONT, 22)
     draw = ImageDraw.Draw(frame)
     text_w, _ = font.getsize(name)
-    draw.text((100 - text_w / 2, 205), name, font=font, fill='black')
+    draw.text((100 - text_w / 2, 202), name, font=font, fill='black')
 
     if examples:
+        example_font = await load_font(DEFAULT_FONT, 16)
         examples = [f'{i}.{e}' for i, e in enumerate(examples, start=1)]
         examples.insert(0, f'需要{len(examples)}段文字，示例：')
-        examples = wrap_text('\n'.join(examples), font, 210)
+        examples = wrap_text('\n'.join(examples), example_font, 200)
         examples = '\n'.join(examples)
-        text_w, text_h = font.getsize_multiline(examples)
+        text_w, text_h = example_font.getsize_multiline(examples)
         draw.multiline_text((307 - text_w / 2, (235 - text_h) / 2),
-                            examples, font=font, fill='grey')
+                            examples, font=example_font, fill='grey')
         draw.rectangle(((0, 0), (414, 234)), fill=None,
                        outline='grey', width=1)
         for y in range(0, 235, 20):

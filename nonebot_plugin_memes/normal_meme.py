@@ -124,7 +124,7 @@ async def make_diyu(texts: List[str]) -> Union[str, BytesIO]:
 
 async def make_shutup(texts: List[str]) -> Union[str, BytesIO]:
     text = texts[0]
-    fontsize = await fit_font_size(text, 220, 50, DEFAULT_FONT, 40, 18)
+    fontsize = await fit_font_size(text, 220, 60, DEFAULT_FONT, 40, 20)
     if not fontsize:
         return BREAK_LINE_MSG
     font = await load_font(DEFAULT_FONT, fontsize)
@@ -133,7 +133,7 @@ async def make_shutup(texts: List[str]) -> Union[str, BytesIO]:
     frame = await load_image('shutup.jpg')
     draw = ImageDraw.Draw(frame)
     x = 120 - text_w / 2
-    y = 203 - text_h / 2
+    y = 195 - text_h / 2
     draw.multiline_text((x, y), text, align='center',
                         font=font, fill=(0, 0, 0))
     return save_jpg(frame)
@@ -150,7 +150,7 @@ async def make_slap(texts: List[str]) -> Union[str, BytesIO]:
     frame = await load_image('slap.jpg')
     draw = ImageDraw.Draw(frame)
     x = 320 - text_w / 2
-    y = 540 - text_h / 2
+    y = 520 - text_h / 2
     draw.multiline_text((x, y), text, align='center',
                         font=font, fill=(0, 0, 0))
     return save_jpg(frame)
