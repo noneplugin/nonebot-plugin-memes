@@ -4,7 +4,7 @@ from nonebot import on_command
 from nonebot.matcher import Matcher
 from nonebot.typing import T_Handler
 from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
+from nonebot.adapters.onebot.v11 import Message, MessageSegment, unescape
 from nonebot.log import logger
 
 from .data_source import make_meme, memes
@@ -69,7 +69,7 @@ def create_matchers():
 
     def create_handler(style: str) -> T_Handler:
         async def handler(msg: Message = CommandArg()):
-            text = msg.extract_plain_text().strip()
+            text = unescape(msg.extract_plain_text()).strip()
             if not text:
                 await matcher.finish()
             await handle(matcher, style, text)
