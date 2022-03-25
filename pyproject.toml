@@ -4,6 +4,9 @@ version = "0.2.2.2"
 description = "Nonebot2 plugin for making memes"
 authors = ["meetwq <meetwq@gmail.com>"]
 license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/MeetWq/nonebot-plugin-memes"
+repository = "https://github.com/MeetWq/nonebot-plugin-memes"
 
 [tool.poetry.dependencies]
 python = "^3.7.3"
@@ -16,6 +19,7 @@ Pillow = ">=8.2.0"
 
 [tool.poetry.dev-dependencies]
 nb-cli = "^0.6.0"
+black = "^22.1.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -4,7 +4,7 @@ from nonebot.log import logger
 from aiocache import cached
 
 
-data_path = Path() / 'data' / 'memes'
+data_path = Path() / "data" / "memes"
 
 
 class DownloadError(Exception):
@@ -15,12 +15,12 @@ async def download(url: str) -> bytes:
     async with httpx.AsyncClient() as client:
         for i in range(3):
             try:
-                resp = await client.get(url, timeout=10)
+                resp = await client.get(url, timeout=20)
                 if resp.status_code != 200:
                     continue
                 return resp.content
             except Exception as e:
-                logger.warning(f'Error downloading {url}, retry {i}/3: {e}')
+                logger.warning(f"Error downloading {url}, retry {i}/3: {e}")
     raise DownloadError
 
 
@@ -32,10 +32,10 @@ async def get_resource(path: str, name: str) -> bytes:
         dir_path.mkdir(parents=True, exist_ok=True)
 
     if not file_path.exists():
-        url = f'https://cdn.jsdelivr.net/gh/MeetWq/nonebot-plugin-memes@main/resources/{path}/{name}'
+        url = f"https://cdn.jsdelivr.net/gh/MeetWq/nonebot-plugin-memes@main/resources/{path}/{name}"
         data = await download(url)
         if data:
-            with file_path.open('wb') as f:
+            with file_path.open("wb") as f:
                 f.write(data)
     if not file_path.exists():
         raise DownloadError
@@ -44,14 +44,14 @@ async def get_resource(path: str, name: str) -> bytes:
 
 @cached(ttl=600)
 async def get_image(name: str) -> bytes:
-    return await get_resource('images', name)
+    return await get_resource("images", name)
 
 
 @cached(ttl=600)
 async def get_font(name: str) -> bytes:
-    return await get_resource('fonts', name)
+    return await get_resource("fonts", name)
 
 
 @cached(ttl=600)
 async def get_thumb(name: str) -> bytes:
-    return await get_resource('thumbs', name)
+    return await get_resource("thumbs", name)
