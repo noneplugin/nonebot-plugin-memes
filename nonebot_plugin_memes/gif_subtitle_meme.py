@@ -1,5 +1,4 @@
 from io import BytesIO
-from PIL import ImageDraw
 from functools import partial
 from typing import List, Tuple, Union
 
@@ -31,8 +30,8 @@ async def make_gif(
         x = int((img_w - text_w) / 2)
         y = img_h - text_h - padding_y
         for frame in part:
-            draw = ImageDraw.Draw(frame)
-            draw.text(
+            await draw_text(
+                frame,
                 (x, y),
                 text,
                 font=font,

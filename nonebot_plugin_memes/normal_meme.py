@@ -1,7 +1,7 @@
 from io import BytesIO
 from datetime import datetime
 from typing import List, Union
-from PIL import Image, ImageDraw
+from PIL import Image
 
 from .models import NormalMeme
 from .functions import *
@@ -19,11 +19,16 @@ async def make_luxunsay(texts: List[str]) -> Union[str, BytesIO]:
     frame = await load_image("luxunsay.jpg")
     x = 240 - text_w / 2
     y = 350 - text_h / 2
-    draw = ImageDraw.Draw(frame)
-    draw.multiline_text(
-        (x, y), text, font=font, align="center", spacing=spacing, fill=(255, 255, 255)
+    await draw_text(
+        frame,
+        (x, y),
+        text,
+        font=font,
+        align="center",
+        spacing=spacing,
+        fill=(255, 255, 255),
     )
-    draw.text((320, 400), "--鲁迅", font=luxun_font, fill=(255, 255, 255))
+    await draw_text(frame, (320, 400), "--鲁迅", font=luxun_font, fill=(255, 255, 255))
     return save_png(frame)
 
 
@@ -34,14 +39,12 @@ async def make_nokia(texts: List[str]) -> Union[str, BytesIO]:
     angle = -9.3
 
     img_text = Image.new("RGBA", (700, 450))
-    draw = ImageDraw.Draw(img_text)
-    draw.multiline_text((0, 0), text, font=font, spacing=30, fill=(0, 0, 0, 255))
+    await draw_text(img_text, (0, 0), text, font=font, spacing=30, fill=(0, 0, 0, 255))
     img_text = img_text.rotate(angle, expand=True)
 
     head = f"{len(text)}/900"
     img_head = Image.new("RGBA", font.getsize(head))
-    draw = ImageDraw.Draw(img_head)
-    draw.text((0, 0), head, font=font, fill=(129, 212, 250, 255))
+    await draw_text(img_head, (0, 0), head, font=font, fill=(129, 212, 250, 255))
     img_head = img_head.rotate(angle, expand=True)
 
     frame = await load_image("nokia.jpg")
@@ -60,11 +63,11 @@ async def make_goodnews(texts: List[str]) -> Union[str, BytesIO]:
     text_w, text_h = font.getsize_multiline(text, stroke_width=stroke_width)
 
     frame = await load_image("goodnews.jpg")
-    draw = ImageDraw.Draw(frame)
     img_w, img_h = frame.size
     x = (img_w - text_w) / 2
     y = (img_h - text_h) / 2
-    draw.multiline_text(
+    await draw_text(
+        frame,
         (x, y),
         text,
         font=font,
@@ -90,9 +93,8 @@ async def make_jichou(texts: List[str]) -> Union[str, BytesIO]:
     img_w, img_h = frame.size
     bg = Image.new("RGB", (img_w, img_h + text_h + 20), (255, 255, 255))
     bg.paste(frame, (0, 0))
-    draw = ImageDraw.Draw(bg)
-    draw.multiline_text(
-        (30, img_h + 5), text, font=font, spacing=spacing, fill=(0, 0, 0)
+    await draw_text(
+        bg, (30, img_h + 5), text, font=font, spacing=spacing, fill=(0, 0, 0)
     )
     return save_jpg(bg)
 
@@ -108,8 +110,7 @@ async def make_fanatic(texts: List[str]) -> Union[str, BytesIO]:
     frame = await load_image("fanatic.jpg")
     x = 242 - text_w / 2
     y = 90 - text_h / 2
-    draw = ImageDraw.Draw(frame)
-    draw.multiline_text((x, y), text, align="center", font=font, fill=(0, 0, 0))
+    await draw_text(frame, (x, y), text, align="center", font=font, fill=(0, 0, 0))
     return save_jpg(frame)
 
 
@@ -122,10 +123,9 @@ async def make_diyu(texts: List[str]) -> Union[str, BytesIO]:
     text_w, text_h = font.getsize_multiline(text)
 
     frame = await load_image("diyu.png")
-    draw = ImageDraw.Draw(frame)
     x = 220 - text_w / 2
     y = 272 - text_h / 2
-    draw.text((x, y), text, font=font, fill="#000000")
+    await draw_text(frame, (x, y), text, font=font, fill="#000000")
     return save_png(frame)
 
 
@@ -138,10 +138,9 @@ async def make_shutup(texts: List[str]) -> Union[str, BytesIO]:
     text_w, text_h = font.getsize_multiline(text)
 
     frame = await load_image("shutup.jpg")
-    draw = ImageDraw.Draw(frame)
     x = 120 - text_w / 2
     y = 195 - text_h / 2
-    draw.multiline_text((x, y), text, align="center", font=font, fill=(0, 0, 0))
+    await draw_text(frame, (x, y), text, align="center", font=font, fill=(0, 0, 0))
     return save_jpg(frame)
 
 
@@ -154,10 +153,9 @@ async def make_slap(texts: List[str]) -> Union[str, BytesIO]:
     text_w, text_h = font.getsize_multiline(text)
 
     frame = await load_image("slap.jpg")
-    draw = ImageDraw.Draw(frame)
     x = 320 - text_w / 2
     y = 520 - text_h / 2
-    draw.multiline_text((x, y), text, align="center", font=font, fill=(0, 0, 0))
+    await draw_text(frame, (x, y), text, align="center", font=font, fill=(0, 0, 0))
     return save_jpg(frame)
 
 
@@ -175,8 +173,7 @@ async def make_scroll(texts: List[str]) -> Union[str, BytesIO]:
     dialog_box.paste(dialog_left, (0, 0))
     dialog_box.paste(Image.new("RGBA", (text_w, 110), "#ffffff"), (70, 20))
     dialog_box.paste(dialog_right, (text_w + 70, 0))
-    draw = ImageDraw.Draw(dialog_box)
-    draw.text((70, 95 - text_h), text, font=font, fill="#000000")
+    await draw_text(dialog_box, (70, 95 - text_h), text, font=font, fill="#000000")
 
     dialog_w, dialog_h = dialog_box.size
     static = Image.new("RGBA", (dialog_w, dialog_h * 4), "#eaedf4")
