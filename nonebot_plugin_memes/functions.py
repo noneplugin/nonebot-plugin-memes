@@ -109,7 +109,7 @@ async def draw_text(
         return
     lines = text.strip().split("\n")
     draw = ImageDraw.Draw(img)
-    max_w = font.getsize_multiline(text, spacing=spacing, stroke_width=stroke_width)[0]
+    max_w = font.getsize_multiline(text)[0]
     current_x, current_y = pos
 
     emoji_font_file = BytesIO(await get_font(EMOJI_FONT))
@@ -123,9 +123,9 @@ async def draw_text(
         return False
 
     for line in lines:
-        line_w = font.getsize(line, stroke_width=stroke_width)[0]
+        line_w = font.getsize(line)[0]
         dw = max_w - line_w
-        current_x = pos[0]
+        current_x = pos[0] + stroke_width
         if align == "center":
             current_x += dw / 2
         elif align == "right":
@@ -137,7 +137,7 @@ async def draw_text(
                 emoji_draw = ImageDraw.Draw(emoji_img)
                 emoji_draw.text((0, 0), char, font=emoji_font, embedded_color=True)
                 emoji_img = emoji_img.crop(emoji_font.getbbox(char))
-                emoji_x, emoji_y = font.getsize(char, stroke_width=stroke_width)
+                emoji_x, emoji_y = font.getsize(char)
                 emoji_img = fit_size(
                     emoji_img, (emoji_x, emoji_y), FitSizeMode.INSIDE, FitSizeDir.SOUTH
                 )
@@ -152,7 +152,7 @@ async def draw_text(
                     stroke_width=stroke_width,
                     stroke_fill=stroke_fill,
                 )
-                current_x += font.getsize(char, stroke_width=stroke_width)[0]
+                current_x += font.getsize(char)[0]
         current_y += font.getsize("A", stroke_width=stroke_width)[1] + spacing
 
 
