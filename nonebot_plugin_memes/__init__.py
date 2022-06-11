@@ -8,10 +8,9 @@ from nonebot.adapters.onebot.v11 import MessageSegment
 
 require("nonebot_plugin_imageutils")
 
-from .utils import Meme
 from .depends import regex
 from .data_source import memes
-
+from .utils import Meme, help_image
 
 __help__plugin_name__ = "memes"
 __des__ = "表情包制作"
@@ -29,10 +28,9 @@ help_cmd = on_command("表情包制作", block=True, priority=12)
 
 @help_cmd.handle()
 async def _():
-    pass
-    # img = await help_image(memes)
-    # if img:
-    #     await help_cmd.finish(MessageSegment.image(img))
+    img = await help_image(memes)
+    if img:
+        await help_cmd.finish(MessageSegment.image(img))
 
 
 def create_matchers():

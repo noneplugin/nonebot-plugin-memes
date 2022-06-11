@@ -16,6 +16,10 @@ def load_image(path: str) -> BuildImage:
     return BuildImage.open(data_path / "images" / path)
 
 
+def load_thumb(path: str) -> BuildImage:
+    return BuildImage.open(data_path / "thumbs" / path)
+
+
 async def download_url(url: str) -> bytes:
     async with httpx.AsyncClient() as client:
         for i in range(3):
