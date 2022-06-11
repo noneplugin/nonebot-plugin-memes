@@ -1,10 +1,11 @@
-from typing import List
+from typing import List, Tuple
 from datetime import datetime
+from typing_extensions import Literal
 from PIL.Image import Image as IMG
 
 from nonebot_plugin_imageutils import BuildImage, Text2Image
 
-from .depends import Arg
+from .depends import Arg, RegexArg, NoArg
 from .download import load_image
 from .utils import save_gif, OVER_LENGTH_MSG
 
@@ -146,6 +147,21 @@ def slap(text: str = Arg()):
     return frame.save_jpg()
 
 
+def imprison(text: str = Arg()):
+    frame = load_image("imprison/0.jpg")
+    try:
+        frame.draw_text(
+            (10, 157, 230, 197),
+            text,
+            allow_wrap=True,
+            max_fontsize=35,
+            min_fontsize=15,
+        )
+    except ValueError:
+        return OVER_LENGTH_MSG
+    return frame.save_jpg()
+
+
 def scroll(text: str = Arg()):
     text2image = Text2Image.from_text(text, 40).wrap(600)
     if len(text2image.lines) > 5:
@@ -181,3 +197,61 @@ def scroll(text: str = Arg()):
         frame.paste(dialog, (0, dialog.height - dy * i))
         frames.append(frame.image)
     return save_gif(frames, 0.05)
+
+
+def high_EQ(left: str = RegexArg("left"), right: str = RegexArg("right"), arg=NoArg()):
+    frame = load_image("high_EQ/0.jpg")
+
+    def draw(pos: Tuple[float, float, float, float], text: str):
+        frame.draw_text(
+            pos,
+            text,
+            max_fontsize=70,
+            min_fontsize=40,
+            allow_wrap=True,
+            fill="white",
+            stroke_fill="black",
+            stroke_ratio=0.1,
+        )
+
+    try:
+        draw((70, 540, 572, 1140), left)
+        draw((712, 540, 1214, 1140), right)
+    except ValueError:
+        return OVER_LENGTH_MSG
+    return frame.save_jpg()
+
+
+def wujing(left: str = RegexArg("left"), right: str = RegexArg("right"), arg=NoArg()):
+    frame = load_image("wujing/0.jpg")
+
+    def draw(
+        pos: Tuple[float, float, float, float],
+        text: str,
+        align: Literal["left", "right", "center"],
+    ):
+        frame.draw_text(
+            pos,
+            text,
+            lines_align=align,
+            max_fontsize=100,
+            min_fontsize=50,
+            fill="white",
+            stroke_fill="black",
+            stroke_ratio=0.1,
+        )
+
+    try:
+        if left:
+            parts = left.split()
+            if len(parts) >= 2:
+                draw((50, 430, 350, 887), " ".join(parts[:-1]), "left")
+            draw((20, 560, 350, 690), parts[-1], "right")
+        if right:
+            parts = right.split()
+            draw((610, 540, 917, 670), right[0], "left")
+            if len(parts) >= 2:
+                draw((50, 680, 917, 887), " ".join(parts[1:]), "center")
+    except ValueError:
+        return OVER_LENGTH_MSG
+    return frame.save_jpg()

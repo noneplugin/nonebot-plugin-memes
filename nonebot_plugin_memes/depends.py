@@ -23,7 +23,7 @@ def regex(pattern: str) -> Rule:
 
         seg_text = str(msg_seg).lstrip()
         start = "|".join(get_driver().config.command_start)
-        matched = re.match(rf"(?:{start})(?:{pattern})", seg_text, re.IGNORECASE)
+        matched = re.match(rf"(?:{start})(?:{pattern})", seg_text, re.IGNORECASE | re.S)
         if not matched:
             return False
 
