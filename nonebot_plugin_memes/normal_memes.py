@@ -206,12 +206,12 @@ def high_EQ(left: str = RegexArg("left"), right: str = RegexArg("right"), arg=No
         frame.draw_text(
             pos,
             text,
-            max_fontsize=70,
-            min_fontsize=40,
+            max_fontsize=100,
+            min_fontsize=50,
             allow_wrap=True,
             fill="white",
             stroke_fill="black",
-            stroke_ratio=0.1,
+            stroke_ratio=0.05,
         )
 
     try:
@@ -233,25 +233,25 @@ def wujing(left: str = RegexArg("left"), right: str = RegexArg("right"), arg=NoA
         frame.draw_text(
             pos,
             text,
-            lines_align=align,
+            halign=align,
             max_fontsize=100,
             min_fontsize=50,
             fill="white",
             stroke_fill="black",
-            stroke_ratio=0.1,
+            stroke_ratio=0.05,
         )
 
     try:
         if left:
             parts = left.split()
             if len(parts) >= 2:
-                draw((50, 430, 350, 887), " ".join(parts[:-1]), "left")
+                draw((50, 430, 887, 550), " ".join(parts[:-1]), "left")
             draw((20, 560, 350, 690), parts[-1], "right")
         if right:
             parts = right.split()
-            draw((610, 540, 917, 670), right[0], "left")
+            draw((610, 540, 917, 670), parts[0], "left")
             if len(parts) >= 2:
-                draw((50, 680, 917, 887), " ".join(parts[1:]), "center")
+                draw((50, 680, 887, 810), " ".join(parts[1:]), "center")
     except ValueError:
         return OVER_LENGTH_MSG
     return frame.save_jpg()
