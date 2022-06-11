@@ -255,3 +255,15 @@ def wujing(left: str = RegexArg("left"), right: str = RegexArg("right"), arg=NoA
     except ValueError:
         return OVER_LENGTH_MSG
     return frame.save_jpg()
+
+
+def wakeup(text: str = RegexArg("text"), arg=NoArg()):
+    frame = load_image("wakeup/0.jpg")
+    try:
+        frame.draw_text((310, 270, 460, 380), text, max_fontsize=90, min_fontsize=50)
+        frame.draw_text(
+            (50, 610, 670, 720), f"{text}起来了", max_fontsize=110, min_fontsize=70
+        )
+    except ValueError:
+        return OVER_LENGTH_MSG
+    return frame.save_jpg()

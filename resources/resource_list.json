@@ -57,7 +57,7 @@
     },
     {
         "path": "images/imprison/0.jpg",
-        "hash": "1f1f7a9586d5108acf15e6b5ee8e1fac"
+        "hash": "7afdc93efbe34a2a9c7e7fc60b8b57a4"
     },
     {
         "path": "images/jichou/0.png",
@@ -96,6 +96,10 @@
         "hash": "bca036d3b7a5de25c57e92525891c3e7"
     },
     {
+        "path": "images/wakeup/0.jpg",
+        "hash": "2737c1fd3d312729ee917f5bee3f9016"
+    },
+    {
         "path": "images/wujing/0.jpg",
         "hash": "c187cfc302ce2c8583e7d18bfdde245a"
     },
@@ -117,11 +121,11 @@
     },
     {
         "path": "thumbs/high_EQ.jpg",
-        "hash": "45035e3506747a78f9978c72edd1a608"
+        "hash": "e3e87c1f17997772f5632dd5fc283b88"
     },
     {
         "path": "thumbs/imprison.jpg",
-        "hash": "c7da6c8bd7e22dc4d83c6bb731e4220c"
+        "hash": "c026390dae73852b802e43075ac2ea8e"
     },
     {
         "path": "thumbs/jichou.jpg",
@@ -164,6 +168,10 @@
         "hash": "8b025964696161f8a9e706b1f7bb8518"
     },
     {
+        "path": "thumbs/wakeup.jpg",
+        "hash": "17c2c492a30b095dd2773473af61357b"
+    },
+    {
         "path": "thumbs/wangjingze.jpg",
         "hash": "f1d653d1c6b9e11a5713d0abd9df7edd"
     },
@@ -173,7 +181,7 @@
     },
     {
         "path": "thumbs/wujing.jpg",
-        "hash": "9cb355e039c6899e864013d28804c494"
+        "hash": "d7e258f04efe6d9ba3db5008d07fa9b8"
     },
     {
         "path": "thumbs/wunian.jpg",

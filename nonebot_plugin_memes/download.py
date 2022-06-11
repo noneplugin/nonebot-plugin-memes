@@ -59,6 +59,7 @@ async def check_resources():
         except Exception as e:
             logger.warning(str(e))
     await add_font("FZXS14.ttf", resource_url("fonts/FZXS14.ttf"))
+    await add_font("FZSEJW.ttf", resource_url("fonts/FZSEJW.ttf"))
 
 
 driver = get_driver()

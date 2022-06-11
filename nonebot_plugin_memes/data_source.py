@@ -16,6 +16,7 @@ memes: List[Meme] = [
     Meme("scroll", scroll, ("滚屏",)),
     Meme("high_EQ", high_EQ, ("高情商xx低情商xx",), r"高情商(?P<left>.*?)低情商(?P<right>.*)"),
     Meme("wujing", wujing, ("xx中国xx",), r"(?P<left>.*?)中国(?P<right>.*)"),
+    Meme("wakeup", wakeup, ("xx起来了",), r"(?P<text>.*?)起来了"),
     GifMeme("wangjingze", wangjingze, ("王境泽",)),
     GifMeme("weisuoyuwei", weisuoyuwei, ("为所欲为",)),
     GifMeme("chanshenzi", chanshenzi, ("馋身子",)),
