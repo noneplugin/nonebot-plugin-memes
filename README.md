@@ -12,26 +12,34 @@
 发送“表情包制作”显示下图的列表：
 
 <div align="left">
-  <img src="https://s2.loli.net/2022/01/19/KNnsQxOrFgouV6z.jpg" width="500" />
+  <img src="https://s2.loli.net/2022/06/12/w1ZjHx4Rzl6MI39.jpg" width="500" />
 </div>
 
 
-每个表情包首次使用时会下载对应的图片和字体，可以手动下载 `resources` 下的 `images`，`thumbs` 和 `fonts` 文件夹，放置于机器人运行目录下的 `data/memes/` 文件夹中
+#### 字体和资源
+
+插件使用 [nonebot-plugin-imageutils](https://github.com/noneplugin/nonebot-plugin-imageutils) 插件来绘制文字，字体配置可参考该插件的说明
+
+插件在启动时会检查并下载图片资源，初次使用时需等待资源下载完成
+
+可以手动下载 `resources` 下的 `images` 和 `thumbs` 文件夹，放置于机器人运行目录下的 `data/memes/` 文件夹中
+
+可以手动下载 `resources` 下 `fonts` 中的字体文件，放置于 nonebot-plugin-imageutils 定义的字体路径，默认为机器人运行目录下的 `data/fonts/` 文件夹
 
 
 ### 示例
 
- - `鲁迅说 我没说过这句话`
+ - `/鲁迅说 我没说过这句话`
 
 <div align="left">
-  <img src="./examples/2.png" width="250" />
+  <img src="https://s2.loli.net/2022/06/12/dqRF8egWb3U6Vfz.png" width="250" />
 </div>
 
 
- - `王境泽 我就是饿死 死外边 不会吃你们一点东西 真香`
+ - `/举牌 aya大佬带带我`
 
 <div align="left">
-  <img src="./examples/3.gif" width="250" />
+  <img src="https://s2.loli.net/2022/06/12/FPuBosEgM3Qh1rJ.jpg" width="250" />
 </div>
 
 
