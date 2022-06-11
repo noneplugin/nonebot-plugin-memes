@@ -13,7 +13,7 @@ data_path = Path() / "data" / "memes"
 
 
 def load_image(path: str) -> BuildImage:
-    return BuildImage.open(data_path / "images" / path).convert("RGBA")
+    return BuildImage.open(data_path / "images" / path)
 
 
 async def download_url(url: str) -> bytes:

@@ -29,12 +29,16 @@ def luxunsay(text: str = Arg()):
 
 def nokia(text: str = Arg()):
     text = text[:900]
-    text2image = Text2Image.from_text(
-        text, 70, fontname="FZXS14", fill="black", spacing=30
-    ).wrap(700)
-    text2image.lines = text2image.lines[:5]
-    text_img = text2image.to_image()
-    text_img = BuildImage(text_img).rotate(-9.3, expand=True)
+    text_img = (
+        Text2Image.from_text(text, 70, fontname="FZXS14", fill="black", spacing=30)
+        .wrap(700)
+        .to_image()
+    )
+    text_img = (
+        BuildImage(text_img)
+        .resize_canvas((700, 450), direction="northwest")
+        .rotate(-9.3, expand=True)
+    )
 
     head_img = Text2Image.from_text(
         f"{len(text)}/900", 70, fontname="FZXS14", fill=(129, 212, 250, 255)
@@ -55,7 +59,7 @@ def goodnews(text: str = Arg()):
             text,
             allow_wrap=True,
             lines_align="center",
-            max_fontsize=80,
+            max_fontsize=50,
             min_fontsize=30,
             fill=(238, 0, 0),
             stroke_ratio=1 / 15,
@@ -151,7 +155,7 @@ def scroll(text: str = Arg()):
 
     box_w = text_w + 140
     box_h = max(text_h + 103, 150)
-    box = BuildImage.new("RGBA", (box_w, box_h))
+    box = BuildImage.new("RGBA", (box_w, box_h), "#eaedf4")
     corner1 = load_image("scroll/corner1.png")
     corner2 = load_image("scroll/corner2.png")
     corner3 = load_image("scroll/corner3.png")
@@ -169,11 +173,11 @@ def scroll(text: str = Arg()):
         dialog.paste(box, (0, box_h * i))
 
     frames: List[IMG] = []
-    num = 20
+    num = 30
     dy = int(dialog.height / num)
     for i in range(num):
         frame = BuildImage.new("RGBA", dialog.size)
         frame.paste(dialog, (0, -dy * i))
         frame.paste(dialog, (0, dialog.height - dy * i))
         frames.append(frame.image)
-    return save_gif(frames, 0.02)
+    return save_gif(frames, 0.05)

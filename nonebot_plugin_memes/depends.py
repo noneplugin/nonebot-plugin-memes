@@ -75,7 +75,8 @@ def RegexArg(key: str):
 def Arg():
     async def dependency(state: T_State = State()):
         arg: str = state[ARG_KEY]
-        return arg
+        if arg:
+            return arg
 
     return Depends(dependency)
 

@@ -3,8 +3,10 @@ from typing import Union
 from nonebot.params import Depends
 from nonebot.matcher import Matcher
 from nonebot.typing import T_Handler
-from nonebot import on_command, on_message
+from nonebot import on_command, on_message, require
 from nonebot.adapters.onebot.v11 import MessageSegment
+
+require("nonebot_plugin_imageutils")
 
 from .utils import Meme
 from .depends import regex
