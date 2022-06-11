@@ -72,6 +72,10 @@
         "hash": "b15f3d10d3b28f9988deb9940b2084cb"
     },
     {
+        "path": "images/raisesign/0.jpg",
+        "hash": "e8151cf81d9c6944e38de9652f5ac409"
+    },
+    {
         "path": "images/scroll/corner1.png",
         "hash": "53a18e9da0e4723e876976b06aebe1a2"
     },
@@ -94,6 +98,10 @@
     {
         "path": "images/slap/0.jpg",
         "hash": "bca036d3b7a5de25c57e92525891c3e7"
+    },
+    {
+        "path": "images/slogan/0.jpg",
+        "hash": "93e06a80b22c3b796f3bb90c590f8cd6"
     },
     {
         "path": "images/wakeup/0.jpg",
@@ -148,6 +156,10 @@
         "hash": "041ae1772f3e9d207a9b377d61dd2e22"
     },
     {
+        "path": "thumbs/raisesign.jpg",
+        "hash": "72f40a24743afc17ee04d3c2ff144223"
+    },
+    {
         "path": "thumbs/scroll.jpg",
         "hash": "bc984df62e631bf1c5f90426b69566a3"
     },
@@ -166,6 +178,10 @@
     {
         "path": "thumbs/slap.jpg",
         "hash": "8b025964696161f8a9e706b1f7bb8518"
+    },
+    {
+        "path": "thumbs/slogan.jpg",
+        "hash": "b3b87752ffc88766ef48e503bab46a0a"
     },
     {
         "path": "thumbs/wakeup.jpg",

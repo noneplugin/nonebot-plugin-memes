@@ -11,6 +11,7 @@ from nonebot.adapters.onebot.v11 import MessageSegment, MessageEvent, unescape
 ARG_KEY = "ARG"
 ARGS_KEY = "ARGS"
 REGEX_DICT = "REGEX_DICT"
+REGEX_GROUP = "REGEX_GROUP"
 REGEX_ARG = "REGEX_ARG"
 
 
@@ -34,6 +35,7 @@ def regex(pattern: str) -> Rule:
         else:
             new_msg.pop(0)
         state[REGEX_DICT] = matched.groupdict()
+        state[REGEX_GROUP] = matched.groups()
         state[REGEX_ARG] = new_msg
 
         msg_text = new_msg.extract_plain_text()
@@ -68,6 +70,16 @@ def RegexArg(key: str):
     async def dependency(state: T_State = State()):
         args: dict = state[REGEX_DICT]
         return args.get(key, None)
+
+    return Depends(dependency)
+
+
+def RegexArgs(num: Optional[int] = None):
+    async def dependency(state: T_State = State()):
+        args: List[str] = list(state[REGEX_GROUP])
+        if num and len(args) != num:
+            return
+        return args
 
     return Depends(dependency)
 

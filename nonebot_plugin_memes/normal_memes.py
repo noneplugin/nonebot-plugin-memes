@@ -5,7 +5,7 @@ from PIL.Image import Image as IMG
 
 from nonebot_plugin_imageutils import BuildImage, Text2Image
 
-from .depends import Arg, RegexArg, NoArg
+from .depends import *
 from .download import load_image
 from .utils import save_gif, OVER_LENGTH_MSG
 
@@ -215,8 +215,8 @@ def high_EQ(left: str = RegexArg("left"), right: str = RegexArg("right"), arg=No
         )
 
     try:
-        draw((70, 540, 572, 1140), left)
-        draw((712, 540, 1214, 1140), right)
+        draw((40, 540, 602, 1140), left)
+        draw((682, 540, 1244, 1140), right)
     except ValueError:
         return OVER_LENGTH_MSG
     return frame.save_jpg()
@@ -257,6 +257,24 @@ def wujing(left: str = RegexArg("left"), right: str = RegexArg("right"), arg=NoA
     return frame.save_jpg()
 
 
+def slogan(texts: List[str] = RegexArgs(6), arg=NoArg()):
+    frame = load_image("slogan/0.jpg")
+
+    def draw(pos: Tuple[float, float, float, float], text: str):
+        frame.draw_text(pos, text, max_fontsize=40, min_fontsize=20, allow_wrap=True)
+
+    try:
+        draw((10, 0, 294, 50), texts[0])
+        draw((316, 0, 602, 50), texts[1])
+        draw((10, 230, 294, 280), texts[2])
+        draw((316, 230, 602, 280), texts[3])
+        draw((10, 455, 294, 505), texts[4])
+        draw((316, 455, 602, 505), texts[5])
+    except ValueError:
+        return OVER_LENGTH_MSG
+    return frame.save_jpg()
+
+
 def wakeup(text: str = RegexArg("text"), arg=NoArg()):
     frame = load_image("wakeup/0.jpg")
     try:
@@ -266,4 +284,26 @@ def wakeup(text: str = RegexArg("text"), arg=NoArg()):
         )
     except ValueError:
         return OVER_LENGTH_MSG
+    return frame.save_jpg()
+
+
+def raisesign(text: str = Arg()):
+    frame = load_image("raisesign/0.jpg")
+    text_img = BuildImage.new("RGBA", (360, 260))
+    try:
+        text_img.draw_text(
+            (10, 10, 350, 250),
+            text,
+            max_fontsize=80,
+            min_fontsize=40,
+            allow_wrap=True,
+            lines_align="center",
+            spacing=10,
+            fontname="FZSEJW",
+            fill="#51201b",
+        )
+    except ValueError:
+        return OVER_LENGTH_MSG
+    text_img = text_img.perspective(((33, 0), (375, 120), (333, 387), (0, 258)))
+    frame.paste(text_img, (285, 24), alpha=True)
     return frame.save_jpg()
