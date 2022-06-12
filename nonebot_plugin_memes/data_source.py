@@ -14,7 +14,7 @@ memes: List[Meme] = [
     Meme("slap", slap, ("一巴掌",)),
     Meme("imprison", imprison, ("坐牢",)),
     Meme("scroll", scroll, ("滚屏",)),
-    Meme("high_EQ", high_EQ, ("高情商xx低情商xx",), r"高情商(?P<left>.*?)低情商(?P<right>.*)"),
+    Meme("high_EQ", high_EQ, ("低情商xx高情商xx",), r"低情商(?P<left>.*?)高情商(?P<right>.*)"),
     Meme("wujing", wujing, ("吴京xx中国xx",), r"吴京[\s:：]*(?P<left>.*?)中国(?P<right>.*)"),
     Meme("slogan", slogan, ("口号",)),
     Meme("wakeup", wakeup, ("xx起来了",), r"(?P<text>.*?)起来了"),
