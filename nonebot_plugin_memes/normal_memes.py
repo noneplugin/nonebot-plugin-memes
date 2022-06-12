@@ -257,7 +257,7 @@ def wujing(left: str = RegexArg("left"), right: str = RegexArg("right"), arg=NoA
     return frame.save_jpg()
 
 
-def slogan(texts: List[str] = RegexArgs(6), arg=NoArg()):
+def slogan(texts: List[str] = Args(6)):
     frame = load_image("slogan/0.jpg")
 
     def draw(pos: Tuple[float, float, float, float], text: str):
@@ -283,7 +283,7 @@ def wakeup(text: str = RegexArg("text"), arg=NoArg()):
             (50, 610, 670, 720), f"{text}起来了", max_fontsize=110, min_fontsize=70
         )
     except ValueError:
-        return OVER_LENGTH_MSG
+        return
     return frame.save_jpg()
 
 
