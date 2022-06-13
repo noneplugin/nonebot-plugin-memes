@@ -19,6 +19,7 @@ memes: List[Meme] = [
     Meme("slogan", slogan, ("口号",)),
     Meme("wakeup", wakeup, ("xx起来了",), r"(?P<text>.*?)起来了"),
     Meme("raisesign", raisesign, ("举牌",)),
+    Meme("psyduck", psyduck, ("可达鸭",)),
     GifMeme("wangjingze", wangjingze, ("王境泽",)),
     GifMeme("weisuoyuwei", weisuoyuwei, ("为所欲为",)),
     GifMeme("chanshenzi", chanshenzi, ("馋身子",)),

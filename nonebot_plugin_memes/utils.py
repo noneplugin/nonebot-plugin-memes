@@ -71,7 +71,7 @@ def help_image(memes: List[Meme]) -> BytesIO:
     frame = BuildImage.new("RGB", (img_w, img_h), "white")
     current_y = 0
     for img in line_imgs:
-        frame.paste(img, (img_w - img.width, current_y))
+        frame.paste(img, (0, current_y))
         current_y += img.height
     frame = frame.resize_canvas((frame.width + 20, frame.height + 20), bg_color="white")
     return frame.save_jpg()

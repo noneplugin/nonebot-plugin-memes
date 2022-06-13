@@ -72,6 +72,78 @@
         "hash": "b15f3d10d3b28f9988deb9940b2084cb"
     },
     {
+        "path": "images/psyduck/0.jpg",
+        "hash": "6202ec5410070dc4c555da8f96bed178"
+    },
+    {
+        "path": "images/psyduck/1.jpg",
+        "hash": "4bbd69e7d760ceb020ea183703ee3c4f"
+    },
+    {
+        "path": "images/psyduck/10.jpg",
+        "hash": "2b88c97afddc019a361948db1d294c09"
+    },
+    {
+        "path": "images/psyduck/11.jpg",
+        "hash": "443509125b7c6bf2f8d7bd2de1850e8f"
+    },
+    {
+        "path": "images/psyduck/12.jpg",
+        "hash": "450c7e24cd5782923d5fc43ed6059274"
+    },
+    {
+        "path": "images/psyduck/13.jpg",
+        "hash": "4d3c4db8e6d5603a670c1fda698d2a65"
+    },
+    {
+        "path": "images/psyduck/14.jpg",
+        "hash": "fb05987bc8e71c10ea14945f5773998f"
+    },
+    {
+        "path": "images/psyduck/15.jpg",
+        "hash": "d41d59768debb11cce3b8ddd459d9f73"
+    },
+    {
+        "path": "images/psyduck/16.jpg",
+        "hash": "cb748afc1be5c6a24631e834e65dc788"
+    },
+    {
+        "path": "images/psyduck/17.jpg",
+        "hash": "c907167d37716a05f9b98f67c738b5f9"
+    },
+    {
+        "path": "images/psyduck/2.jpg",
+        "hash": "bcdada499bee10b55bcf89f3c4203c41"
+    },
+    {
+        "path": "images/psyduck/3.jpg",
+        "hash": "2c56d83e9c28ecff169f2bc2934b7e51"
+    },
+    {
+        "path": "images/psyduck/4.jpg",
+        "hash": "7d2d686127e5ecbdca634859f044b245"
+    },
+    {
+        "path": "images/psyduck/5.jpg",
+        "hash": "44ef8e53403baed0104ec7be98a255f1"
+    },
+    {
+        "path": "images/psyduck/6.jpg",
+        "hash": "1e5a3c85df09b32b7ba5e8b3e62aaa67"
+    },
+    {
+        "path": "images/psyduck/7.jpg",
+        "hash": "4447c7004f6a34fe1dfa973899b74593"
+    },
+    {
+        "path": "images/psyduck/8.jpg",
+        "hash": "567f517d1674346c98bd223b11549c93"
+    },
+    {
+        "path": "images/psyduck/9.jpg",
+        "hash": "5d9e85e3e70a8f2488070a19b703452d"
+    },
+    {
         "path": "images/raisesign/0.jpg",
         "hash": "e8151cf81d9c6944e38de9652f5ac409"
     },
@@ -150,6 +222,10 @@
     {
         "path": "thumbs/nokia.jpg",
         "hash": "7e33543a0de7192503205d1f942c429a"
+    },
+    {
+        "path": "thumbs/psyduck.jpg",
+        "hash": "fed0155de7b5d2eff2766d83065ddf94"
     },
     {
         "path": "thumbs/qiegewala.jpg",
