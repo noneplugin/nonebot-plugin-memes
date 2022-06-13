@@ -12,7 +12,7 @@
 发送“表情包制作”显示下图的列表：
 
 <div align="left">
-  <img src="https://s2.loli.net/2022/06/12/SNEYkDLQ8zvb3pV.jpg" width="500" />
+  <img src="https://s2.loli.net/2022/06/14/wOLCQF8gxvm5lIc.jpg" width="500" />
 </div>
 
 
