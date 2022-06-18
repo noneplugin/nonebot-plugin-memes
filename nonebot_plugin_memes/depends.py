@@ -59,7 +59,7 @@ def regex(pattern: str) -> Rule:
 def Args(num: Optional[int] = None):
     async def dependency(state: T_State = State()):
         args: List[str] = state[ARGS_KEY]
-        if num and len(args) != num:
+        if num is not None and len(args) != num:
             return
         return args
 
@@ -77,7 +77,7 @@ def RegexArg(key: str):
 def RegexArgs(num: Optional[int] = None):
     async def dependency(state: T_State = State()):
         args: List[str] = list(state[REGEX_GROUP])
-        if num and len(args) != num:
+        if num is not None and len(args) != num:
             return
         return args
 
