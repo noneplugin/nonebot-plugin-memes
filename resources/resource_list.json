@@ -1,9 +1,5 @@
 [
     {
-        "path": "images/diyu/0.png",
-        "hash": "008c075830d361b6cb3f849e7e9ac2e1"
-    },
-    {
         "path": "images/fanatic/0.jpg",
         "hash": "65803c47845cd55e16cc3b5155d14430"
     },
@@ -56,16 +52,20 @@
         "hash": "e82b03fd3c5e4b8671c76047c9bcc1ad"
     },
     {
+        "path": "images/holdgrudge/0.png",
+        "hash": "985187c5c54b553b0af9781bfa7a5514"
+    },
+    {
         "path": "images/imprison/0.jpg",
         "hash": "7afdc93efbe34a2a9c7e7fc60b8b57a4"
     },
     {
-        "path": "images/jichou/0.png",
-        "hash": "985187c5c54b553b0af9781bfa7a5514"
-    },
-    {
         "path": "images/luxunsay/0.jpg",
         "hash": "fdf0252e7edea0a3186b908af557d2a7"
+    },
+    {
+        "path": "images/murmur/0.png",
+        "hash": "008c075830d361b6cb3f849e7e9ac2e1"
     },
     {
         "path": "images/nokia/0.jpg",
@@ -188,10 +188,6 @@
         "hash": "59f13a3126f3d23a17b067acb460712d"
     },
     {
-        "path": "thumbs/diyu.jpg",
-        "hash": "bfce4fa14abd97681a6d061475e8184e"
-    },
-    {
         "path": "thumbs/fanatic.jpg",
         "hash": "11f7e9fb5f7883885bc8e5bcbba8a710"
     },
@@ -204,16 +200,20 @@
         "hash": "e3e87c1f17997772f5632dd5fc283b88"
     },
     {
+        "path": "thumbs/holdgrudge.jpg",
+        "hash": "39122d0767d85dde75096e416f5ee305"
+    },
+    {
         "path": "thumbs/imprison.jpg",
         "hash": "c026390dae73852b802e43075ac2ea8e"
     },
     {
-        "path": "thumbs/jichou.jpg",
-        "hash": "39122d0767d85dde75096e416f5ee305"
-    },
-    {
         "path": "thumbs/luxunsay.jpg",
         "hash": "7db68e6b8c4894ec2ef09225c5a5554f"
+    },
+    {
+        "path": "thumbs/murmur.jpg",
+        "hash": "bfce4fa14abd97681a6d061475e8184e"
     },
     {
         "path": "thumbs/nihaosaoa.jpg",

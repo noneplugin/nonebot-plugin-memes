@@ -71,7 +71,7 @@ def goodnews(text: str = Arg()):
     return frame.save_png()
 
 
-def jichou(text: str = Arg()):
+def holdgrudge(text: str = Arg()):
     date = datetime.today().strftime("%Y{}%m{}%d{}").format("年", "月", "日")
     text = f"{date} 晴\n{text}\n这个仇我先记下了"
     text2image = Text2Image.from_text(text, 45, fill="black", spacing=10).wrap(440)
@@ -79,7 +79,7 @@ def jichou(text: str = Arg()):
         return OVER_LENGTH_MSG
     text_img = text2image.to_image()
 
-    frame = load_image("jichou/0.png")
+    frame = load_image("holdgrudge/0.png")
     bg = BuildImage.new(
         "RGB", (frame.width, frame.height + text_img.height + 20), "white"
     )
@@ -103,8 +103,8 @@ def fanatic(text: str = Arg()):
     return frame.save_jpg()
 
 
-def diyu(text: str = Arg()):
-    frame = load_image("diyu/0.png")
+def murmur(text: str = Arg()):
+    frame = load_image("murmur/0.png")
     try:
         frame.draw_text(
             (10, 255, 430, 300),
