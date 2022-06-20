@@ -3,6 +3,7 @@ from typing import Union
 from nonebot.params import Depends
 from nonebot.matcher import Matcher
 from nonebot.typing import T_Handler
+from nonebot.plugin import PluginMetadata
 from nonebot import on_command, on_message, require
 from nonebot.adapters.onebot.v11 import MessageSegment
 
@@ -12,15 +13,17 @@ from .depends import regex
 from .data_source import memes
 from .utils import Meme, help_image
 
-__help__plugin_name__ = "memes"
-__des__ = "表情包制作"
-__cmd__ = "发送“表情包制作”查看表情包列表"
-__short_cmd__ = __cmd__
-__example__ = """
-鲁迅说 我没说过这句话
-王境泽.gif 我就是饿死 死外边 不会吃你们一点东西 真香
-""".strip()
-__usage__ = f"{__des__}\n\nUsage:\n{__cmd__}\n\nExamples:\n{__example__}"
+__plugin_meta__ = PluginMetadata(
+    name="表情包制作",
+    description="生成各种表情包",
+    usage="触发方式：指令 + 文字 (部分表情包需要多段文字)\n发送“表情包制作”查看表情包列表",
+    extra={
+        "unique_name": "memes",
+        "example": "鲁迅说 我没说过这句话\n举牌 aya大佬带带我",
+        "author": "meetwq <meetwq@gmail.com>",
+        "version": "0.3.3",
+    },
+)
 
 
 help_cmd = on_command("表情包制作", block=True, priority=12)
