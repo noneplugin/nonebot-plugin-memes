@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nonebot_plugin_memes"
-version = "0.3.3"
+version = "0.3.4"
 description = "Nonebot2 plugin for making memes"
 authors = ["meetwq <meetwq@gmail.com>"]
 license = "MIT"
