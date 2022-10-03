@@ -9,6 +9,8 @@ from nonebot.log import logger
 from nonebot_plugin_imageutils import BuildImage
 from nonebot_plugin_imageutils.fonts import add_font
 
+from .config import memes_config
+
 data_path = Path() / "data" / "memes"
 
 
@@ -34,7 +36,7 @@ async def download_url(url: str) -> bytes:
 
 
 def resource_url(path: str) -> str:
-    return f"https://ghproxy.com/https://raw.githubusercontent.com/noneplugin/nonebot-plugin-memes/v0.3.x/resources/{path}"
+    return f"{memes_config.memes_resource_url}/{path}"
 
 
 async def download_resource(path: str) -> bytes:

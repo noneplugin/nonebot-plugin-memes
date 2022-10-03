@@ -31,3 +31,5 @@ memes: List[Meme] = [
     GifMeme("shishilani", shishilani, ("食屎啦你",)),
     GifMeme("wunian", wunian, ("五年怎么过的",)),
 ]
+
+memes = [meme for meme in memes if meme.name not in memes_config.memes_disabled_list]

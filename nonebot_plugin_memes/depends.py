@@ -8,11 +8,17 @@ from nonebot.typing import T_State
 from nonebot.params import State, Depends
 from nonebot.adapters.onebot.v11 import MessageSegment, MessageEvent, unescape
 
+from .config import memes_config
+
 ARG_KEY = "ARG"
 ARGS_KEY = "ARGS"
 REGEX_DICT = "REGEX_DICT"
 REGEX_GROUP = "REGEX_GROUP"
 REGEX_ARG = "REGEX_ARG"
+
+command_start = memes_config.memes_command_start or "|".join(
+    get_driver().config.command_start
+)
 
 
 def regex(pattern: str) -> Rule:
@@ -23,8 +29,9 @@ def regex(pattern: str) -> Rule:
             return False
 
         seg_text = str(msg_seg).lstrip()
-        start = "|".join(get_driver().config.command_start)
-        matched = re.match(rf"(?:{start})(?:{pattern})", seg_text, re.IGNORECASE | re.S)
+        matched = re.match(
+            rf"(?:{command_start})(?:{pattern})", seg_text, re.IGNORECASE | re.S
+        )
         if not matched:
             return False
 
