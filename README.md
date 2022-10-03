@@ -1,6 +1,31 @@
+<div align="center">
+
+  <a href="https://v2.nonebot.dev/">
+    <img src="https://v2.nonebot.dev/logo.png" width="200" height="200" alt="nonebot">
+  </a>
+
 # nonebot-plugin-memes
 
-[Nonebot2](https://github.com/nonebot/nonebot2) 插件，用于表情包制作
+_✨ [Nonebot2](https://github.com/nonebot/nonebot2) 插件，用于表情包制作 ✨_
+
+<p align="center">
+  <img src="https://img.shields.io/github/license/noneplugin/nonebot-plugin-memes" alt="license">
+  <img src="https://img.shields.io/badge/python-3.7.3+-blue.svg" alt="Python">
+  <img src="https://img.shields.io/badge/nonebot-2.0.0b4+-red.svg" alt="NoneBot">
+  <a href="https://pypi.org/project/nonebot-plugin-memes">
+    <img src="https://badgen.net/pypi/v/nonebot-plugin-memes" alt="pypi">
+  </a>
+  <a href="https://jq.qq.com/?_wv=1027&k=wDVNrMdr">
+    <img src="https://img.shields.io/badge/QQ%E7%BE%A4-682145034-orange" alt="qq group">
+  </a>
+</p>
+
+</div>
+
+
+头像相关表情包制作：[nonebot-plugin-petpet](https://github.com/noneplugin/nonebot-plugin-petpet)
+
+风格logo图片制作：[nonebot-plugin-logo](https://github.com/noneplugin/nonebot-plugin-logo)
 
 
 ### 安装
@@ -28,6 +53,29 @@ pip install nonebot_plugin_memes
 可以手动下载 `resources` 下 `fonts` 中的字体文件，放置于 nonebot-plugin-imageutils 定义的字体路径，默认为机器人运行目录下的 `data/fonts/` 文件夹
 
 
+### 配置项
+
+<details>
+<summary>展开/收起</summary>
+
+#### `memes_command_start`
+ - 类型：`str`
+ - 默认：`""`
+ - 说明：命令开始字符，为空则使用Nonebot设置中的`command_start`
+
+#### `memes_resource_url`
+ - 类型：`str`
+ - 默认：`https://ghproxy.com/https://raw.githubusercontent.com/noneplugin/nonebot-plugin-memes/v0.3.x/resources`
+ - 说明：资源下载链接，默认为使用`ghproxy`代理的github仓库链接
+
+#### `memes_disabled_list`
+ - 类型：`List[str]`
+ - 默认：`[]`
+ - 说明：禁用的表情包列表，需填写表情名称的列表，表情名称可以在`data_source.py`文件中查看。若只是临时关闭，可以用下文中的“表情包开关”
+
+</details>
+
+
 ### 使用
 
 **以下命令需要加[命令前缀](https://v2.nonebot.dev/docs/api/config#Config-command_start) (默认为`/`)，可自行设置为空**
@@ -39,6 +87,19 @@ pip install nonebot_plugin_memes
 <div align="left">
   <img src="https://s2.loli.net/2022/06/14/wOLCQF8gxvm5lIc.jpg" width="500" />
 </div>
+
+
+#### 表情包开关
+
+群主 / 管理员 / 超级用户 可以启用或禁用某些表情包
+
+发送 `启用表情/禁用表情 [表情名]`，如：`禁用表情 鲁迅说`
+
+超级用户 可以设置某个表情包的管控模式（黑名单/白名单）
+
+发送 `全局启用表情 [表情名]` 可将表情设为黑名单模式；
+
+发送 `全局禁用表情 [表情名]` 可将表情设为白名单模式；
 
 
 ### 示例
