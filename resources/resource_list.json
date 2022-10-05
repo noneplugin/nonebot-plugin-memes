@@ -148,6 +148,14 @@
         "hash": "e8151cf81d9c6944e38de9652f5ac409"
     },
     {
+        "path": "images/scratchoff/0.png",
+        "hash": "0a9f099c2ff528543c6c8a7cfb2566aa"
+    },
+    {
+        "path": "images/scratchoff/1.png",
+        "hash": "8b4dd8c62fe06b2accb2ca8d79102e3a"
+    },
+    {
         "path": "images/scroll/corner1.png",
         "hash": "53a18e9da0e4723e876976b06aebe1a2"
     },
@@ -234,6 +242,10 @@
     {
         "path": "thumbs/raisesign.jpg",
         "hash": "72f40a24743afc17ee04d3c2ff144223"
+    },
+    {
+        "path": "thumbs/scratchoff.jpg",
+        "hash": "24445353f1f694cc5dc91a611de2f293"
     },
     {
         "path": "thumbs/scroll.jpg",
