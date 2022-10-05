@@ -1,6 +1,8 @@
 from io import BytesIO
 from PIL import ImageFilter
 from typing import List, Union
+from typing_extensions import Literal
+
 from nonebot.params import Depends
 from nonebot.utils import run_sync
 from nonebot.matcher import Matcher
@@ -208,8 +210,12 @@ async def _(matcher: Matcher, msg: Message = CommandArg()):
 def create_matchers():
     def handler(meme: Meme) -> T_Handler:
         async def handle(
-            matcher: Matcher, res: Union[str, BytesIO] = Depends(meme.func)
+            matcher: Matcher,
+            flag: Literal[True] = check_flag(meme),
+            res: Union[str, BytesIO] = Depends(meme.func),
         ):
+            if not flag:
+                return
             matcher.stop_propagation()
             if isinstance(res, str):
                 await matcher.finish(res)
