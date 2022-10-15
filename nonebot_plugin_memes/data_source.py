@@ -7,6 +7,7 @@ memes: List[Meme] = [
     Meme("luxunsay", luxunsay, ("鲁迅说", "鲁迅说过"), r"鲁迅说过?"),
     Meme("nokia", nokia, ("诺基亚", "有内鬼")),
     Meme("goodnews", goodnews, ("喜报",)),
+    Meme("badnews", badnews, ("悲报",)),
     Meme("holdgrudge", holdgrudge, ("记仇",)),
     Meme("fanatic", fanatic, ("狂爱", "狂粉")),
     Meme("murmur", murmur, ("低语",)),
