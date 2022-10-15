@@ -82,6 +82,8 @@ def badnews(text: str = Arg()):
             max_fontsize=60,
             min_fontsize=30,
             fill=(0, 0, 0),
+            stroke_ratio=1 / 15,
+            stroke_fill="white",
         )
     except ValueError:
         return OVER_LENGTH_MSG
