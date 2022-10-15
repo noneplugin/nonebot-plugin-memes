@@ -60,11 +60,28 @@ def goodnews(text: str = Arg()):
             text,
             allow_wrap=True,
             lines_align="center",
-            max_fontsize=50,
+            max_fontsize=60,
             min_fontsize=30,
             fill=(238, 0, 0),
             stroke_ratio=1 / 15,
             stroke_fill=(255, 255, 153),
+        )
+    except ValueError:
+        return OVER_LENGTH_MSG
+    return frame.save_png()
+
+
+def badnews(text: str = Arg()):
+    frame = load_image("badnews/0.png")
+    try:
+        frame.draw_text(
+            (50, 100, frame.width - 50, frame.height - 100),
+            text,
+            allow_wrap=True,
+            lines_align="center",
+            max_fontsize=60,
+            min_fontsize=30,
+            fill=(0, 0, 0),
         )
     except ValueError:
         return OVER_LENGTH_MSG
