@@ -23,6 +23,7 @@ memes: List[Meme] = [
     Meme("psyduck", psyduck, ("可达鸭",)),
     Meme("scratchoff", scratchoff, ("刮刮乐",)),
     Meme("ascension", ascension, ("升天",)),
+    Meme("run", run, ("跑","快跑",)),
     GifMeme("wangjingze", wangjingze, ("王境泽",)),
     GifMeme("weisuoyuwei", weisuoyuwei, ("为所欲为",)),
     GifMeme("chanshenzi", chanshenzi, ("馋身子",)),

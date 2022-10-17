@@ -416,3 +416,21 @@ def ascension(text: str = Arg()):
     except ValueError:
         return OVER_LENGTH_MSG
     return frame.save_jpg()
+
+
+def run(text: str = Arg()):
+    frame = load_image("run/0.png")
+    text_img = BuildImage.new("RGBA", (122, 53))
+    try:
+        text_img.draw_text(
+            (0, 0, 122, 53),
+            text,
+            allow_wrap=True,
+            max_fontsize=50,
+            min_fontsize=10,
+            lines_align="center",
+        )
+    except ValueError:
+        return OVER_LENGTH_MSG
+    frame.paste(text_img.rotate(7, expand=True), (200, 195), alpha=True)
+    return frame.save_jpg()
