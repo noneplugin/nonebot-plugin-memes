@@ -400,3 +400,37 @@ def scratchoff(text: str = Arg()):
     mask = load_image("scratchoff/1.png")
     frame.paste(mask, alpha=True)
     return frame.save_jpg()
+
+
+def ascension(text: str = Arg()):
+    frame = load_image("ascension/0.png")
+    text = f"你原本应该要去地狱的，但因为你生前{text}，我们就当作你已经服完刑期了"
+    try:
+        frame.draw_text(
+            (40, 30, 482, 135),
+            text,
+            allow_wrap=True,
+            max_fontsize=50,
+            min_fontsize=20,
+        )
+    except ValueError:
+        return OVER_LENGTH_MSG
+    return frame.save_jpg()
+
+
+def run(text: str = Arg()):
+    frame = load_image("run/0.png")
+    text_img = BuildImage.new("RGBA", (122, 53))
+    try:
+        text_img.draw_text(
+            (0, 0, 122, 53),
+            text,
+            allow_wrap=True,
+            max_fontsize=50,
+            min_fontsize=10,
+            lines_align="center",
+        )
+    except ValueError:
+        return OVER_LENGTH_MSG
+    frame.paste(text_img.rotate(7, expand=True), (200, 195), alpha=True)
+    return frame.save_jpg()
