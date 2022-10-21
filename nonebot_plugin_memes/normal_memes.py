@@ -434,3 +434,34 @@ def run(text: str = Arg()):
         return OVER_LENGTH_MSG
     frame.paste(text_img.rotate(7, expand=True), (200, 195), alpha=True)
     return frame.save_jpg()
+
+
+def meteor(text: str = Arg()):
+    frame = load_image("meteor/0.png")
+    try:
+        frame.draw_text(
+            (220, 230, 920, 315),
+            text,
+            allow_wrap=True,
+            max_fontsize=80,
+            min_fontsize=20,
+            fill="white",
+        )
+    except ValueError:
+        return OVER_LENGTH_MSG
+    return frame.save_jpg()
+
+
+def wish_fail(text: str = Arg()):
+    frame = load_image("wish_fail/0.png")
+    try:
+        frame.draw_text(
+            (70, 305, 320, 380),
+            text,
+            allow_wrap=True,
+            max_fontsize=80,
+            min_fontsize=20,
+        )
+    except ValueError:
+        return OVER_LENGTH_MSG
+    return frame.save_jpg()
