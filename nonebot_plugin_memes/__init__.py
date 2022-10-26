@@ -34,9 +34,9 @@ from .manager import meme_manager, ActionResult, MemeMode
 
 
 __plugin_meta__ = PluginMetadata(
-    name="表情包制作",
-    description="生成各种表情包",
-    usage="触发方式：指令 + 文字 (部分表情包需要多段文字)\n发送“表情包制作”查看表情包列表",
+    name="文字表情包",
+    description="生成文字类表情包",
+    usage="触发方式：指令 + 文字 (部分表情包需要多段文字)\n发送“文字表情包”查看表情包列表",
     extra={
         "unique_name": "memes",
         "example": "鲁迅说 我没说过这句话\n举牌 aya大佬带带我",
@@ -49,7 +49,7 @@ __plugin_meta__ = PluginMetadata(
 PERM_EDIT = GROUP_ADMIN | GROUP_OWNER | PRIVATE_FRIEND | SUPERUSER
 PERM_GLOBAL = SUPERUSER
 
-help_cmd = on_command("文字表情包", aliases={"文字相关表情包", "文字相关表情制作","表情包制作"}, block=True, priority=12)
+help_cmd = on_command("文字表情包", aliases={"文字相关表情包", "文字相关表情制作"}, block=True, priority=12)
 block_cmd = on_command("禁用文字表情", block=True, priority=12, permission=PERM_EDIT)
 unblock_cmd = on_command("启用文字表情", block=True, priority=12, permission=PERM_EDIT)
 block_cmd_gl = on_command("全局禁用文字表情", block=True, priority=12, permission=PERM_GLOBAL)
@@ -79,7 +79,7 @@ def help_image(user_id: str, memes: List[Meme]) -> BytesIO:
         )
         return frame
 
-    num_per_line = 5
+    num_per_line = 6
     line_imgs: List[BuildImage] = []
     for i in range(0, len(memes), num_per_line):
         imgs = [thumb_image(meme) for meme in memes[i : i + num_per_line]]

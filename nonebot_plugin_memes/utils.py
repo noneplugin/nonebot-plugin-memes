@@ -22,7 +22,7 @@ class Meme:
 
     def __post_init__(self):
         if not self.pattern:
-            self.pattern = "|".join(self.keywords)
+            self.pattern = rf"(?:{'|'.join(self.keywords)})\s+"
 
 
 @dataclass

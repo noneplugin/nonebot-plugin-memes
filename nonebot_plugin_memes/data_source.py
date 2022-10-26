@@ -4,7 +4,7 @@ from .gif_subtitle_memes import *
 
 
 memes: List[Meme] = [
-    Meme("luxunsay", luxunsay, ("鲁迅说", "鲁迅说过"), r"鲁迅说过?"),
+    Meme("luxunsay", luxunsay, ("鲁迅说", "鲁迅说过"), r"鲁迅说过?\s+"),
     Meme("nokia", nokia, ("诺基亚", "有内鬼")),
     Meme("goodnews", goodnews, ("喜报",)),
     Meme("badnews", badnews, ("悲报",)),
@@ -23,7 +23,7 @@ memes: List[Meme] = [
     Meme("psyduck", psyduck, ("可达鸭",)),
     Meme("scratchoff", scratchoff, ("刮刮乐",)),
     Meme("ascension", ascension, ("升天",)),
-    Meme("run", run, ("跑","快跑",)),
+    Meme("run", run, ("快跑",)),
     Meme("meteor", meteor, ("流星",)),
     Meme("wish_fail", wish_fail, ("许愿失败",)),
     GifMeme("wangjingze", wangjingze, ("王境泽",)),

@@ -6,7 +6,7 @@
 
 # nonebot-plugin-memes
 
-_✨ [Nonebot2](https://github.com/nonebot/nonebot2) 插件，用于表情包制作 ✨_
+_✨ [Nonebot2](https://github.com/nonebot/nonebot2) 插件，用于文字类表情包制作 ✨_
 
 <p align="center">
   <img src="https://img.shields.io/github/license/noneplugin/nonebot-plugin-memes" alt="license">
@@ -26,6 +26,13 @@ _✨ [Nonebot2](https://github.com/nonebot/nonebot2) 插件，用于表情包制
 头像相关表情包制作：[nonebot-plugin-petpet](https://github.com/noneplugin/nonebot-plugin-petpet)
 
 风格logo图片制作：[nonebot-plugin-logo](https://github.com/noneplugin/nonebot-plugin-logo)
+
+
+### ！！！注意
+
+- 为避免表情开关的命令与“头像表情包”插件冲突，同时更准确地描述插件功能，本插件由“表情包制作”更名为“文字表情包”，相应的指令也做了调整
+
+- 为避免误触发，大多数表情改为需要在指令后加空格，如：“鲁迅说 我没说过这句话”
 
 
 ### 安装
@@ -82,7 +89,7 @@ pip install nonebot_plugin_memes
 
 支持的表情包：
 
-发送“表情包制作”显示下图的列表：
+发送“文字表情包”显示下图的列表：
 
 <div align="left">
   <img src="https://s2.loli.net/2022/10/05/D1W9cTeXvqAsFmb.jpg" width="500" />
@@ -93,13 +100,13 @@ pip install nonebot_plugin_memes
 
 群主 / 管理员 / 超级用户 可以启用或禁用某些表情包
 
-发送 `启用表情/禁用表情 [表情名]`，如：`禁用表情 鲁迅说`
+发送 `启用文字表情/禁用文字表情 [表情名]`，如：`禁用文字表情 鲁迅说`
 
 超级用户 可以设置某个表情包的管控模式（黑名单/白名单）
 
-发送 `全局启用表情 [表情名]` 可将表情设为黑名单模式；
+发送 `全局启用文字表情 [表情名]` 可将表情设为黑名单模式；
 
-发送 `全局禁用表情 [表情名]` 可将表情设为白名单模式；
+发送 `全局禁用文字表情 [表情名]` 可将表情设为白名单模式；
 
 
 ### 示例

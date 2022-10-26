@@ -1,5 +1,13 @@
 [
     {
+        "path": "images/ascension/0.png",
+        "hash": "e09e50c266c1e8babfe2c73612ac4200"
+    },
+    {
+        "path": "images/badnews/0.png",
+        "hash": "960baf23d9d516c5ea6d13f48b67f070"
+    },
+    {
         "path": "images/fanatic/0.jpg",
         "hash": "65803c47845cd55e16cc3b5155d14430"
     },
@@ -62,6 +70,10 @@
     {
         "path": "images/luxunsay/0.jpg",
         "hash": "fdf0252e7edea0a3186b908af557d2a7"
+    },
+    {
+        "path": "images/meteor/0.png",
+        "hash": "16a32e5a514c4355a164afb05d510fb6"
     },
     {
         "path": "images/murmur/0.png",
@@ -148,6 +160,10 @@
         "hash": "e8151cf81d9c6944e38de9652f5ac409"
     },
     {
+        "path": "images/run/0.png",
+        "hash": "8504969b4b3d302c15e37ab7033591a7"
+    },
+    {
         "path": "images/scratchoff/0.png",
         "hash": "0a9f099c2ff528543c6c8a7cfb2566aa"
     },
@@ -188,8 +204,20 @@
         "hash": "2737c1fd3d312729ee917f5bee3f9016"
     },
     {
+        "path": "images/wish_fail/0.png",
+        "hash": "ecf3e01a1091ef0d035dd2114e7c9a29"
+    },
+    {
         "path": "images/wujing/0.jpg",
         "hash": "c187cfc302ce2c8583e7d18bfdde245a"
+    },
+    {
+        "path": "thumbs/ascension.jpg",
+        "hash": "df4f9913ce77ede73c572e538fd95da2"
+    },
+    {
+        "path": "thumbs/badnews.jpg",
+        "hash": "2a9f5c3d527d563ec7b50d2cffa594f9"
     },
     {
         "path": "thumbs/chanshenzi.jpg",
@@ -220,6 +248,10 @@
         "hash": "7db68e6b8c4894ec2ef09225c5a5554f"
     },
     {
+        "path": "thumbs/meteor.jpg",
+        "hash": "0eb21bf3471b33cb256aad7c336a0eec"
+    },
+    {
         "path": "thumbs/murmur.jpg",
         "hash": "bfce4fa14abd97681a6d061475e8184e"
     },
@@ -242,6 +274,10 @@
     {
         "path": "thumbs/raisesign.jpg",
         "hash": "72f40a24743afc17ee04d3c2ff144223"
+    },
+    {
+        "path": "thumbs/run.jpg",
+        "hash": "57b314ceed8dc19d48846ee1b4373970"
     },
     {
         "path": "thumbs/scratchoff.jpg",
@@ -282,6 +318,10 @@
     {
         "path": "thumbs/weisuoyuwei.jpg",
         "hash": "122cb271d986a61e8cb632f7c18c1441"
+    },
+    {
+        "path": "thumbs/wish_fail.jpg",
+        "hash": "5b209355305f85d8f20dbfd8a50b3c43"
     },
     {
         "path": "thumbs/wujing.jpg",
