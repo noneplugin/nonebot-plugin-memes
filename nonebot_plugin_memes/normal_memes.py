@@ -481,3 +481,19 @@ def findchips(texts: List[str] = Args(4, prompt=True)):
     except ValueError:
         return OVER_LENGTH_MSG
     return frame.save_jpg()
+
+
+def bronya_holdsign(text: str = Arg()):
+    frame = load_image("bronya_holdsign/0.jpg")
+    try:
+        frame.draw_text(
+            (190, 675, 640, 930),
+            text,
+            fill=(111, 95, 95),
+            allow_wrap=True,
+            max_fontsize=60,
+            min_fontsize=30,
+        )
+    except ValueError:
+        return OVER_LENGTH_MSG
+    return frame.save_jpg()

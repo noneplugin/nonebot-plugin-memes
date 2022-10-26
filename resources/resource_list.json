@@ -8,6 +8,10 @@
         "hash": "960baf23d9d516c5ea6d13f48b67f070"
     },
     {
+        "path": "images/bronya_holdsign/0.jpg",
+        "hash": "fc035e0ac02ee3bd44f4409f8df14ed9"
+    },
+    {
         "path": "images/fanatic/0.jpg",
         "hash": "65803c47845cd55e16cc3b5155d14430"
     },
@@ -222,6 +226,10 @@
     {
         "path": "thumbs/badnews.jpg",
         "hash": "2a9f5c3d527d563ec7b50d2cffa594f9"
+    },
+    {
+        "path": "thumbs/bronya_holdsign.jpg",
+        "hash": "1b506fd313a7b413908ae24b7176de29"
     },
     {
         "path": "thumbs/chanshenzi.jpg",
