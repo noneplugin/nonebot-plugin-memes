@@ -12,6 +12,10 @@
         "hash": "65803c47845cd55e16cc3b5155d14430"
     },
     {
+        "path": "images/findchips/0.jpg",
+        "hash": "a8b86967b35a34129dd70a6c81a565e4"
+    },
+    {
         "path": "images/gif/chanshenzi.gif",
         "hash": "1d691ef44c9015b90118d462d8254bcf"
     },
@@ -226,6 +230,10 @@
     {
         "path": "thumbs/fanatic.jpg",
         "hash": "11f7e9fb5f7883885bc8e5bcbba8a710"
+    },
+    {
+        "path": "thumbs/findchips.jpg",
+        "hash": "ee3409ab09f0ba5fcf693dd05fec6eda"
     },
     {
         "path": "thumbs/goodnews.jpg",

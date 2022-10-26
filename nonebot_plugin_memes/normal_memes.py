@@ -276,7 +276,7 @@ def wujing(left: str = RegexArg("left"), right: str = RegexArg("right"), arg=NoA
     return frame.save_jpg()
 
 
-def slogan(texts: List[str] = Args(6)):
+def slogan(texts: List[str] = Args(6, prompt=True)):
     frame = load_image("slogan/0.jpg")
 
     def draw(pos: Tuple[float, float, float, float], text: str):
@@ -462,6 +462,22 @@ def wish_fail(text: str = Arg()):
             max_fontsize=80,
             min_fontsize=20,
         )
+    except ValueError:
+        return OVER_LENGTH_MSG
+    return frame.save_jpg()
+
+
+def findchips(texts: List[str] = Args(4, prompt=True)):
+    frame = load_image("findchips/0.jpg")
+
+    def draw(pos: Tuple[float, float, float, float], text: str):
+        frame.draw_text(pos, text, max_fontsize=40, min_fontsize=20, allow_wrap=True)
+
+    try:
+        draw((405, 54, 530, 130), texts[0])
+        draw((570, 62, 667, 160), texts[1])
+        draw((65, 400, 325, 463), texts[2])
+        draw((430, 400, 630, 470), texts[3])
     except ValueError:
         return OVER_LENGTH_MSG
     return frame.save_jpg()

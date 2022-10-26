@@ -26,6 +26,7 @@ memes: List[Meme] = [
     Meme("run", run, ("快跑",)),
     Meme("meteor", meteor, ("流星",)),
     Meme("wish_fail", wish_fail, ("许愿失败",)),
+    Meme("findchips", findchips, ("整点薯条",)),
     GifMeme("wangjingze", wangjingze, ("王境泽",)),
     GifMeme("weisuoyuwei", weisuoyuwei, ("为所欲为",)),
     GifMeme("chanshenzi", chanshenzi, ("馋身子",)),
