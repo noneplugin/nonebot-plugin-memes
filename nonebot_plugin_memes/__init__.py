@@ -41,7 +41,7 @@ __plugin_meta__ = PluginMetadata(
         "unique_name": "memes",
         "example": "鲁迅说 我没说过这句话\n举牌 aya大佬带带我",
         "author": "meetwq <meetwq@gmail.com>",
-        "version": "0.3.5",
+        "version": "0.3.6",
     },
 )
 
