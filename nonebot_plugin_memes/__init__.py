@@ -1,7 +1,6 @@
 from io import BytesIO
 from PIL import ImageFilter
-from typing import List, Union
-from typing_extensions import Literal
+from typing import List, Union, Literal
 
 from nonebot.params import Depends
 from nonebot.utils import run_sync

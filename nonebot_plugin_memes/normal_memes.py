@@ -1,7 +1,7 @@
-from typing import List, Tuple
+from PIL import Image
 from datetime import datetime
-from typing_extensions import Literal
 from PIL.Image import Image as IMG
+from typing import List, Tuple, Literal
 
 from nonebot_plugin_imageutils import BuildImage, Text2Image
 
@@ -496,4 +496,70 @@ def bronya_holdsign(text: str = Arg()):
         )
     except ValueError:
         return OVER_LENGTH_MSG
+    return frame.save_jpg()
+
+
+def pornhub(texts: List[str] = Args(2)):
+    left_img = Text2Image.from_text(texts[0], fontsize=200, fill="white").to_image(
+        bg_color="black", padding=(20, 10)
+    )
+
+    right_img = Text2Image.from_text(
+        texts[1], fontsize=200, fill="black", weight="bold"
+    ).to_image(bg_color=(247, 152, 23), padding=(20, 10))
+    right_img = BuildImage(right_img).circle_corner(20)
+
+    frame = BuildImage.new(
+        "RGBA",
+        (left_img.width + right_img.width, max(left_img.height, right_img.height)),
+        "black",
+    )
+    frame.paste(left_img, (0, frame.height - left_img.height)).paste(
+        right_img, (left_img.width, frame.height - right_img.height), alpha=True
+    )
+    frame = frame.resize_canvas(
+        (frame.width + 100, frame.height + 100), bg_color="black"
+    )
+    return frame.save_jpg()
+
+
+def youtube(texts: List[str] = Args(2)):
+    left_img = Text2Image.from_text(texts[0], fontsize=200, fill="black").to_image(
+        bg_color="white", padding=(30, 20)
+    )
+
+    right_img = Text2Image.from_text(
+        texts[1], fontsize=200, fill="white", weight="bold"
+    ).to_image(bg_color=(230, 33, 23), padding=(50, 20))
+    right_img = BuildImage(right_img).resize_canvas(
+        (max(right_img.width, 400), right_img.height), bg_color=(230, 33, 23)
+    )
+    right_img = right_img.circle_corner(right_img.height // 2)
+
+    frame = BuildImage.new(
+        "RGBA",
+        (left_img.width + right_img.width, max(left_img.height, right_img.height)),
+        "white",
+    )
+    frame.paste(left_img, (0, frame.height - left_img.height))
+    frame = frame.resize_canvas(
+        (frame.width + 100, frame.height + 100), bg_color="white"
+    )
+
+    corner = load_image("youtube/corner.png")
+    ratio = right_img.height / 2 / corner.height
+    corner = corner.resize((int(corner.width * ratio), int(corner.height * ratio)))
+    x0 = left_img.width + 50
+    y0 = frame.height - right_img.height - 50
+    x1 = frame.width - corner.width - 50
+    y1 = frame.height - corner.height - 50
+    frame.paste(corner, (x0, y0 - 1), alpha=True).paste(
+        corner.transpose(Image.FLIP_TOP_BOTTOM), (x0, y1 + 1), alpha=True
+    ).paste(corner.transpose(Image.FLIP_LEFT_RIGHT), (x1, y0 - 1), alpha=True).paste(
+        corner.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.FLIP_LEFT_RIGHT),
+        (x1, y1 + 1),
+        alpha=True,
+    ).paste(
+        right_img, (x0, y0), alpha=True
+    )
     return frame.save_jpg()
