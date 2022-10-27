@@ -328,7 +328,7 @@ def raisesign(text: str = Arg()):
     return frame.save_jpg()
 
 
-def psyduck(texts: List[str] = Args(2)):
+def psyduck(texts: List[str] = Args(2, prompt=True)):
     left_img = BuildImage.new("RGBA", (155, 100))
     right_img = BuildImage.new("RGBA", (155, 100))
 
@@ -499,7 +499,7 @@ def bronya_holdsign(text: str = Arg()):
     return frame.save_jpg()
 
 
-def pornhub(texts: List[str] = Args(2)):
+def pornhub(texts: List[str] = Args(2, prompt=True)):
     left_img = Text2Image.from_text(texts[0], fontsize=200, fill="white").to_image(
         bg_color="black", padding=(20, 10)
     )
@@ -523,7 +523,7 @@ def pornhub(texts: List[str] = Args(2)):
     return frame.save_jpg()
 
 
-def youtube(texts: List[str] = Args(2)):
+def youtube(texts: List[str] = Args(2, prompt=True)):
     left_img = Text2Image.from_text(texts[0], fontsize=200, fill="black").to_image(
         bg_color="white", padding=(30, 20)
     )

@@ -69,7 +69,7 @@ def Args(num: Optional[int] = None, prompt: bool = False):
         args: List[str] = state[ARGS_KEY]
         if num is not None and len(args) != num:
             if prompt and args:
-                await matcher.finish(f"该表情需要{num}个参数")
+                await matcher.finish(f"该表情需要{num}段文字")
             return
         return args
 
