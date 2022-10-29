@@ -25,8 +25,6 @@ _✨ [Nonebot2](https://github.com/nonebot/nonebot2) 插件，用于文字类表
 
 头像相关表情包制作：[nonebot-plugin-petpet](https://github.com/noneplugin/nonebot-plugin-petpet)
 
-风格logo图片制作：[nonebot-plugin-logo](https://github.com/noneplugin/nonebot-plugin-logo)
-
 
 ### ！！！注意
 
@@ -92,7 +90,7 @@ pip install nonebot_plugin_memes
 发送“文字表情包”显示下图的列表：
 
 <div align="left">
-  <img src="https://s2.loli.net/2022/10/27/UCY5zoTBDbVPlKc.jpg" width="500" />
+  <img src="https://s2.loli.net/2022/10/29/aChJAZmBNs8HbO3.jpg" width="500" />
 </div>
 
 
