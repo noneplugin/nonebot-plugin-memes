@@ -569,6 +569,24 @@ def youtube(texts: List[str] = Args(2, prompt=True)):
     return frame.save_jpg()
 
 
+def google(text: str = Arg()):
+    colors = ["#4285f4", "#db4437", "#f4b400", "#4285f4", "#0f9d58", "#db4437"]
+    imgs:List[IMG] = []
+    for i in range(0, len(text)):
+        img = Text2Image.from_text(
+            text[i], 200, fill=colors[i%len(colors)]
+        )
+        imgs.append(img.to_image())
+    img_w = sum([img.width for img in imgs]) + 50
+    img_h = max([img.height for img in imgs]) + 50
+    cur = 25
+    frame = BuildImage.new("RGBA", (img_w, img_h), "white")
+    for img in imgs:
+        frame.paste(img, (cur, 25))
+        cur += img.width
+    return frame.save_jpg()
+
+
 def fivethousand_choyen(texts: List[str] = Args(2, prompt=True)):
     fontsize = 200
     fontname = "Noto Sans SC"
@@ -749,11 +767,12 @@ def douyin(text: str = Arg()):
     offset = round(fontsize * 0.05)
     px = 70
     py = 30
-    frame = Text2Image.from_text(text, fontsize, fill="#FF0050").to_image(
-        bg_color="#1C0B1B", padding=(px + offset * 2, py + offset * 2, px, py)
+    # bg_color="#1C0B1B"
+    frame = Text2Image.from_text(text, fontsize, fill="#FF0050", stroke_fill="#FF0050", stroke_width=5).to_image(
+        bg_color="black", padding=(px + offset * 2, py + offset * 2, px, py)
     )
-    Text2Image.from_text(text, fontsize, fill="#00F5EB").draw_on_image(frame, (px, py))
-    Text2Image.from_text(text, fontsize, fill="white").draw_on_image(
+    Text2Image.from_text(text, fontsize, fill="#00F5EB", stroke_fill="#00F5EB", stroke_width=5).draw_on_image(frame, (px, py))
+    Text2Image.from_text(text, fontsize, fill="white", stroke_fill="white", stroke_width=5).draw_on_image(
         frame, (px + offset, py + offset)
     )
     frame = BuildImage(frame)
@@ -782,6 +801,10 @@ def douyin(text: str = Arg()):
             direction = -direction
             piece = new_frame.copy().crop((px, yn, px + width, yn + h))
             new_frame.paste(piece, (px + round(i * direction * seed), yn))
+        # 透视变换
+        move_x = 64
+        points = ((move_x, 0), (new_frame.width + move_x, 0), (new_frame.width, new_frame.height), (0, new_frame.height))
+        new_frame = new_frame.perspective(points)
         frames.append(new_frame.image)
 
     return save_gif(frames, 0.2)
