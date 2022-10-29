@@ -67,6 +67,12 @@ async def check_resources():
     await add_font("FZXS14.ttf", resource_url("fonts/FZXS14.ttf"))
     await add_font("FZSEJW.ttf", resource_url("fonts/FZSEJW.ttf"))
     await add_font("FZSJ-QINGCRJ.ttf", resource_url("fonts/FZSJ-QINGCRJ.ttf"))
+    await add_font(
+        "NotoSansSC-Regular.otf", resource_url("fonts/NotoSansSC-Regular.otf")
+    )
+    await add_font(
+        "NotoSerifSC-Regular.otf", resource_url("fonts/NotoSerifSC-Regular.otf")
+    )
 
 
 driver = get_driver()
