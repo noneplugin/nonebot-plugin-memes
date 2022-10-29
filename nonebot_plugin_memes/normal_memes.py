@@ -1,3 +1,5 @@
+import math
+import random
 from PIL import Image
 from datetime import datetime
 from PIL.Image import Image as IMG
@@ -739,3 +741,47 @@ def fivethousand_choyen(texts: List[str] = Args(2, prompt=True)):
     for img, pos in imgs:
         frame.paste(img, pos, alpha=True)
     return frame.save_jpg()
+
+
+def douyin(text: str = Arg()):
+    text = " ".join(text.splitlines())
+    fontsize = 200
+    offset = round(fontsize * 0.05)
+    px = 70
+    py = 30
+    frame = Text2Image.from_text(text, fontsize, fill="#FF0050").to_image(
+        bg_color="#1C0B1B", padding=(px + offset * 2, py + offset * 2, px, py)
+    )
+    Text2Image.from_text(text, fontsize, fill="#00F5EB").draw_on_image(frame, (px, py))
+    Text2Image.from_text(text, fontsize, fill="white").draw_on_image(
+        frame, (px + offset, py + offset)
+    )
+    frame = BuildImage(frame)
+
+    width = frame.width - px
+    height = frame.height - py
+    frame_num = 10
+    devide_num = 6
+    seed = 20 * 0.05
+    frames: List[IMG] = []
+    for _ in range(frame_num):
+        new_frame = frame.copy()
+        h_seeds = [
+            math.fabs(math.sin(random.random() * devide_num)) for _ in range(devide_num)
+        ]
+        h_seed_sum = sum(h_seeds)
+        h_seeds = [s / h_seed_sum for s in h_seeds]
+        direction = 1
+        last_yn = 0
+        last_h = 0
+        for i in range(devide_num):
+            yn = last_yn + last_h
+            h = max(round(height * h_seeds[i]), 2)
+            last_yn = yn
+            last_h = h
+            direction = -direction
+            piece = new_frame.copy().crop((px, yn, px + width, yn + h))
+            new_frame.paste(piece, (px + round(i * direction * seed), yn))
+        frames.append(new_frame.image)
+
+    return save_gif(frames, 0.2)
