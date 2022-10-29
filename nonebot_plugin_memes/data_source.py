@@ -30,6 +30,7 @@ memes: List[Meme] = [
     Meme("bronya_holdsign", bronya_holdsign, ("大鸭鸭举牌",)),
     Meme("pornhub", pornhub, ("ph", "pornhub")),
     Meme("youtube", youtube, ("yt", "youtube")),
+    Meme("google", google, ("google",)),
     Meme("5000choyen", fivethousand_choyen, ("5000兆",)),
     Meme("douyin", douyin, ("douyin",)),
     GifMeme("wangjingze", wangjingze, ("王境泽",)),
