@@ -589,7 +589,7 @@ def fivethousand_choyen(texts: List[str] = Args(2, prompt=True)):
         t2m = Text2Image.from_text(
             text, fontsize, fontname=fontname, stroke_width=stroke_width, fill=fill
         )
-        dx = pos_x - stroke_width
+        dx = pos_x - stroke_width * 2
         dy = pos_y - t2m.lines[0].ascent
         imgs.append((transform(t2m.to_image()), (dx + pos[0], dy + pos[1])))
 
@@ -603,7 +603,7 @@ def fivethousand_choyen(texts: List[str] = Args(2, prompt=True)):
             text, fontsize, fontname=fontname, stroke_width=stroke_width, fill="white"
         )
         mask = transform(t2m.to_image()).convert("L")
-        dx = pos_x - stroke_width
+        dx = pos_x - stroke_width * 2
         dy = pos_y - t2m.lines[0].ascent
         gradient = LinearGradient(
             (dir[0] - dx, dir[1] - dy, dir[2] - dx, dir[3] - dy),
@@ -618,7 +618,7 @@ def fivethousand_choyen(texts: List[str] = Args(2, prompt=True)):
     # 银
     add_gradient_text(
         20,
-        (0, 48, 0, 244),
+        (0, 38, 0, 234),
         [
             (0.0, (0, 15, 36)),
             (0.1, (255, 255, 255)),
@@ -656,7 +656,7 @@ def fivethousand_choyen(texts: List[str] = Args(2, prompt=True)):
     # 红
     add_gradient_text(
         4,
-        (0, 40, 0, 200),
+        (0, 50, 0, 200),
         [
             (0, (255, 100, 0)),
             (0.5, (123, 0, 0)),
@@ -668,7 +668,7 @@ def fivethousand_choyen(texts: List[str] = Args(2, prompt=True)):
     # 红
     add_gradient_text(
         0,
-        (0, 40, 0, 200),
+        (0, 50, 0, 200),
         [
             (0, (230, 0, 0)),
             (0.5, (123, 0, 0)),
@@ -687,7 +687,7 @@ def fivethousand_choyen(texts: List[str] = Args(2, prompt=True)):
     # 银
     add_gradient_text(
         19,
-        (0, 320, 0, 496),
+        (0, 320, 0, 506),
         [
             (0, (0, 15, 36)),
             (0.25, (250, 250, 250)),
