@@ -599,12 +599,19 @@ def fivethousand_choyen(texts: List[str] = Args(2, prompt=True)):
             Resampling.BILINEAR,
         )
 
+    def shift(t2m: Text2Image) -> Tuple[int, int]:
+        return (
+            pos_x
+            - t2m.lines[0].chars[0].stroke_width
+            - max(char.stroke_width for char in t2m.lines[0].chars),
+            pos_y - t2m.lines[0].ascent,
+        )
+
     def add_color_text(stroke_width: int, fill: str, pos: Tuple[int, int]):
         t2m = Text2Image.from_text(
             text, fontsize, fontname=fontname, stroke_width=stroke_width, fill=fill
         )
-        dx = pos_x - stroke_width * 2
-        dy = pos_y - t2m.lines[0].ascent
+        dx, dy = shift(t2m)
         imgs.append((transform(t2m.to_image()), (dx + pos[0], dy + pos[1])))
 
     def add_gradient_text(
@@ -617,8 +624,7 @@ def fivethousand_choyen(texts: List[str] = Args(2, prompt=True)):
             text, fontsize, fontname=fontname, stroke_width=stroke_width, fill="white"
         )
         mask = transform(t2m.to_image()).convert("L")
-        dx = pos_x - stroke_width * 2
-        dy = pos_y - t2m.lines[0].ascent
+        dx, dy = shift(t2m)
         gradient = LinearGradient(
             (dir[0] - dx, dir[1] - dy, dir[2] - dx, dir[3] - dy),
             [ColorStop(*color_stop) for color_stop in color_stops],
