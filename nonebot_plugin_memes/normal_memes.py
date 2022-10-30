@@ -570,21 +570,15 @@ def youtube(texts: List[str] = Args(2, prompt=True)):
 
 
 def google(text: str = Arg()):
+    text = " ".join(text.splitlines())
     colors = ["#4285f4", "#db4437", "#f4b400", "#4285f4", "#0f9d58", "#db4437"]
-    imgs:List[IMG] = []
-    for i in range(0, len(text)):
-        img = Text2Image.from_text(
-            text[i], 200, fill=colors[i%len(colors)]
-        )
-        imgs.append(img.to_image())
-    img_w = sum([img.width for img in imgs]) + 50
-    img_h = max([img.height for img in imgs]) + 50
-    cur = 25
-    frame = BuildImage.new("RGBA", (img_w, img_h), "white")
-    for img in imgs:
-        frame.paste(img, (cur, 25))
-        cur += img.width
-    return frame.save_jpg()
+    t2m = Text2Image.from_text(text, 200)
+    index = 0
+    for char in t2m.lines[0].chars:
+        char.fill = colors[index % len(colors)]
+        if char.char.strip():
+            index += 1
+    return BuildImage(t2m.to_image(bg_color="white", padding=(50, 50))).save_jpg()
 
 
 def fivethousand_choyen(texts: List[str] = Args(2, prompt=True)):
@@ -767,14 +761,16 @@ def douyin(text: str = Arg()):
     offset = round(fontsize * 0.05)
     px = 70
     py = 30
-    # bg_color="#1C0B1B"
-    frame = Text2Image.from_text(text, fontsize, fill="#FF0050", stroke_fill="#FF0050", stroke_width=5).to_image(
-        bg_color="black", padding=(px + offset * 2, py + offset * 2, px, py)
-    )
-    Text2Image.from_text(text, fontsize, fill="#00F5EB", stroke_fill="#00F5EB", stroke_width=5).draw_on_image(frame, (px, py))
-    Text2Image.from_text(text, fontsize, fill="white", stroke_fill="white", stroke_width=5).draw_on_image(
-        frame, (px + offset, py + offset)
-    )
+    bg_color = "#1C0B1B"
+    frame = Text2Image.from_text(
+        text, fontsize, fill="#FF0050", stroke_fill="#FF0050", stroke_width=5
+    ).to_image(bg_color=bg_color, padding=(px + offset * 2, py + offset * 2, px, py))
+    Text2Image.from_text(
+        text, fontsize, fill="#00F5EB", stroke_fill="#00F5EB", stroke_width=5
+    ).draw_on_image(frame, (px, py))
+    Text2Image.from_text(
+        text, fontsize, fill="white", stroke_fill="white", stroke_width=5
+    ).draw_on_image(frame, (px + offset, py + offset))
     frame = BuildImage(frame)
 
     width = frame.width - px
@@ -803,8 +799,15 @@ def douyin(text: str = Arg()):
             new_frame.paste(piece, (px + round(i * direction * seed), yn))
         # 透视变换
         move_x = 64
-        points = ((move_x, 0), (new_frame.width + move_x, 0), (new_frame.width, new_frame.height), (0, new_frame.height))
+        points = (
+            (move_x, 0),
+            (new_frame.width + move_x, 0),
+            (new_frame.width, new_frame.height),
+            (0, new_frame.height),
+        )
         new_frame = new_frame.perspective(points)
-        frames.append(new_frame.image)
+        bg = BuildImage.new("RGBA", new_frame.size, bg_color)
+        bg.paste(new_frame, alpha=True)
+        frames.append(bg.image)
 
     return save_gif(frames, 0.2)
