@@ -245,7 +245,7 @@
     },
     {
         "path": "thumbs/douyin.jpg",
-        "hash": "c6901a2cd18c1478654793707bbdd21f"
+        "hash": "a6325b91a92a7342e01a9903f1f3b84e"
     },
     {
         "path": "thumbs/fanatic.jpg",
@@ -258,6 +258,10 @@
     {
         "path": "thumbs/goodnews.jpg",
         "hash": "c8efef030ef4cec98e39b2db05dfdaf1"
+    },
+    {
+        "path": "thumbs/google.jpg",
+        "hash": "c9cb8681834a67f946d52101219c9bd0"
     },
     {
         "path": "thumbs/high_EQ.jpg",
