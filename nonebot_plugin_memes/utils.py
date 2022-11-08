@@ -1,4 +1,3 @@
-import imageio
 from io import BytesIO
 from dataclasses import dataclass
 from PIL.Image import Image as IMG
@@ -9,7 +8,15 @@ OVER_LENGTH_MSG = "文字长度过长，请适当缩减"
 
 def save_gif(frames: List[IMG], duration: float) -> BytesIO:
     output = BytesIO()
-    imageio.mimsave(output, frames, format="gif", duration=duration)
+    frames[0].save(
+        output,
+        format="GIF",
+        save_all=True,
+        append_images=frames[1:],
+        duration=duration * 1000,
+        loop=0,
+        disposal=2,
+    )
     return output
 
 
