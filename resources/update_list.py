@@ -20,7 +20,7 @@ def update():
             }
         )
     resource_list.sort(key=lambda i: i["path"])
-    with open("resource_list.json", "w", encoding="utf-8") as f:
+    with open(dir_path / "resource_list.json", "w", encoding="utf-8") as f:
         json.dump(resource_list, f, ensure_ascii=False, indent=4)
 
 
