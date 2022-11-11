@@ -60,8 +60,7 @@ pip install nonebot_plugin_memes
 
 ### 配置项
 
-<details>
-<summary>展开/收起</summary>
+> 以下配置项可在 `.env.*` 文件中设置，具体参考 [NoneBot 配置方式](https://v2.nonebot.dev/docs/tutorial/configuration#%E9%85%8D%E7%BD%AE%E6%96%B9%E5%BC%8F)
 
 #### `memes_command_start`
  - 类型：`str`
@@ -77,8 +76,6 @@ pip install nonebot_plugin_memes
  - 类型：`List[str]`
  - 默认：`[]`
  - 说明：禁用的表情包列表，需填写表情名称的列表，表情名称可以在`data_source.py`文件中查看。若只是临时关闭，可以用下文中的“表情包开关”
-
-</details>
 
 
 ### 使用
