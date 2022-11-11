@@ -3,14 +3,21 @@ import hashlib
 from pathlib import Path
 from itertools import chain
 
+dir_path = Path(__file__).parent
+
 
 def update():
     resource_list = []
-    for file in chain(Path("images").rglob("*"), Path("thumbs").rglob("*")):
+    for file in chain(
+        (dir_path / "images").rglob("*"), (dir_path / "thumbs").rglob("*")
+    ):
         if not file.is_file():
             continue
         resource_list.append(
-            {"path": str(file), "hash": hashlib.md5(file.read_bytes()).hexdigest()}
+            {
+                "path": str(file.relative_to(dir_path).as_posix()),
+                "hash": hashlib.md5(file.read_bytes()).hexdigest(),
+            }
         )
     resource_list.sort(key=lambda i: i["path"])
     with open("resource_list.json", "w", encoding="utf-8") as f:
