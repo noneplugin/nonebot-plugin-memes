@@ -33,6 +33,7 @@ memes: List[Meme] = [
     Meme("google", google, ("google",)),
     Meme("5000choyen", fivethousand_choyen, ("5000兆",)),
     Meme("douyin", douyin, ("douyin",)),
+    Meme("not_call_me", not_call_me, ("不喊我",), ),
     GifMeme("wangjingze", wangjingze, ("王境泽",)),
     GifMeme("weisuoyuwei", weisuoyuwei, ("为所欲为",)),
     GifMeme("chanshenzi", chanshenzi, ("馋身子",)),

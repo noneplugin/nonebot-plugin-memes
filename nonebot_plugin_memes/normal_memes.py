@@ -817,3 +817,18 @@ def douyin(text: str = Arg()):
         frames.append(bg.image)
 
     return save_gif(frames, 0.2)
+
+
+def not_call_me(text: str = Arg()):
+    frame = load_image("not_call_me/0.png")
+    try:
+        frame.draw_text(
+            (228, 11, 340, 164),
+            text,
+            allow_wrap=True,
+            max_fontsize=80,
+            min_fontsize=20,
+        )
+    except ValueError:
+        return OVER_LENGTH_MSG
+    return frame.save_png()
