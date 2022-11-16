@@ -92,6 +92,10 @@
         "hash": "b15f3d10d3b28f9988deb9940b2084cb"
     },
     {
+        "path": "images/not_call_me/0.png",
+        "hash": "27500542a606e46aa4c218686fd43077"
+    },
+    {
         "path": "images/psyduck/0.jpg",
         "hash": "6202ec5410070dc4c555da8f96bed178"
     },
@@ -294,6 +298,10 @@
     {
         "path": "thumbs/nokia.jpg",
         "hash": "7e33543a0de7192503205d1f942c429a"
+    },
+    {
+        "path": "thumbs/not_call_me.jpg",
+        "hash": "59b8e3643cd73cf03261f2ed888ffbbe"
     },
     {
         "path": "thumbs/pornhub.jpg",
