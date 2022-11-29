@@ -10,7 +10,7 @@ _✨ [Nonebot2](https://github.com/nonebot/nonebot2) 插件，用于文字类表
 
 <p align="center">
   <img src="https://img.shields.io/github/license/noneplugin/nonebot-plugin-memes" alt="license">
-  <img src="https://img.shields.io/badge/python-3.7.3+-blue.svg" alt="Python">
+  <img src="https://img.shields.io/badge/python-3.8+-blue.svg" alt="Python">
   <img src="https://img.shields.io/badge/nonebot-2.0.0b4+-red.svg" alt="NoneBot">
   <a href="https://pypi.org/project/nonebot-plugin-memes">
     <img src="https://badgen.net/pypi/v/nonebot-plugin-memes" alt="pypi">
@@ -87,7 +87,7 @@ pip install nonebot_plugin_memes
 发送“文字表情包”显示下图的列表：
 
 <div align="left">
-  <img src="https://s2.loli.net/2022/10/30/QUxOBbiD4s8mG3R.jpg" width="500" />
+  <img src="https://s2.loli.net/2022/11/29/496PAMb25GgTuyq.jpg" width="500" />
 </div>
 
 
