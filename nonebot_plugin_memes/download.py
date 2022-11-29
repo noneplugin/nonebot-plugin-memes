@@ -7,7 +7,7 @@ from nonebot import get_driver
 from nonebot.log import logger
 
 from nonebot_plugin_imageutils import BuildImage
-from nonebot_plugin_imageutils.fonts import add_font
+from nonebot_plugin_imageutils.fonts import add_font, Font
 
 from .config import memes_config
 
@@ -43,6 +43,13 @@ async def download_resource(path: str) -> bytes:
     return await download_url(resource_url(path))
 
 
+async def check_font(family: str, fontname: str):
+    try:
+        Font.find(family)
+    except ValueError:
+        await add_font(fontname, resource_url(f"fonts/{fontname}"))
+
+
 async def check_resources():
     resource_list = json.loads(
         (await download_resource("resource_list.json")).decode("utf-8")
@@ -64,15 +71,12 @@ async def check_resources():
                 f.write(data)
         except Exception as e:
             logger.warning(str(e))
-    await add_font("FZXS14.ttf", resource_url("fonts/FZXS14.ttf"))
-    await add_font("FZSEJW.ttf", resource_url("fonts/FZSEJW.ttf"))
-    await add_font("FZSJ-QINGCRJ.ttf", resource_url("fonts/FZSJ-QINGCRJ.ttf"))
-    await add_font(
-        "NotoSansSC-Regular.otf", resource_url("fonts/NotoSansSC-Regular.otf")
-    )
-    await add_font(
-        "NotoSerifSC-Regular.otf", resource_url("fonts/NotoSerifSC-Regular.otf")
-    )
+
+    await check_font("FZXS14", "FZXS14.ttf")
+    await check_font("FZSEJW", "FZSEJW.ttf")
+    await check_font("FZSJ-QINGCRJ", "FZSJ-QINGCRJ.ttf")
+    await check_font("Noto Sans SC", "NotoSansSC-Regular.otf")
+    await check_font("Noto Serif SC", "NotoSerifSC-Regular.otf")
 
 
 driver = get_driver()
