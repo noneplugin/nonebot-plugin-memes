@@ -133,7 +133,7 @@ def murmur(text: str = Arg()):
             (10, 255, 430, 300),
             text,
             max_fontsize=40,
-            min_fontsize=20,
+            min_fontsize=15,
         )
     except ValueError:
         return OVER_LENGTH_MSG
@@ -148,7 +148,7 @@ def shutup(text: str = Arg()):
             text,
             allow_wrap=True,
             max_fontsize=40,
-            min_fontsize=20,
+            min_fontsize=15,
         )
     except ValueError:
         return OVER_LENGTH_MSG
@@ -163,7 +163,7 @@ def slap(text: str = Arg()):
             text,
             allow_wrap=True,
             max_fontsize=110,
-            min_fontsize=65,
+            min_fontsize=50,
         )
     except ValueError:
         return OVER_LENGTH_MSG
@@ -284,7 +284,7 @@ def slogan(texts: List[str] = Args(6, prompt=True)):
     frame = load_image("slogan/0.jpg")
 
     def draw(pos: Tuple[float, float, float, float], text: str):
-        frame.draw_text(pos, text, max_fontsize=40, min_fontsize=20, allow_wrap=True)
+        frame.draw_text(pos, text, max_fontsize=40, min_fontsize=15, allow_wrap=True)
 
     try:
         draw((10, 0, 294, 50), texts[0])
@@ -318,7 +318,7 @@ def raisesign(text: str = Arg()):
             (10, 10, 350, 250),
             text,
             max_fontsize=80,
-            min_fontsize=40,
+            min_fontsize=30,
             allow_wrap=True,
             lines_align="center",
             spacing=10,
@@ -395,7 +395,7 @@ def scratchoff(text: str = Arg()):
             text,
             allow_wrap=True,
             max_fontsize=80,
-            min_fontsize=40,
+            min_fontsize=30,
             fill="white",
             lines_align="center",
         )
@@ -496,7 +496,7 @@ def bronya_holdsign(text: str = Arg()):
             fill=(111, 95, 95),
             allow_wrap=True,
             max_fontsize=60,
-            min_fontsize=30,
+            min_fontsize=25,
         )
     except ValueError:
         return OVER_LENGTH_MSG
