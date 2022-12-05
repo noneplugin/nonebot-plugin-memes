@@ -3,7 +3,6 @@ import shlex
 from typing import List, Optional
 
 from nonebot.rule import Rule
-from nonebot import get_driver
 from nonebot.typing import T_State
 from nonebot.params import Depends
 from nonebot.matcher import Matcher
@@ -17,9 +16,7 @@ REGEX_DICT = "REGEX_DICT"
 REGEX_GROUP = "REGEX_GROUP"
 REGEX_ARG = "REGEX_ARG"
 
-command_start = memes_config.memes_command_start or "|".join(
-    get_driver().config.command_start
-)
+command_start = "|".join(memes_config.memes_command_start)
 
 
 def regex(pattern: str) -> Rule:
