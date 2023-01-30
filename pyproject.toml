@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nonebot_plugin_memes"
-version = "0.3.9"
+version = "0.3.10"
 description = "Nonebot2 plugin for making memes"
 authors = ["meetwq <meetwq@gmail.com>"]
 license = "MIT"
@@ -16,8 +16,7 @@ httpx = ">=0.19.0"
 Pillow = "^9.0.0"
 nonebot-plugin-imageutils = "^0.1.13"
 
-[tool.poetry.dev-dependencies]
-nb-cli = "^1.0.0"
+[tool.poetry.group.dev.dependencies]
 black = "^22.1.0"
 
 [build-system]
