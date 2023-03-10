@@ -18,6 +18,10 @@ from pil_utils import BuildImage, Text2Image
 from .config import memes_config
 
 
+class NetworkError(Exception):
+    pass
+
+
 async def download_url(url: str) -> bytes:
     async with httpx.AsyncClient() as client:
         for i in range(3):
@@ -28,7 +32,7 @@ async def download_url(url: str) -> bytes:
             except Exception as e:
                 logger.warning(f"Error downloading {url}, retry {i}/3: {e}")
                 await asyncio.sleep(3)
-    raise Exception(f"{url} 下载失败！")
+    raise NetworkError(f"{url} 下载失败！")
 
 
 @dataclass
@@ -61,7 +65,14 @@ class QQAvatar(ImageSource):
 class PlatformUnsupportError(Exception):
     def __init__(self, platform: str):
         self.platform = platform
-        super().__init__()
+
+
+@dataclass
+class UnsupportAvatar(ImageSource):
+    platform: str
+
+    async def get_image(self) -> bytes:
+        raise PlatformUnsupportError(self.platform)
 
 
 def user_avatar(bot: Union[V11Bot, V12Bot], user_id: str) -> ImageSource:
@@ -72,7 +83,7 @@ def user_avatar(bot: Union[V11Bot, V12Bot], user_id: str) -> ImageSource:
     if platform == "qq":
         return QQAvatar(qq=user_id)
 
-    raise PlatformUnsupportError(platform)
+    return UnsupportAvatar(platform)
 
 
 def check_user_id(bot: Union[V11Bot, V12Bot], user_id: str) -> bool:

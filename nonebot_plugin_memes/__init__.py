@@ -31,6 +31,7 @@ from nonebot.adapters.onebot.v12 import Message as V12Msg
 from nonebot.adapters.onebot.v12 import MessageEvent as V12MEvent
 from nonebot.adapters.onebot.v12 import MessageSegment as V12MsgSeg
 from nonebot.adapters.onebot.v12.permission import PRIVATE
+from nonebot.exception import AdapterException
 from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, Depends
@@ -39,11 +40,24 @@ from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_Handler, T_State
 from pypinyin import Style, pinyin
 
-from .constants import IMAGE_SOURCES_KEY, TEXTS_KEY, USERS_KEY
-from .depends import split_msg_v11, split_msg_v12
+from .depends import (
+    IMAGE_SOURCES_KEY,
+    TEXTS_KEY,
+    USERS_KEY,
+    split_msg_v11,
+    split_msg_v12,
+)
 from .manager import ActionResult, MemeMode, meme_manager
 from .rule import command_rule, regex_rule
-from .utils import ImageSource, User, UserInfo, generate_help_image, meme_info
+from .utils import (
+    ImageSource,
+    NetworkError,
+    PlatformUnsupportError,
+    User,
+    UserInfo,
+    generate_help_image,
+    meme_info,
+)
 
 __plugin_meta__ = PluginMetadata(
     name="表情包制作",
@@ -236,9 +250,8 @@ def handler(meme: Meme) -> T_Handler:
         args: Dict[str, Any] = {}
         user_infos: List[UserInfo] = []
 
-        if meme.params_type.args_type and (
-            parser := copy.deepcopy(meme.params_type.args_type.parser)
-        ):
+        if meme.params_type.args_type and (parser := meme.params_type.args_type.parser):
+            parser = copy.deepcopy(parser)
             parser.add_argument("texts", nargs="*", default=[])
             try:
                 parse_result = vars(parser.parse_args(raw_texts))
@@ -259,17 +272,26 @@ def handler(meme: Meme) -> T_Handler:
             )
             and (meme.params_type.min_texts <= len(texts) <= meme.params_type.max_texts)
         ):
-            logger.warning("参数数量不符")
+            logger.info("输入 图片/文字 数量不符，跳过表情制作")
             return
 
-        for image_source in image_sources:
-            images.append(await image_source.get_image())
-
-        for user in users:
-            user_infos.append(await user.get_info())
-        args["user_infos"] = user_infos
-
         matcher.stop_propagation()
+
+        try:
+            for image_source in image_sources:
+                images.append(await image_source.get_image())
+        except PlatformUnsupportError as e:
+            await matcher.finish(f"当前平台 “{e.platform}” 暂不支持获取头像，请使用图片输入")
+        except (NetworkError, AdapterException):
+            logger.warning(traceback.format_exc())
+            await matcher.finish("图片下载出错，请稍后再试")
+
+        try:
+            for user in users:
+                user_infos.append(await user.get_info())
+            args["user_infos"] = user_infos
+        except (NetworkError, AdapterException):
+            logger.warning("用户信息获取失败\n" + traceback.format_exc())
 
         try:
             result = await meme(images=images, texts=texts, args=args)
@@ -319,7 +341,7 @@ def create_matchers():
         if meme.keywords:
             # 纯文字输入的表情，在命令后加空格以防止误触发
             keywords = (
-                [keyword + " " for keyword in meme.keywords]
+                [keyword.rstrip() + " " for keyword in meme.keywords]
                 if meme.params_type.min_images == 0 and meme.params_type.max_images == 0
                 else meme.keywords
             )

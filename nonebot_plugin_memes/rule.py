@@ -7,7 +7,7 @@ from nonebot.rule import TRIE_VALUE, Rule, TrieRule
 from nonebot.typing import T_State
 
 from .config import memes_config
-from .constants import MSG_KEY, TEXTS_KEY
+from .depends import MSG_KEY, TEXTS_KEY
 
 
 def command_rule(commands: List[str]) -> Rule:

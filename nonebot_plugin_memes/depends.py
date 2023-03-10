@@ -16,7 +16,6 @@ from nonebot.adapters.onebot.v12 import MessageSegment as V12MsgSeg
 from nonebot.params import Depends
 from nonebot.typing import T_State
 
-from .constants import IMAGE_SOURCES_KEY, MSG_KEY, TEXTS_KEY, USERS_KEY
 from .utils import (
     ImageSource,
     ImageUrl,
@@ -27,6 +26,11 @@ from .utils import (
     split_text,
     user_avatar,
 )
+
+MSG_KEY = "MSG"
+TEXTS_KEY = "TEXTS"
+USERS_KEY = "USERS"
+IMAGE_SOURCES_KEY = "IMAGE_SOURCES"
 
 
 def restore_last_at_me_seg(event: V11MEvent, msg: V11Msg):
@@ -150,7 +154,6 @@ def split_msg_v12(meme: Meme):
 
         msg: V12Msg = state[MSG_KEY]
         restore_last_mention_me_seg(event, msg)
-        platform = event.self.platform
 
         for msg_seg in msg:
             if msg_seg.type == "mention":
