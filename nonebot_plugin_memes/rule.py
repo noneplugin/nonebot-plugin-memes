@@ -1,6 +1,7 @@
 import re
 from typing import List, Optional, Tuple
 
+from nonebot import get_driver
 from nonebot.adapters import Event, Message, MessageSegment
 from nonebot.params import Command, CommandArg
 from nonebot.rule import TRIE_VALUE, Rule, TrieRule
@@ -9,9 +10,12 @@ from nonebot.typing import T_State
 from .config import memes_config
 from .depends import MSG_KEY, TEXTS_KEY
 
+command_start = memes_config.memes_command_start or list(
+    get_driver().config.command_start
+)
+
 
 def command_rule(commands: List[str]) -> Rule:
-    command_start = memes_config.memes_command_start
     for command in commands:
         for start in command_start:
             TrieRule.add_prefix(f"{start}{command}", TRIE_VALUE(start, (command,)))
@@ -30,7 +34,7 @@ def command_rule(commands: List[str]) -> Rule:
 
 
 def regex_rule(patterns: List[str]) -> Rule:
-    command_start = "|".join(memes_config.memes_command_start)
+    start = "|".join(command_start)
     pattern = "|".join([rf"(?:{p})" for p in patterns])
 
     def checker(event: Event, state: T_State) -> bool:
@@ -41,7 +45,7 @@ def regex_rule(patterns: List[str]) -> Rule:
             return False
 
         seg_text = str(msg_seg).lstrip()
-        matched = re.match(rf"(?:{command_start}){pattern}", seg_text, re.IGNORECASE)
+        matched = re.match(rf"(?:{start}){pattern}", seg_text, re.IGNORECASE)
         if not matched:
             return False
 

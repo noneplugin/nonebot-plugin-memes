@@ -61,8 +61,8 @@ pip install nonebot_plugin_memes
 
 #### `memes_command_start`
  - 类型：`List[str]`
- - 默认：`[""]`
- - 说明：命令起始标记，默认包含空字符串
+ - 默认：`[]`
+ - 说明：命令前缀，若不配置则使用 [NoneBot 命令前缀](https://v2.nonebot.dev/docs/api/config#Config-command_start)
 
 #### `memes_disabled_list`
  - 类型：`List[str]`
@@ -77,7 +77,7 @@ pip install nonebot_plugin_memes
 
 ### 使用
 
-**以下命令需要加 [NoneBot 命令前缀](https://v2.nonebot.dev/docs/api/config#Config-command_start) (默认为`/`)，可自行设置为空**
+**以下命令需要加 [NoneBot 命令前缀](https://v2.nonebot.dev/docs/api/config#Config-command_start) (默认为`/`)，可自行添加空字符**
 
 #### 表情列表
 
@@ -111,8 +111,6 @@ pip install nonebot_plugin_memes
 
 发送 `全局禁用表情 [表情名/表情关键词]` 可将表情设为白名单模式；
 
-
-**以下命令使用 memes 自行定义的命令前缀，默认包含空字符串**
 
 #### 表情使用
 
