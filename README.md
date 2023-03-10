@@ -23,6 +23,11 @@ _✨ [Nonebot2](https://github.com/nonebot/nonebot2) 表情包制作插件 ✨_
 </div>
 
 
+> 本插件 v0.4.x 版本为原 [头像表情包](https://github.com/noneplugin/nonebot-plugin-petpet) 与 [文字表情包](https://github.com/noneplugin/nonebot-plugin-memes/tree/v0.3.x) 整合而来，合并为 “表情包制作”
+> 
+> 本插件负责处理聊天机器人相关逻辑，具体表情包制作相关资源文件和代码在 [表情包生成器 meme-generator](https://github.com/MeetWq/meme-generator) 中
+
+
 ### 安装
 
 - 使用 nb-cli
@@ -36,6 +41,18 @@ nb plugin install nonebot_plugin_memes
 ```
 pip install nonebot_plugin_memes
 ```
+并按照 [NoneBot 加载插件](https://v2.nonebot.dev/docs/tutorial/plugin/load-plugin) 加载插件
+
+
+#### 字体和资源
+
+插件默认在启动时会检查 [meme-generator](https://github.com/MeetWq/meme-generator) 所需的图片资源
+
+需按照 [meme-generator 字体安装](https://github.com/MeetWq/meme-generator#字体安装) 自行安装字体
+
+<div align="left">
+  <img src="https://s2.loli.net/2023/03/10/Y81ACvu2pGLW4Qc.jpg" width="150" />
+</div>
 
 
 ### 配置项
@@ -60,8 +77,26 @@ pip install nonebot_plugin_memes
 
 ### 使用
 
-**以下命令需要加[命令前缀](https://v2.nonebot.dev/docs/api/config#Config-command_start) (默认为`/`)，可自行设置为空**
+**以下命令需要加 [NoneBot 命令前缀](https://v2.nonebot.dev/docs/api/config#Config-command_start) (默认为`/`)，可自行设置为空**
 
+#### 表情列表
+
+发送 “表情包制作” 显示如下图所示的表情列表：
+
+<div align="left">
+  <img src="https://s2.loli.net/2023/03/10/3BSlTXwCIycWUmK.jpg" width="550" />
+</div>
+
+
+#### 表情帮助
+
+- 发送 “表情详情 + 表情名/关键词” 查看 表情详细信息 和 表情预览
+
+示例：
+
+<div align="left">
+  <img src="https://s2.loli.net/2023/03/10/1glyUrwELCHMfkT.png" width="250" />
+</div>
 
 
 #### 表情包开关
@@ -77,10 +112,40 @@ pip install nonebot_plugin_memes
 发送 `全局禁用表情 [表情名/表情关键词]` 可将表情设为白名单模式；
 
 
+**以下命令使用 memes 自行定义的命令前缀，默认包含空字符串**
+
+#### 表情使用
+
+发送 “关键词 + 图片/文字” 制作表情
+
+可使用 “自己”、“@某人” 获取指定用户的头像作为图片
+
+可使用 “@ + 用户id” 指定任意用户获取头像，如 “摸 @114514”
+
+可回复包含图片的消息作为图片输入
+
+示例：
+
+<div align="left">
+  <img src="https://s2.loli.net/2023/03/10/UDTOuPnwk3emxv4.png" width="250" />
+</div>
+
+
+**注意事项**
+
+- 为避免误触发，当输入的 图片/文字 数量不符时，不会进行提示，可事先通过 “表情详情” 查看所需的图文数
+- 为避免误触发，对于不需要图片输入的表情，需在关键词后加空格，如 “鲁迅说 我没有说过这句话”
+- 本插件已初步支持 OneBot V12，由于平台不同，部分平台可能不支持获取头像，可 ~~速速提交PR~~ 暂时使用图片输入
+- 同上，由于不同平台的用户id格式不同，“@ + 用户id” 的头像获取方式目前仅适用于部分平台，可 ~~速速提交PR~~ 暂时使用图片输入
+- 由于 OneBot V12 暂不支持获取回复消息，若使用 OneBot V12 适配器 可 ~~速速提交PR~~ 暂时使用图片输入
+
+
 ### 特别感谢
 
 - [Ailitonia/omega-miya](https://github.com/Ailitonia/omega-miya) 基于nonebot2的qq机器人
-
+- [FloatTech/ZeroBot-Plugin](https://github.com/FloatTech/ZeroBot-Plugin) 基于 ZeroBot 的 OneBot 插件
 - [HibiKier/zhenxun_bot](https://github.com/HibiKier/zhenxun_bot) 基于 Nonebot2 和 go-cqhttp 开发，以 postgresql 作为数据库，非常可爱的绪山真寻bot
-
+- [SAGIRI-kawaii/sagiri-bot](https://github.com/SAGIRI-kawaii/sagiri-bot) 基于Graia Ariadne和Mirai的QQ机器人 SAGIRI-BOT
+- [Dituon/petpet](https://github.com/Dituon/petpet) Mirai插件 生成各种奇怪的图片
 - [kexue-z/nonebot-plugin-nokia](https://github.com/kexue-z/nonebot-plugin-nokia) 诺基亚手机图生成
+- [RafuiiChan/nonebot_plugin_charpic](https://github.com/RafuiiChan/nonebot_plugin_charpic) 字符画生成插件
