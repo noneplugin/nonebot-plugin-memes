@@ -1,4 +1,5 @@
 import copy
+import random
 import traceback
 from itertools import chain
 from typing import Any, Dict, List, NoReturn, Type, Union
@@ -9,7 +10,7 @@ from meme_generator.exception import (
     TextOrNameNotEnough,
     TextOverLength,
 )
-from meme_generator.meme import Meme
+from meme_generator.meme import Meme, MemeParamsType
 from nonebot import on_command, on_message
 from nonebot.adapters.onebot.v11 import Bot as V11Bot
 from nonebot.adapters.onebot.v11 import GroupMessageEvent as V11GMEvent
@@ -230,6 +231,54 @@ async def _(matcher: Matcher, msg: Union[V11Msg, V12Msg] = CommandArg()):
     await matcher.finish("\n".join(messages))
 
 
+async def process(
+    bot: Union[V11Bot, V12Bot],
+    matcher: Matcher,
+    meme: Meme,
+    image_sources: List[ImageSource],
+    texts: List[str],
+    users: List[User],
+    args: Dict[str, Any] = {},
+):
+    images: List[bytes] = []
+    user_infos: List[UserInfo] = []
+
+    try:
+        for image_source in image_sources:
+            images.append(await image_source.get_image())
+    except PlatformUnsupportError as e:
+        await matcher.finish(f"当前平台 “{e.platform}” 暂不支持获取头像，请使用图片输入")
+    except (NetworkError, AdapterException):
+        logger.warning(traceback.format_exc())
+        await matcher.finish("图片下载出错，请稍后再试")
+
+    try:
+        for user in users:
+            user_infos.append(await user.get_info())
+        args["user_infos"] = user_infos
+    except (NetworkError, AdapterException):
+        logger.warning("用户信息获取失败\n" + traceback.format_exc())
+
+    try:
+        result = await meme(images=images, texts=texts, args=args)
+    except TextOverLength as e:
+        await matcher.finish(f"文字 “{e.text}” 长度过长")
+    except ArgMismatch:
+        await matcher.finish("参数解析错误")
+    except TextOrNameNotEnough:
+        await matcher.finish("文字或名字数量不足")
+    except MemeGeneratorException:
+        logger.warning(traceback.format_exc())
+        await matcher.finish("出错了，请稍后再试")
+
+    if isinstance(bot, V11Bot):
+        await matcher.finish(V11MsgSeg.image(result))
+    else:
+        resp = await bot.upload_file(type="data", name="memes", data=result.getvalue())
+        file_id = resp["file_id"]
+        await matcher.finish(V12MsgSeg.image(file_id))
+
+
 def handler(meme: Meme) -> T_Handler:
     async def handle(
         bot: Union[V11Bot, V12Bot],
@@ -244,10 +293,8 @@ def handler(meme: Meme) -> T_Handler:
         users: List[User] = state[USERS_KEY]
         image_sources: List[ImageSource] = state[IMAGE_SOURCES_KEY]
 
-        images: List[bytes] = []
         texts: List[str] = []
         args: Dict[str, Any] = {}
-        user_infos: List[UserInfo] = []
 
         async def finish(msg: str) -> NoReturn:
             logger.info(msg)
@@ -295,43 +342,7 @@ def handler(meme: Meme) -> T_Handler:
             )
 
         matcher.stop_propagation()
-
-        try:
-            for image_source in image_sources:
-                images.append(await image_source.get_image())
-        except PlatformUnsupportError as e:
-            await matcher.finish(f"当前平台 “{e.platform}” 暂不支持获取头像，请使用图片输入")
-        except (NetworkError, AdapterException):
-            logger.warning(traceback.format_exc())
-            await matcher.finish("图片下载出错，请稍后再试")
-
-        try:
-            for user in users:
-                user_infos.append(await user.get_info())
-            args["user_infos"] = user_infos
-        except (NetworkError, AdapterException):
-            logger.warning("用户信息获取失败\n" + traceback.format_exc())
-
-        try:
-            result = await meme(images=images, texts=texts, args=args)
-        except TextOverLength as e:
-            await matcher.finish(f"文字 “{e.text}” 长度过长")
-        except ArgMismatch:
-            await matcher.finish("参数解析错误")
-        except TextOrNameNotEnough:
-            await matcher.finish("文字或名字数量不足")
-        except MemeGeneratorException:
-            logger.warning(traceback.format_exc())
-            await matcher.finish("出错了，请稍后再试")
-
-        if isinstance(bot, V11Bot):
-            await matcher.finish(V11MsgSeg.image(result))
-        else:
-            resp = await bot.upload_file(
-                type="data", name="memes", data=result.getvalue()
-            )
-            file_id = resp["file_id"]
-            await matcher.finish(V12MsgSeg.image(file_id))
+        await process(bot, matcher, meme, image_sources, texts, users, args)
 
     return handle
 
@@ -357,6 +368,42 @@ def create_matchers():
         for matcher in matchers:
             matcher.append_handler(handler(meme), parameterless=[split_msg_v11(meme)])
             matcher.append_handler(handler(meme), parameterless=[split_msg_v12(meme)])
+
+    async def random_handler(
+        bot: Union[V11Bot, V12Bot], state: T_State, matcher: Matcher
+    ):
+        texts: List[str] = state[TEXTS_KEY]
+        users: List[User] = state[USERS_KEY]
+        image_sources: List[ImageSource] = state[IMAGE_SOURCES_KEY]
+
+        random_meme = random.choice(
+            [
+                meme
+                for meme in meme_manager.memes
+                if (
+                    (
+                        meme.params_type.min_images
+                        <= len(image_sources)
+                        <= meme.params_type.max_images
+                    )
+                    and (
+                        meme.params_type.min_texts
+                        <= len(texts)
+                        <= meme.params_type.max_texts
+                    )
+                )
+            ]
+        )
+        await process(bot, matcher, random_meme, image_sources, texts, users)
+
+    random_matcher = on_message(command_rule(["随机表情"]), block=False, priority=12)
+    fake_meme = Meme("_fake", _, MemeParamsType())
+    random_matcher.append_handler(
+        random_handler, parameterless=[split_msg_v11(fake_meme)]
+    )
+    random_matcher.append_handler(
+        random_handler, parameterless=[split_msg_v12(fake_meme)]
+    )
 
 
 create_matchers()
