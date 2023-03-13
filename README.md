@@ -74,6 +74,11 @@ pip install nonebot_plugin_memes
  - 默认：`True`
  - 说明：是否在启动时检查 `meme-generator` 资源
 
+#### `memes_prompt_params_error`
+ - 类型：`bool`
+ - 默认：`False`
+ - 说明：是否在图片/文字数量不符或参数解析错误时提示，若没有设置命令前缀不建议开启，否则极易误触发
+
 
 ### 使用
 

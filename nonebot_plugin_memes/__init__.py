@@ -1,14 +1,11 @@
 import copy
 import traceback
-from argparse import ArgumentError
 from itertools import chain
-from typing import Any, Dict, List, Type, Union
+from typing import Any, Dict, List, NoReturn, Type, Union
 
 from meme_generator.exception import (
     ArgMismatch,
-    ImageNumberMismatch,
     MemeGeneratorException,
-    TextNumberMismatch,
     TextOrNameNotEnough,
     TextOverLength,
 )
@@ -31,15 +28,17 @@ from nonebot.adapters.onebot.v12 import Message as V12Msg
 from nonebot.adapters.onebot.v12 import MessageEvent as V12MEvent
 from nonebot.adapters.onebot.v12 import MessageSegment as V12MsgSeg
 from nonebot.adapters.onebot.v12.permission import PRIVATE
-from nonebot.exception import AdapterException
+from nonebot.exception import AdapterException, ParserExit
 from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, Depends
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
+from nonebot.rule import ArgumentParser, parser_message
 from nonebot.typing import T_Handler, T_State
 from pypinyin import Style, pinyin
 
+from .config import memes_config
 from .depends import (
     IMAGE_SOURCES_KEY,
     TEXTS_KEY,
@@ -250,14 +249,22 @@ def handler(meme: Meme) -> T_Handler:
         args: Dict[str, Any] = {}
         user_infos: List[UserInfo] = []
 
+        async def finish(msg: str) -> NoReturn:
+            logger.info(msg)
+            if memes_config.memes_prompt_params_error:
+                matcher.stop_propagation()
+                await matcher.finish(msg)
+            await matcher.finish()
+
         if meme.params_type.args_type and (parser := meme.params_type.args_type.parser):
             parser = copy.deepcopy(parser)
             parser.add_argument("texts", nargs="*", default=[])
+            parser.__class__ = ArgumentParser
+            parser_message.set("")
             try:
                 parse_result = vars(parser.parse_args(raw_texts))
-            except (ArgumentError, SystemExit) as e:
-                logger.warning(f"参数解析错误: {e}")
-                return
+            except ParserExit as e:
+                await finish(f"参数解析错误:\n {e.message}")
             texts = parse_result["texts"]
             parse_result.pop("texts")
             args = parse_result
@@ -265,15 +272,27 @@ def handler(meme: Meme) -> T_Handler:
             texts = raw_texts
 
         if not (
-            (
-                meme.params_type.min_images
-                <= len(image_sources)
-                <= meme.params_type.max_images
-            )
-            and (meme.params_type.min_texts <= len(texts) <= meme.params_type.max_texts)
+            meme.params_type.min_images
+            <= len(image_sources)
+            <= meme.params_type.max_images
         ):
-            logger.info("输入 图片/文字 数量不符，跳过表情制作")
-            return
+            await finish(
+                f"输入图片数量不符，图片数量应为 {meme.params_type.min_images}"
+                + (
+                    f" ~ {meme.params_type.max_images}"
+                    if meme.params_type.max_images > meme.params_type.min_images
+                    else ""
+                )
+            )
+        if not (meme.params_type.min_texts <= len(texts) <= meme.params_type.max_texts):
+            await finish(
+                f"输入文字数量不符，文字数量应为 {meme.params_type.min_images}"
+                + (
+                    f" ~ {meme.params_type.max_images}"
+                    if meme.params_type.max_images > meme.params_type.min_images
+                    else ""
+                )
+            )
 
         matcher.stop_propagation()
 
@@ -295,24 +314,6 @@ def handler(meme: Meme) -> T_Handler:
 
         try:
             result = await meme(images=images, texts=texts, args=args)
-        except ImageNumberMismatch:
-            await matcher.finish(
-                f"图片数量不符，图片数量应为 {meme.params_type.min_images}"
-                + (
-                    f" ~ {meme.params_type.max_images}"
-                    if meme.params_type.max_images > meme.params_type.min_images
-                    else ""
-                )
-            )
-        except TextNumberMismatch:
-            await matcher.finish(
-                f"文字数量不符，文字数量应为 {meme.params_type.min_images}"
-                + (
-                    f" ~ {meme.params_type.max_images}"
-                    if meme.params_type.max_images > meme.params_type.min_images
-                    else ""
-                )
-            )
         except TextOverLength as e:
             await matcher.finish(f"文字 “{e.text}” 长度过长")
         except ArgMismatch:
