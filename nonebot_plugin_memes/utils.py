@@ -4,12 +4,17 @@ import math
 import shlex
 from dataclasses import dataclass
 from io import BytesIO
-from typing import List, Optional, Tuple, TypedDict, Union
+from typing import List, Tuple, TypedDict, Union
 
 import httpx
 from meme_generator.meme import Meme
 from nonebot.adapters.onebot.v11 import Bot as V11Bot
+from nonebot.adapters.onebot.v11 import GroupMessageEvent as V11GMEvent
+from nonebot.adapters.onebot.v11 import MessageEvent as V11MEvent
 from nonebot.adapters.onebot.v12 import Bot as V12Bot
+from nonebot.adapters.onebot.v12 import ChannelMessageEvent as V12CMEvent
+from nonebot.adapters.onebot.v12 import GroupMessageEvent as V12GMEvent
+from nonebot.adapters.onebot.v12 import MessageEvent as V12MEvent
 from nonebot.log import logger
 from nonebot.utils import run_sync
 from PIL.Image import Image as IMG
@@ -75,10 +80,13 @@ class UnsupportAvatar(ImageSource):
         raise PlatformUnsupportError(self.platform)
 
 
-def user_avatar(bot: Union[V11Bot, V12Bot], user_id: str) -> ImageSource:
+def user_avatar(
+    bot: Union[V11Bot, V12Bot], event: Union[V11MEvent, V12MEvent], user_id: str
+) -> ImageSource:
     if isinstance(bot, V11Bot):
         return QQAvatar(qq=user_id)
 
+    assert isinstance(event, V12MEvent)
     platform = bot.platform
     if platform == "qq":
         return QQAvatar(qq=user_id)
@@ -109,13 +117,13 @@ class User:
 @dataclass
 class V11User(User):
     bot: V11Bot
+    event: V11MEvent
     user_id: int
-    group_id: Optional[int] = None
 
     async def get_info(self) -> UserInfo:
-        if self.group_id:
+        if isinstance(self.event, V11GMEvent):
             info = await self.bot.get_group_member_info(
-                group_id=self.group_id, user_id=self.user_id
+                group_id=self.event.group_id, user_id=self.user_id
             )
         else:
             info = await self.bot.get_stranger_info(user_id=self.user_id)
@@ -127,18 +135,17 @@ class V11User(User):
 @dataclass
 class V12User(User):
     bot: V12Bot
+    event: V12MEvent
     user_id: str
-    group_id: Optional[str] = None
-    guild_id: Optional[str] = None
 
     async def get_info(self) -> UserInfo:
-        if self.group_id:
+        if isinstance(self.event, V12GMEvent):
             info = await self.bot.get_group_member_info(
-                group_id=self.group_id, user_id=self.user_id
+                group_id=self.event.group_id, user_id=self.user_id
             )
-        elif self.guild_id:
+        elif isinstance(self.event, V12CMEvent):
             info = await self.bot.get_guild_member_info(
-                guild_id=self.guild_id, user_id=self.user_id
+                guild_id=self.event.guild_id, user_id=self.user_id
             )
         else:
             info = await self.bot.get_user_info(user_id=self.user_id)

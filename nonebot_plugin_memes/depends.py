@@ -2,20 +2,18 @@ from typing import List
 
 from meme_generator.meme import Meme
 from nonebot.adapters.onebot.v11 import Bot as V11Bot
-from nonebot.adapters.onebot.v11 import GroupMessageEvent as V11GMEvent
 from nonebot.adapters.onebot.v11 import Message as V11Msg
 from nonebot.adapters.onebot.v11 import MessageEvent as V11MEvent
 from nonebot.adapters.onebot.v11 import MessageSegment as V11MsgSeg
 from nonebot.adapters.onebot.v11.utils import unescape
 from nonebot.adapters.onebot.v12 import Bot as V12Bot
-from nonebot.adapters.onebot.v12 import ChannelMessageEvent as V12CMEvent
-from nonebot.adapters.onebot.v12 import GroupMessageEvent as V12GMEvent
 from nonebot.adapters.onebot.v12 import Message as V12Msg
 from nonebot.adapters.onebot.v12 import MessageEvent as V12MEvent
 from nonebot.adapters.onebot.v12 import MessageSegment as V12MsgSeg
 from nonebot.params import Depends
 from nonebot.typing import T_State
 
+from .config import memes_config
 from .utils import (
     ImageSource,
     ImageUrl,
@@ -90,16 +88,8 @@ def split_msg_v11(meme: Meme):
 
         for msg_seg in msg:
             if msg_seg.type == "at":
-                image_sources.append(user_avatar(bot, str(msg_seg.data["qq"])))
-                users.append(
-                    V11User(
-                        bot=bot,
-                        user_id=int(msg_seg.data["qq"]),
-                        group_id=event.group_id
-                        if isinstance(event, V11GMEvent)
-                        else None,
-                    )
-                )
+                image_sources.append(user_avatar(bot, event, str(msg_seg.data["qq"])))
+                users.append(V11User(bot, event, int(msg_seg.data["qq"])))
 
             elif msg_seg.type == "image":
                 image_sources.append(ImageUrl(url=msg_seg.data["url"]))
@@ -109,35 +99,29 @@ def split_msg_v11(meme: Meme):
                 for text in split_text(raw_text):
                     if text.startswith("@") and check_user_id(bot, text[1:]):
                         user_id = text[1:]
-                        image_sources.append(user_avatar(bot, user_id))
-                        users.append(V11User(bot=bot, user_id=int(user_id)))
+                        image_sources.append(user_avatar(bot, event, user_id))
+                        users.append(V11User(bot, event, int(user_id)))
 
                     elif text == "自己":
-                        image_sources.append(user_avatar(bot, str(event.user_id)))
-                        users.append(
-                            V11User(
-                                bot=bot,
-                                user_id=event.user_id,
-                                group_id=event.group_id
-                                if isinstance(event, V11GMEvent)
-                                else None,
-                            )
+                        image_sources.append(
+                            user_avatar(bot, event, str(event.user_id))
                         )
+                        users.append(V11User(bot, event, event.user_id))
 
                     elif text := unescape(text):
                         texts.append(text)
 
         # 当所需图片数为 2 且已指定图片数为 1 时，使用 发送者的头像 作为第一张图
         if meme.params_type.min_images == 2 and len(image_sources) == 1:
-            image_sources.insert(0, user_avatar(bot, str(event.user_id)))
-            users.insert(
-                0,
-                V11User(
-                    bot=bot,
-                    user_id=event.user_id,
-                    group_id=event.group_id if isinstance(event, V11GMEvent) else None,
-                ),
-            )
+            image_sources.insert(0, user_avatar(bot, event, str(event.user_id)))
+            users.insert(0, V11User(bot, event, event.user_id))
+
+        # 当所需图片数为 1 且没有已指定图片时，使用发送者的头像
+        if memes_config.memes_use_sender_when_no_image and (
+            meme.params_type.min_images == 1 and len(image_sources) == 0
+        ):
+            image_sources.append(user_avatar(bot, event, str(event.user_id)))
+            users.append(V11User(bot, event, event.user_id))
 
         state[TEXTS_KEY] = state.get(TEXTS_KEY, []) + texts
         state[USERS_KEY] = users
@@ -157,19 +141,8 @@ def split_msg_v12(meme: Meme):
 
         for msg_seg in msg:
             if msg_seg.type == "mention":
-                image_sources.append(user_avatar(bot, msg_seg.data["user_id"]))
-                users.append(
-                    V12User(
-                        bot=bot,
-                        user_id=msg_seg.data["user_id"],
-                        group_id=event.group_id
-                        if isinstance(event, V12GMEvent)
-                        else None,
-                        guild_id=event.guild_id
-                        if isinstance(event, V12CMEvent)
-                        else None,
-                    )
-                )
+                image_sources.append(user_avatar(bot, event, msg_seg.data["user_id"]))
+                users.append(V12User(bot, event, msg_seg.data["user_id"]))
 
             elif msg_seg.type == "image":
                 file_id = msg_seg.data["file_id"]
@@ -181,39 +154,27 @@ def split_msg_v12(meme: Meme):
                 for text in split_text(raw_text):
                     if text.startswith("@") and check_user_id(bot, text[1:]):
                         user_id = text[1:]
-                        image_sources.append(user_avatar(bot, user_id))
-                        users.append(V12User(bot=bot, user_id=user_id))
+                        image_sources.append(user_avatar(bot, event, user_id))
+                        users.append(V12User(bot, event, user_id))
 
                     elif text == "自己":
-                        image_sources.append(user_avatar(bot, event.user_id))
-                        users.append(
-                            V12User(
-                                bot=bot,
-                                user_id=event.user_id,
-                                group_id=event.group_id
-                                if isinstance(event, V12GMEvent)
-                                else None,
-                                guild_id=event.guild_id
-                                if isinstance(event, V12CMEvent)
-                                else None,
-                            )
-                        )
+                        image_sources.append(user_avatar(bot, event, event.user_id))
+                        users.append(V12User(bot, event, event.user_id))
 
                     elif text:
                         texts.append(text)
 
         # 当所需图片数为 2 且已指定图片数为 1 时，使用 发送者的头像 作为第一张图
         if meme.params_type.min_images == 2 and len(image_sources) == 1:
-            image_sources.insert(0, user_avatar(bot, event.user_id))
-            users.insert(
-                0,
-                V12User(
-                    bot=bot,
-                    user_id=event.user_id,
-                    group_id=event.group_id if isinstance(event, V12GMEvent) else None,
-                    guild_id=event.guild_id if isinstance(event, V12CMEvent) else None,
-                ),
-            )
+            image_sources.insert(0, user_avatar(bot, event, event.user_id))
+            users.insert(0, V12User(bot, event, event.user_id))
+
+        # 当所需图片数为 1 且没有已指定图片时，使用发送者的头像
+        if memes_config.memes_use_sender_when_no_image and (
+            meme.params_type.min_images == 1 and len(image_sources) == 0
+        ):
+            image_sources.append(user_avatar(bot, event, event.user_id))
+            users.append(V12User(bot, event, event.user_id))
 
         state[TEXTS_KEY] = state.get(TEXTS_KEY, []) + texts
         state[USERS_KEY] = users
