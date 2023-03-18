@@ -560,14 +560,14 @@ python-dateutil = ">=2.7"
 
 [[package]]
 name = "meme-generator"
-version = "0.0.5"
+version = "0.0.7"
 description = "Python package for making fun pictures"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "meme_generator-0.0.5-py3-none-any.whl", hash = "sha256:172790ad8701ac91d6d064b5a81d11b9cc6a9c0b410902845ba73cc62b93dd61"},
-    {file = "meme_generator-0.0.5.tar.gz", hash = "sha256:db73604858ef3c685a8073cbd73de8e42e0cb066152b48bc1ac2dd8bd13941b4"},
+    {file = "meme_generator-0.0.7-py3-none-any.whl", hash = "sha256:3b296a5798e23f6e98d061589c057416672a5e1ea92a69854e1247e4d62934f5"},
+    {file = "meme_generator-0.0.7.tar.gz", hash = "sha256:55100e284047bad2f0df1b341794029e310abe89654dbb14fbfb1d68287458d0"},
 ]
 
 [package.dependencies]
@@ -1650,4 +1650,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "9d3d88fa437737e9f1b5da051042c555fd55db4723b49eafbddf01568631b043"
+content-hash = "53111845c96634414416f5bb36e4075f384069deee09d7baed3d2267bf766f20"
