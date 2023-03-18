@@ -1,10 +1,8 @@
 import asyncio
 import hashlib
-import math
 import shlex
 from dataclasses import dataclass
-from io import BytesIO
-from typing import List, Tuple, TypedDict, Union
+from typing import List, TypedDict, Union
 
 import httpx
 from meme_generator.meme import Meme
@@ -16,9 +14,6 @@ from nonebot.adapters.onebot.v12 import ChannelMessageEvent as V12CMEvent
 from nonebot.adapters.onebot.v12 import GroupMessageEvent as V12GMEvent
 from nonebot.adapters.onebot.v12 import MessageEvent as V12MEvent
 from nonebot.log import logger
-from nonebot.utils import run_sync
-from PIL.Image import Image as IMG
-from pil_utils import BuildImage, Text2Image
 
 from .config import memes_config
 
@@ -199,42 +194,6 @@ def meme_info(meme: Meme) -> str:
         + (f"默认文字：[{default_texts}]\n" if default_texts else "")
         + (f"可选参数：\n{args_info}\n" if args_info else "")
     )
-
-
-@run_sync
-def generate_help_image(meme_list: List[Tuple[Meme, bool]]) -> BytesIO:
-    def cmd_text(memes: List[Tuple[Meme, bool]], start: int = 1) -> str:
-        texts = []
-        for i, (meme, status) in enumerate(memes):
-            text = f"{i + start}. " + "/".join(meme.keywords)
-            if not status:
-                text = f"[color=lightgrey]{text}[/color]"
-            texts.append(text)
-        return "\n".join(texts)
-
-    head_text = (
-        "表情包制作\n"
-        "触发方式：关键词 + 图片/文字\n"
-        "可使用 “自己”、“@某人” 获取指定用户的头像作为图片，如：“摸 自己”\n"
-        "发送 “表情详情 + 关键词” 可查看表情需要的参数及表情预览\n"
-        "目前支持的表情列表："
-    )
-    head = Text2Image.from_text(head_text, 30, weight="bold").to_image(padding=(40, 20))
-    imgs: List[IMG] = []
-    col_num = 4
-    num_per_col = math.ceil(len(meme_list) / col_num)
-    for idx in range(0, len(meme_list), num_per_col):
-        text = cmd_text(meme_list[idx : idx + num_per_col], start=idx + 1)
-        imgs.append(Text2Image.from_bbcode_text(text, 30).to_image(padding=(40, 20)))
-    w = max(sum((img.width for img in imgs)), head.width)
-    h = head.height + max((img.height for img in imgs))
-    frame = BuildImage.new("RGBA", (w, h), "white")
-    frame.paste(head, alpha=True)
-    current_w = 0
-    for img in imgs:
-        frame.paste(img, (current_w, head.height), alpha=True)
-        current_w += img.width
-    return frame.save_jpg()
 
 
 if memes_config.memes_check_resources_on_startup:

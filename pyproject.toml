@@ -16,7 +16,7 @@ nonebot-plugin-localstore = "^0.4.0"
 httpx = ">=0.20.0,<1.0.0"
 pypinyin = ">=0.44.0,<1.0.0"
 pil-utils = "^0.1.4"
-meme-generator = ">=0.0.5,<0.1.0"
+meme-generator = ">=0.0.7,<0.1.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1.0"

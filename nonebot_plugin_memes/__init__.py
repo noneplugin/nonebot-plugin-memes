@@ -1,4 +1,3 @@
-import copy
 import random
 import traceback
 from itertools import chain
@@ -6,11 +5,13 @@ from typing import Any, Dict, List, NoReturn, Type, Union
 
 from meme_generator.exception import (
     ArgMismatch,
+    ArgParserExit,
     MemeGeneratorException,
     TextOrNameNotEnough,
     TextOverLength,
 )
 from meme_generator.meme import Meme, MemeParamsType
+from meme_generator.utils import TextProperties, render_meme_list
 from nonebot import on_command, on_message
 from nonebot.adapters.onebot.v11 import Bot as V11Bot
 from nonebot.adapters.onebot.v11 import GroupMessageEvent as V11GMEvent
@@ -29,14 +30,14 @@ from nonebot.adapters.onebot.v12 import Message as V12Msg
 from nonebot.adapters.onebot.v12 import MessageEvent as V12MEvent
 from nonebot.adapters.onebot.v12 import MessageSegment as V12MsgSeg
 from nonebot.adapters.onebot.v12.permission import PRIVATE
-from nonebot.exception import AdapterException, ParserExit
+from nonebot.exception import AdapterException
 from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, Depends
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
-from nonebot.rule import ArgumentParser, parser_message
 from nonebot.typing import T_Handler, T_State
+from nonebot.utils import run_sync
 from pypinyin import Style, pinyin
 
 from .config import memes_config
@@ -55,7 +56,6 @@ from .utils import (
     PlatformUnsupportError,
     User,
     UserInfo,
-    generate_help_image,
     meme_info,
 )
 
@@ -110,15 +110,24 @@ async def _(bot: Union[V11Bot, V12Bot], matcher: Matcher, user_id: str = get_use
             chain.from_iterable(pinyin(meme.keywords[0], style=Style.TONE3))
         ),
     )
-    meme_list = [(meme, meme_manager.check(user_id, meme.key)) for meme in memes]
-    img = await generate_help_image(meme_list)
+    meme_list = [
+        (
+            meme,
+            TextProperties(
+                fill="black" if meme_manager.check(user_id, meme.key) else "lightgrey"
+            ),
+        )
+        for meme in memes
+    ]
+    img = await run_sync(render_meme_list)(meme_list)
+    msg = "触发方式：“关键词 + 图片/文字”\n发送 “表情详情 + 关键词” 查看表情参数和预览\n目前支持的表情列表："
 
     if isinstance(bot, V11Bot):
-        await matcher.finish(V11MsgSeg.image(img))
+        await matcher.finish(msg + V11MsgSeg.image(img))
     else:
         resp = await bot.upload_file(type="data", name="memes", data=img.getvalue())
         file_id = resp["file_id"]
-        await matcher.finish(V12MsgSeg.image(file_id))
+        await matcher.finish(msg + V12MsgSeg.image(file_id))
 
 
 @info_cmd.handle()
@@ -303,15 +312,11 @@ def handler(meme: Meme) -> T_Handler:
                 await matcher.finish(msg)
             await matcher.finish()
 
-        if meme.params_type.args_type and (parser := meme.params_type.args_type.parser):
-            parser = copy.deepcopy(parser)
-            parser.add_argument("texts", nargs="*", default=[])
-            parser.__class__ = ArgumentParser
-            parser_message.set("")
+        if meme.params_type.args_type:
             try:
-                parse_result = vars(parser.parse_args(raw_texts))
-            except ParserExit as e:
-                await finish(f"参数解析错误:\n {e.message}")
+                parse_result = meme.parse_args(raw_texts)
+            except ArgParserExit:
+                await finish(f"参数解析错误")
             texts = parse_result["texts"]
             parse_result.pop("texts")
             args = parse_result
@@ -333,10 +338,10 @@ def handler(meme: Meme) -> T_Handler:
             )
         if not (meme.params_type.min_texts <= len(texts) <= meme.params_type.max_texts):
             await finish(
-                f"输入文字数量不符，文字数量应为 {meme.params_type.min_images}"
+                f"输入文字数量不符，文字数量应为 {meme.params_type.min_texts}"
                 + (
-                    f" ~ {meme.params_type.max_images}"
-                    if meme.params_type.max_images > meme.params_type.min_images
+                    f" ~ {meme.params_type.max_texts}"
+                    if meme.params_type.max_texts > meme.params_type.min_texts
                     else ""
                 )
             )
