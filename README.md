@@ -28,6 +28,10 @@ _✨ [Nonebot2](https://github.com/nonebot/nonebot2) 表情包制作插件 ✨_
 > 本插件负责处理聊天机器人相关逻辑，具体表情包制作相关资源文件和代码在 [表情包生成器 meme-generator](https://github.com/MeetWq/meme-generator) 中
 
 
+> 可使用 [nonebot-plugin-memes-api](https://github.com/noneplugin/nonebot-plugin-memes-api)（表情包制作 调用 api 版本），将 NoneBot 插件端与 `meme-generator` 分开部署
+>
+> `nonebot-plugin-memes-api` 与 `nonebot-plugin-memes` 功能上基本一致
+
 ### 安装
 
 - 使用 nb-cli
