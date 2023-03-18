@@ -231,14 +231,14 @@ files = [
 
 [[package]]
 name = "fonttools"
-version = "4.39.0"
+version = "4.39.2"
 description = "Tools to manipulate font files"
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "fonttools-4.39.0-py3-none-any.whl", hash = "sha256:f5e764e1fd6ad54dfc201ff32af0ba111bcfbe0d05b24540af74c63db4ed6390"},
-    {file = "fonttools-4.39.0.zip", hash = "sha256:909c104558835eac27faeb56be5a4c32694192dca123d073bf746ce9254054af"},
+    {file = "fonttools-4.39.2-py3-none-any.whl", hash = "sha256:85245aa2fd4cf502a643c9a9a2b5a393703e150a6eaacc3e0e84bb448053f061"},
+    {file = "fonttools-4.39.2.zip", hash = "sha256:e2d9f10337c9e3b17f9bce17a60a16a885a7d23b59b7f45ce07ea643e5580439"},
 ]
 
 [package.extras]
@@ -560,14 +560,14 @@ python-dateutil = ">=2.7"
 
 [[package]]
 name = "meme-generator"
-version = "0.0.4"
+version = "0.0.5"
 description = "Python package for making fun pictures"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "meme_generator-0.0.4-py3-none-any.whl", hash = "sha256:8a2af6e032b38a8a1ee4c60516f5a71a1e5851cc10a96a9ee75da8fd09c682b9"},
-    {file = "meme_generator-0.0.4.tar.gz", hash = "sha256:4675f221809857dbe247a20487c14d3e5c0b0fabc43a12c6d5b17858547c2b8a"},
+    {file = "meme_generator-0.0.5-py3-none-any.whl", hash = "sha256:172790ad8701ac91d6d064b5a81d11b9cc6a9c0b410902845ba73cc62b93dd61"},
+    {file = "meme_generator-0.0.5.tar.gz", hash = "sha256:db73604858ef3c685a8073cbd73de8e42e0cb066152b48bc1ac2dd8bd13941b4"},
 ]
 
 [package.dependencies]
@@ -753,14 +753,14 @@ files = [
 
 [[package]]
 name = "nonebot-adapter-onebot"
-version = "2.2.1"
+version = "2.2.2"
 description = "OneBot(CQHTTP) adapter for nonebot2"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "nonebot_adapter_onebot-2.2.1-py3-none-any.whl", hash = "sha256:db22c92a541f243ef427a7080096fb28751fec213bc75b111e2c9ed89e121d94"},
-    {file = "nonebot_adapter_onebot-2.2.1.tar.gz", hash = "sha256:2f77ff2345cc98e493c3bf00a5fd7112cf20e66ebeac062bbb8de56b4d07040e"},
+    {file = "nonebot_adapter_onebot-2.2.2-py3-none-any.whl", hash = "sha256:1ee231cacfd47afcc0b77a67c8bc56440f33750b2d976139a20732e023cb79b9"},
+    {file = "nonebot_adapter_onebot-2.2.2.tar.gz", hash = "sha256:0c7340dbc075f25bdb7e5cb0575e5758155b3939f77c36f5b51440e24c155306"},
 ]
 
 [package.dependencies]
@@ -905,14 +905,14 @@ files = [
 
 [[package]]
 name = "pil-utils"
-version = "0.1.3"
+version = "0.1.4"
 description = "A simple PIL wrapper and text-to-image tool"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "pil_utils-0.1.3-py3-none-any.whl", hash = "sha256:4346881d716f97c5049f9110bcff950d7ec029526b479900bc669b6789fc5c7b"},
-    {file = "pil_utils-0.1.3.tar.gz", hash = "sha256:1dbb7448b167cb46cb5a5a9ce32dd07919bd924557d1b45cf854acd96f04ff00"},
+    {file = "pil_utils-0.1.4-py3-none-any.whl", hash = "sha256:00c6cda736b632c0de9c3968145d8886e1383a905a2e68639a7c9504b98f6301"},
+    {file = "pil_utils-0.1.4.tar.gz", hash = "sha256:a95cce7b0c6fcab5f0dddf40c0cbd2a42db5f1a049e630825ae3b3074bda957b"},
 ]
 
 [package.dependencies]
@@ -921,7 +921,7 @@ fonttools = ">=4.0.0,<5.0.0"
 matplotlib = ">=3.0.0,<4.0.0"
 numpy = ">=1.20.0,<2.0.0"
 opencv-python-headless = ">=4.0.0,<5.0.0"
-Pillow = ">=9.0.0,<10.0.0"
+Pillow = ">=9.1.0,<10.0.0"
 
 [[package]]
 name = "pillow"
@@ -1349,14 +1349,14 @@ files = [
 
 [[package]]
 name = "uvicorn"
-version = "0.21.0"
+version = "0.21.1"
 description = "The lightning-fast ASGI server."
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "uvicorn-0.21.0-py3-none-any.whl", hash = "sha256:e69e955cb621ae7b75f5590a814a4fcbfb14cb8f44a36dfe3c5c75ab8aee3ad5"},
-    {file = "uvicorn-0.21.0.tar.gz", hash = "sha256:8635a388062222082f4b06225b867b74a7e4ef942124453d4d1d1a5cb3750932"},
+    {file = "uvicorn-0.21.1-py3-none-any.whl", hash = "sha256:e47cac98a6da10cd41e6fd036d472c6f58ede6c5dbee3dbee3ef7a100ed97742"},
+    {file = "uvicorn-0.21.1.tar.gz", hash = "sha256:0fac9cb342ba099e0d582966005f3fdba5b0290579fed4a6266dc702ca7bb032"},
 ]
 
 [package.dependencies]
@@ -1650,4 +1650,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "dd0bb62f3997e9959e26cfb9a9a07d96c1c1902588a38bdc3bf428b61d752cbc"
+content-hash = "9d3d88fa437737e9f1b5da051042c555fd55db4723b49eafbddf01568631b043"
