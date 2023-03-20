@@ -2,7 +2,7 @@ import asyncio
 import hashlib
 import shlex
 from dataclasses import dataclass
-from typing import List, TypedDict, Union
+from typing import List, Optional, TypedDict, Union
 
 import httpx
 from meme_generator.meme import Meme
@@ -75,6 +75,27 @@ class UnsupportAvatar(ImageSource):
         raise PlatformUnsupportError(self.platform)
 
 
+@dataclass
+class QQGuildAvatar(ImageSource):
+    """QQ频道 用户头像"""
+
+    bot: V12Bot
+    user_id: str
+    guild_id: str
+    avatar: Optional[str] = None
+
+    async def get_image(self) -> bytes:
+        if self.avatar is None:
+            user_info = await self.bot.get_guild_member_info(
+                guild_id=self.guild_id, user_id=self.user_id
+            )
+            # 直接这样好了，反正出错了会报错
+            url = user_info["user"]["avatar"]  # type: ignore
+        else:
+            url = self.avatar
+        return await download_url(url)
+
+
 def user_avatar(
     bot: Union[V11Bot, V12Bot], event: Union[V11MEvent, V12MEvent], user_id: str
 ) -> ImageSource:
@@ -83,8 +104,24 @@ def user_avatar(
 
     assert isinstance(event, V12MEvent)
     platform = bot.platform
+    impl = bot.impl
     if platform == "qq":
         return QQAvatar(qq=user_id)
+    if (
+        platform == "qqguild"
+        and impl == "nonebot-plugin-all4one"
+        and isinstance(event, V12CMEvent)
+    ):
+        # 先转成 dict，这样就算以后用扩展模型也不会出错
+        event_dict = event.dict()
+        if user_id == str(event_dict["qqguild"]["author"]["id"]):
+            return QQGuildAvatar(
+                bot=bot,
+                user_id=user_id,
+                guild_id=event.guild_id,
+                avatar=event_dict["qqguild"]["author"]["avatar"],
+            )
+        return QQGuildAvatar(bot=bot, user_id=user_id, guild_id=event.guild_id)
 
     return UnsupportAvatar(platform)
 
