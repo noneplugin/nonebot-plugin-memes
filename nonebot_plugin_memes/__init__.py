@@ -41,6 +41,7 @@ from nonebot.utils import run_sync
 from pypinyin import Style, pinyin
 
 from .config import memes_config
+from .data_source import ImageSource, User, UserInfo
 from .depends import (
     IMAGE_SOURCES_KEY,
     TEXTS_KEY,
@@ -48,16 +49,10 @@ from .depends import (
     split_msg_v11,
     split_msg_v12,
 )
+from .exception import NetworkError, PlatformUnsupportError
 from .manager import ActionResult, MemeMode, meme_manager
 from .rule import command_rule, regex_rule
-from .utils import (
-    ImageSource,
-    NetworkError,
-    PlatformUnsupportError,
-    User,
-    UserInfo,
-    meme_info,
-)
+from .utils import meme_info
 
 __plugin_meta__ = PluginMetadata(
     name="表情包制作",
