@@ -62,7 +62,7 @@ class QQGuildAvatar(ImageSource):
                 guild_id=self.guild_id, user_id=self.user_id
             )
             # 直接这样好了，反正出错了会报错
-            url = user_info["user"]["avatar"]  # type: ignore
+            url = user_info["qqguild"]["user"]["avatar"]  # type: ignore
         else:
             url = self.avatar
         return await download_url(url)
