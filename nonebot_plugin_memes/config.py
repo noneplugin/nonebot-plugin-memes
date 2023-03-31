@@ -10,6 +10,7 @@ class Config(BaseModel, extra=Extra.ignore):
     memes_check_resources_on_startup: bool = True
     memes_prompt_params_error: bool = False
     memes_use_sender_when_no_image: bool = False
+    memes_use_default_when_no_text: bool = False
 
 
 memes_config = Config.parse_obj(get_driver().config.dict())

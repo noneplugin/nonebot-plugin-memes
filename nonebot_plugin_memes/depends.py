@@ -123,7 +123,14 @@ def split_msg_v11(meme: Meme):
             image_sources.append(user_avatar(bot, event, str(event.user_id)))
             users.append(V11User(bot, event, event.user_id))
 
-        state[TEXTS_KEY] = state.get(TEXTS_KEY, []) + texts
+        # 当所需文字数 >0 且没有输入文字时，使用默认文字
+        texts = state.get(TEXTS_KEY, []) + texts
+        if memes_config.memes_use_default_when_no_text and (
+            meme.params_type.min_texts > 0 and len(texts) == 0
+        ):
+            texts = meme.params_type.default_texts
+
+        state[TEXTS_KEY] = texts
         state[USERS_KEY] = users
         state[IMAGE_SOURCES_KEY] = image_sources
 
@@ -176,7 +183,14 @@ def split_msg_v12(meme: Meme):
             image_sources.append(user_avatar(bot, event, event.user_id))
             users.append(V12User(bot, event, event.user_id))
 
-        state[TEXTS_KEY] = state.get(TEXTS_KEY, []) + texts
+        # 当所需文字数 >0 且没有输入文字时，使用默认文字
+        texts = state.get(TEXTS_KEY, []) + texts
+        if memes_config.memes_use_default_when_no_text and (
+            meme.params_type.min_texts > 0 and len(texts) == 0
+        ):
+            texts = meme.params_type.default_texts
+
+        state[TEXTS_KEY] = texts
         state[USERS_KEY] = users
         state[IMAGE_SOURCES_KEY] = image_sources
 

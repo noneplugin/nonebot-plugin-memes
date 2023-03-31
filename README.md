@@ -88,6 +88,11 @@ pip install nonebot_plugin_memes
  - 默认：`False`
  - 说明：在表情需要至少1张图且没有输入图片时，是否使用发送者的头像（谨慎使用，容易误触发）
 
+#### `memes_use_default_when_no_text`
+ - 类型：`bool`
+ - 默认：`False`
+ - 说明：在表情需要至少1段文字且没有输入文字时，是否使用默认文字（谨慎使用，容易误触发）
+
 
 ### 使用
 
