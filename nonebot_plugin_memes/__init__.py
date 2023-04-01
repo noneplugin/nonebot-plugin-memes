@@ -377,7 +377,7 @@ def create_matchers():
             )
         if meme.patterns:
             matchers.append(
-                on_message(regex_rule(meme.patterns), block=False, priority=12)
+                on_message(regex_rule(meme.patterns), block=False, priority=13)
             )
 
         for matcher in matchers:
