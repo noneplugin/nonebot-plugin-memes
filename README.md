@@ -68,6 +68,11 @@ pip install nonebot_plugin_memes
  - 默认：`[]`
  - 说明：命令前缀，若不配置则使用 [NoneBot 命令前缀](https://v2.nonebot.dev/docs/api/config#Config-command_start)
 
+#### `memes_command_force_whitespace`
+ - 类型：`bool`
+ - 默认：`True`
+ - 说明：是否强制要求命令后加空格（仅当命令后是文本时需要加空格）
+
 #### `memes_disabled_list`
  - 类型：`List[str]`
  - 默认：`[]`

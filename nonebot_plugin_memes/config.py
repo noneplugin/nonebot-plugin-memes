@@ -6,6 +6,7 @@ from pydantic import BaseModel, Extra
 
 class Config(BaseModel, extra=Extra.ignore):
     memes_command_start: List[str] = []
+    memes_command_force_whitespace: bool = True
     memes_disabled_list: List[str] = []
     memes_check_resources_on_startup: bool = True
     memes_prompt_params_error: bool = False

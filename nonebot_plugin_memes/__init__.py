@@ -351,14 +351,8 @@ def create_matchers():
     for meme in meme_manager.memes:
         matchers: List[Type[Matcher]] = []
         if meme.keywords:
-            # 纯文字输入的表情，在命令后加空格以防止误触发
-            keywords = (
-                [keyword.rstrip() + " " for keyword in meme.keywords]
-                if meme.params_type.min_images == 0 and meme.params_type.max_images == 0
-                else meme.keywords
-            )
             matchers.append(
-                on_message(command_rule(keywords), block=False, priority=12)
+                on_message(command_rule(meme.keywords), block=False, priority=12)
             )
         if meme.patterns:
             matchers.append(

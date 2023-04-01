@@ -3,7 +3,7 @@ from typing import List, Optional, Tuple
 
 from nonebot import get_driver
 from nonebot.adapters import Event, Message, MessageSegment
-from nonebot.params import Command, CommandArg
+from nonebot.params import Command, EventMessage, RawCommand
 from nonebot.rule import TRIE_VALUE, Rule, TrieRule
 from nonebot.typing import T_State
 
@@ -23,9 +23,30 @@ def command_rule(commands: List[str]) -> Rule:
     def checker(
         state: T_State,
         cmd: Optional[Tuple[str, ...]] = Command(),
-        msg: Message = CommandArg(),
+        raw_cmd: str = RawCommand(),
+        message: Message = EventMessage(),
     ) -> bool:
         if cmd and cmd[0] in commands:
+            message_seg: MessageSegment = message[0]
+            assert message_seg.is_text()
+            segment_text = str(message_seg).lstrip()
+
+            msg = message.copy()
+            msg.pop(0)
+
+            # check whitespace
+            arg_str = segment_text[len(raw_cmd) :]
+            arg_str_stripped = arg_str.lstrip()
+            if memes_config.memes_command_force_whitespace:
+                has_text_arg = arg_str_stripped or (msg and msg[0].is_text())
+                if has_text_arg and (len(arg_str) - len(arg_str_stripped) <= 0):
+                    return False
+
+            # construct msg
+            if arg_str_stripped:
+                new_message = msg.__class__(arg_str_stripped)
+                for new_segment in reversed(new_message):
+                    msg.insert(0, new_segment)
             state[MSG_KEY] = msg
             return True
         return False
@@ -38,21 +59,33 @@ def regex_rule(patterns: List[str]) -> Rule:
     pattern = "|".join([rf"(?:{p})" for p in patterns])
 
     def checker(event: Event, state: T_State) -> bool:
-        if not (msg := event.get_message()):
+        if not (message := event.get_message()):
             return False
-        msg_seg: MessageSegment = msg[0]
-        if not msg_seg.is_text():
+        message_seg: MessageSegment = message[0]
+        if not message_seg.is_text():
             return False
 
-        seg_text = str(msg_seg).lstrip()
-        matched = re.match(rf"(?:{start}){pattern}", seg_text, re.IGNORECASE)
+        segment_text = str(message_seg).lstrip()
+        matched = re.match(rf"(?:{start}){pattern}", segment_text, re.IGNORECASE)
         if not matched:
             return False
 
+        msg = message.copy()
         msg.pop(0)
-        new_msg = msg.__class__(seg_text[matched.end() :].lstrip())
-        for new_seg in reversed(new_msg):
-            msg.insert(0, new_seg)
+
+        # check whitespace
+        arg_str = segment_text[matched.end() :]
+        arg_str_stripped = arg_str.lstrip()
+        if memes_config.memes_command_force_whitespace:
+            has_text_arg = arg_str_stripped or (msg and msg[0].is_text())
+            if has_text_arg and (len(arg_str) - len(arg_str_stripped) <= 0):
+                return False
+
+        # construct msg
+        if arg_str_stripped:
+            new_message = msg.__class__(arg_str_stripped)
+            for new_segment in reversed(new_message):
+                msg.insert(0, new_segment)
         state[MSG_KEY] = msg
         state[TEXTS_KEY] = list(matched.groups())
         return True
