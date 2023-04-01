@@ -1,5 +1,7 @@
+import hashlib
 import random
 import traceback
+from io import BytesIO
 from itertools import chain
 from typing import Any, Dict, List, NoReturn, Type, Union
 
@@ -12,7 +14,7 @@ from meme_generator.exception import (
 )
 from meme_generator.meme import Meme, MemeParamsType
 from meme_generator.utils import TextProperties, render_meme_list
-from nonebot import on_command, on_message
+from nonebot import on_command, on_message, require
 from nonebot.adapters.onebot.v11 import Bot as V11Bot
 from nonebot.adapters.onebot.v11 import GroupMessageEvent as V11GMEvent
 from nonebot.adapters.onebot.v11 import Message as V11Msg
@@ -40,6 +42,10 @@ from nonebot.typing import T_Handler, T_State
 from nonebot.utils import run_sync
 from pypinyin import Style, pinyin
 
+require("nonebot_plugin_localstore")
+
+from nonebot_plugin_localstore import get_cache_dir
+
 from .config import memes_config
 from .data_source import ImageSource, User, UserInfo
 from .depends import (
@@ -64,6 +70,8 @@ __plugin_meta__ = PluginMetadata(
         "version": "0.4.4",
     },
 )
+
+memes_cache_dir = get_cache_dir("nonebot_plugin_memes")
 
 
 PERM_EDIT = GROUP_ADMIN | GROUP_OWNER | PRIVATE_FRIEND | PRIVATE | SUPERUSER
@@ -114,7 +122,20 @@ async def _(bot: Union[V11Bot, V12Bot], matcher: Matcher, user_id: str = get_use
         )
         for meme in memes
     ]
-    img = await run_sync(render_meme_list)(meme_list)
+
+    # cache rendered meme list
+    meme_list_hashable = [
+        ({"key": meme.key, "keywords": meme.keywords}, prop) for meme, prop in meme_list
+    ]
+    meme_list_hash = hashlib.md5(str(meme_list_hashable).encode("utf8")).hexdigest()
+    meme_list_cache_file = memes_cache_dir / f"{meme_list_hash}.jpg"
+    if not meme_list_cache_file.exists():
+        img = await run_sync(render_meme_list)(meme_list)
+        with open(meme_list_cache_file, "wb") as f:
+            f.write(img.getvalue())
+    else:
+        img = BytesIO(meme_list_cache_file.read_bytes())
+
     msg = "触发方式：“关键词 + 图片/文字”\n发送 “表情详情 + 关键词” 查看表情参数和预览\n目前支持的表情列表："
 
     if isinstance(bot, V11Bot):
