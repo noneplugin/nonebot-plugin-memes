@@ -52,7 +52,7 @@ pip install nonebot_plugin_memes
 
 插件默认在启动时会检查 [meme-generator](https://github.com/MeetWq/meme-generator) 所需的图片资源
 
-需按照 [meme-generator 字体安装](https://github.com/MeetWq/meme-generator#字体安装) 自行安装字体
+需按照 [meme-generator 字体安装](https://github.com/MeetWq/meme-generator/blob/main/docs/install.md#字体安装) 自行安装字体
 
 <div align="left">
   <img src="https://s2.loli.net/2023/03/10/Y81ACvu2pGLW4Qc.jpg" width="150" />
