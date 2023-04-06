@@ -105,11 +105,18 @@ pip install nonebot_plugin_memes
 
 #### 表情列表
 
-发送 “表情包制作” 显示如下图所示的表情列表：
+发送 “表情包制作” 查看表情列表
 
-<div align="left">
-  <img src="https://s2.loli.net/2023/03/10/3BSlTXwCIycWUmK.jpg" width="550" />
-</div>
+> **Note**
+>
+> 插件会缓存生成的表情列表图片以避免重复生成
+>
+> 若因为字体没安装好等原因导致生成的图片不正常，需要删除缓存的图片
+>
+> 缓存路径：
+> - Windows: `C:\Users\<username>\AppData\Local\nonebot2\Cache\nonebot_plugin_memes`
+> - Linux: `~/.cache/nonebot2/nonebot_plugin_memes`
+> - Mac: `~/Library/Caches/nonebot2/nonebot_plugin_memes`
 
 
 #### 表情帮助
