@@ -55,7 +55,7 @@ def command_rule(commands: List[str]) -> Rule:
 
 
 def regex_rule(patterns: List[str]) -> Rule:
-    start = re.escape("|".join(command_start))
+    start = "|".join([re.escape(s) for s in command_start])
     pattern = "|".join([rf"(?:{p})" for p in patterns])
 
     def checker(event: Event, state: T_State) -> bool:
