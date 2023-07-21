@@ -46,7 +46,7 @@ require("nonebot_plugin_localstore")
 
 from nonebot_plugin_localstore import get_cache_dir
 
-from .config import memes_config
+from .config import Config, memes_config
 from .data_source import ImageSource, User, UserInfo
 from .depends import (
     IMAGE_SOURCES_KEY,
@@ -64,10 +64,14 @@ __plugin_meta__ = PluginMetadata(
     name="表情包制作",
     description="制作各种沙雕表情包",
     usage="发送“表情包制作”查看表情包列表",
+    type="application",
+    homepage="https://github.com/noneplugin/nonebot-plugin-memes",
+    config=Config,
+    supported_adapters={"~onebot.v11", "~onebot.v12"},
     extra={
         "unique_name": "memes",
         "author": "meetwq <meetwq@gmail.com>",
-        "version": "0.4.6",
+        "version": "0.4.7",
     },
 )
 
