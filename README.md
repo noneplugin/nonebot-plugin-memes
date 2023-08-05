@@ -1,7 +1,7 @@
 <div align="center">
 
-  <a href="https://v2.nonebot.dev/">
-    <img src="https://v2.nonebot.dev/logo.png" width="200" height="200" alt="nonebot">
+  <a href="https://nonebot.dev/">
+    <img src="https://nonebot.dev/logo.png" width="200" height="200" alt="nonebot">
   </a>
 
 # nonebot-plugin-memes
@@ -45,7 +45,7 @@ nb plugin install nonebot_plugin_memes
 ```
 pip install nonebot_plugin_memes
 ```
-并按照 [NoneBot 加载插件](https://v2.nonebot.dev/docs/tutorial/plugin/load-plugin) 加载插件
+并按照 [NoneBot 加载插件](https://nonebot.dev/docs/tutorial/create-plugin#加载插件) 加载插件
 
 
 #### 字体和资源
@@ -61,12 +61,12 @@ pip install nonebot_plugin_memes
 
 ### 配置项
 
-> 以下配置项可在 `.env.*` 文件中设置，具体参考 [NoneBot 配置方式](https://v2.nonebot.dev/docs/tutorial/configuration#%E9%85%8D%E7%BD%AE%E6%96%B9%E5%BC%8F)
+> 以下配置项可在 `.env.*` 文件中设置，具体参考 [NoneBot 配置方式](https://nonebot.dev/docs/appendices/config)
 
 #### `memes_command_start`
  - 类型：`List[str]`
  - 默认：`[]`
- - 说明：命令前缀，若不配置则使用 [NoneBot 命令前缀](https://v2.nonebot.dev/docs/api/config#Config-command_start)
+ - 说明：命令前缀，若不配置则使用 [NoneBot 命令前缀](https://nonebot.dev/docs/appendices/config#command-start-和-command-separator)
 
 #### `memes_command_force_whitespace`
  - 类型：`bool`
@@ -101,7 +101,7 @@ pip install nonebot_plugin_memes
 
 ### 使用
 
-**以下命令需要加 [NoneBot 命令前缀](https://v2.nonebot.dev/docs/api/config#Config-command_start) (默认为`/`)，可自行添加空字符**
+**以下命令需要加 [NoneBot 命令前缀](https://nonebot.dev/docs/appendices/config#command-start-和-command-separator) (默认为`/`)，可自行添加空字符**
 
 #### 表情列表
 
