@@ -11,7 +11,7 @@ _✨ [Nonebot2](https://github.com/nonebot/nonebot2) 表情包制作插件 ✨_
 <p align="center">
   <img src="https://img.shields.io/github/license/noneplugin/nonebot-plugin-memes" alt="license">
   <img src="https://img.shields.io/badge/python-3.8+-blue.svg" alt="Python">
-  <img src="https://img.shields.io/badge/nonebot-2.0.0rc1+-red.svg" alt="NoneBot">
+  <img src="https://img.shields.io/badge/nonebot-2.0.0+-red.svg" alt="NoneBot">
   <a href="https://pypi.org/project/nonebot-plugin-memes">
     <img src="https://badgen.net/pypi/v/nonebot-plugin-memes" alt="pypi">
   </a>
