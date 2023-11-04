@@ -32,6 +32,11 @@ from nonebot.adapters.onebot.v12 import Message as V12Msg
 from nonebot.adapters.onebot.v12 import MessageEvent as V12MEvent
 from nonebot.adapters.onebot.v12 import MessageSegment as V12MsgSeg
 from nonebot.adapters.onebot.v12.permission import PRIVATE
+from nonebot.adapters.red import Bot as RedBot
+from nonebot.adapters.red import MessageEvent as RedMEvent
+from nonebot.adapters.red import GroupMessageEvent as RedGMEvent
+from nonebot.adapters.red import MessageSegment as RedMsgSeg
+from nonebot.adapters.red import Message as RedMsg
 from nonebot.exception import AdapterException
 from nonebot.log import logger
 from nonebot.matcher import Matcher
@@ -52,6 +57,7 @@ from .depends import (
     IMAGE_SOURCES_KEY,
     TEXTS_KEY,
     USERS_KEY,
+    split_msg_red,
     split_msg_v11,
     split_msg_v12,
 )
@@ -91,15 +97,20 @@ unblock_cmd_gl = on_command("全局启用表情", block=True, priority=11, permi
 
 def get_user_id():
     def dependency(
-        bot: Union[V11Bot, V12Bot], event: Union[V11MEvent, V12MEvent]
+        bot: Union[V11Bot, V12Bot, RedBot],
+        event: Union[V11MEvent, V12MEvent, RedMEvent],
     ) -> str:
         if isinstance(event, V11MEvent):
             cid = f"{bot.self_id}_{event.message_type}_"
-        else:
+        elif isinstance(event, V12MEvent):
             cid = f"{bot.self_id}_{event.detail_type}_"
+        elif isinstance(event, RedMEvent):
+            cid = f"{bot.self_id}_{event.get_type()}_"
 
         if isinstance(event, V11GMEvent) or isinstance(event, V12GMEvent):
             cid += str(event.group_id)
+        elif isinstance(event, RedGMEvent):
+            cid += str(event.peerUin)
         elif isinstance(event, V12CMEvent):
             cid += f"{event.guild_id}_{event.channel_id}"
         else:
@@ -110,7 +121,9 @@ def get_user_id():
 
 
 @help_cmd.handle()
-async def _(bot: Union[V11Bot, V12Bot], matcher: Matcher, user_id: str = get_user_id()):
+async def _(
+    bot: Union[V11Bot, V12Bot, RedBot], matcher: Matcher, user_id: str = get_user_id()
+):
     memes = sorted(
         meme_manager.memes,
         key=lambda meme: "".join(
@@ -144,6 +157,8 @@ async def _(bot: Union[V11Bot, V12Bot], matcher: Matcher, user_id: str = get_use
 
     if isinstance(bot, V11Bot):
         await matcher.finish(msg + V11MsgSeg.image(img))
+    elif isinstance(bot, RedBot):
+        await matcher.finish(msg + RedMsgSeg.image(img))
     else:
         resp = await bot.upload_file(type="data", name="memes", data=img.getvalue())
         file_id = resp["file_id"]
@@ -152,9 +167,9 @@ async def _(bot: Union[V11Bot, V12Bot], matcher: Matcher, user_id: str = get_use
 
 @info_cmd.handle()
 async def _(
-    bot: Union[V11Bot, V12Bot],
+    bot: Union[V11Bot, V12Bot, RedBot],
     matcher: Matcher,
-    msg: Union[V11Msg, V12Msg] = CommandArg(),
+    msg: Union[V11Msg, V12Msg, RedMsg] = CommandArg(),
 ):
     meme_name = msg.extract_plain_text().strip()
     if not meme_name:
@@ -170,6 +185,8 @@ async def _(
 
     if isinstance(bot, V11Bot):
         await matcher.finish(info + V11MsgSeg.image(img))
+    elif isinstance(bot, RedBot):
+        await matcher.finish(info + RedMsgSeg.image(img))
     else:
         resp = await bot.upload_file(type="data", name="memes", data=img.getvalue())
         file_id = resp["file_id"]
@@ -179,7 +196,7 @@ async def _(
 @block_cmd.handle()
 async def _(
     matcher: Matcher,
-    msg: Union[V11Msg, V12Msg] = CommandArg(),
+    msg: Union[V11Msg, V12Msg, RedMsg] = CommandArg(),
     user_id: str = get_user_id(),
 ):
     meme_names = msg.extract_plain_text().strip().split()
@@ -202,7 +219,7 @@ async def _(
 @unblock_cmd.handle()
 async def _(
     matcher: Matcher,
-    msg: Union[V11Msg, V12Msg] = CommandArg(),
+    msg: Union[V11Msg, V12Msg, RedMsg] = CommandArg(),
     user_id: str = get_user_id(),
 ):
     meme_names = msg.extract_plain_text().strip().split()
@@ -223,7 +240,7 @@ async def _(
 
 
 @block_cmd_gl.handle()
-async def _(matcher: Matcher, msg: Union[V11Msg, V12Msg] = CommandArg()):
+async def _(matcher: Matcher, msg: Union[V11Msg, V12Msg, RedMsg] = CommandArg()):
     meme_names = msg.extract_plain_text().strip().split()
     if not meme_names:
         matcher.block = False
@@ -242,7 +259,7 @@ async def _(matcher: Matcher, msg: Union[V11Msg, V12Msg] = CommandArg()):
 
 
 @unblock_cmd_gl.handle()
-async def _(matcher: Matcher, msg: Union[V11Msg, V12Msg] = CommandArg()):
+async def _(matcher: Matcher, msg: Union[V11Msg, V12Msg, RedMsg] = CommandArg()):
     meme_names = msg.extract_plain_text().strip().split()
     if not meme_names:
         matcher.block = False
@@ -261,7 +278,7 @@ async def _(matcher: Matcher, msg: Union[V11Msg, V12Msg] = CommandArg()):
 
 
 async def process(
-    bot: Union[V11Bot, V12Bot],
+    bot: Union[V11Bot, V12Bot, RedBot],
     matcher: Matcher,
     meme: Meme,
     image_sources: List[ImageSource],
@@ -302,6 +319,8 @@ async def process(
 
     if isinstance(bot, V11Bot):
         await matcher.finish(V11MsgSeg.image(result))
+    elif isinstance(bot, RedBot):
+        await matcher.finish(RedMsgSeg.image(result))
     else:
         resp = await bot.upload_file(type="data", name="memes", data=result.getvalue())
         file_id = resp["file_id"]
@@ -310,7 +329,7 @@ async def process(
 
 def handler(meme: Meme) -> T_Handler:
     async def handle(
-        bot: Union[V11Bot, V12Bot],
+        bot: Union[V11Bot, V12Bot, RedBot],
         state: T_State,
         matcher: Matcher,
         user_id: str = get_user_id(),
@@ -387,9 +406,10 @@ def create_matchers():
         for matcher in matchers:
             matcher.append_handler(handler(meme), parameterless=[split_msg_v11(meme)])
             matcher.append_handler(handler(meme), parameterless=[split_msg_v12(meme)])
+            matcher.append_handler(handler(meme), parameterless=[split_msg_red(meme)])
 
     async def random_handler(
-        bot: Union[V11Bot, V12Bot], state: T_State, matcher: Matcher
+        bot: Union[V11Bot, V12Bot, RedBot], state: T_State, matcher: Matcher
     ):
         texts: List[str] = state[TEXTS_KEY]
         users: List[User] = state[USERS_KEY]
@@ -422,6 +442,9 @@ def create_matchers():
     )
     random_matcher.append_handler(
         random_handler, parameterless=[split_msg_v12(fake_meme)]
+    )
+    random_matcher.append_handler(
+        random_handler, parameterless=[split_msg_red(fake_meme)]
     )
 
 

@@ -17,6 +17,7 @@ httpx = ">=0.20.0,<1.0.0"
 pypinyin = ">=0.44.0,<1.0.0"
 pil-utils = "^0.1.7"
 meme-generator = ">=0.0.7,<0.1.0"
+nonebot-adapter-red = "^0.7.4"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1.0"

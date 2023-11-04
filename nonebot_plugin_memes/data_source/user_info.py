@@ -8,6 +8,8 @@ from nonebot.adapters.onebot.v12 import Bot as V12Bot
 from nonebot.adapters.onebot.v12 import ChannelMessageEvent as V12CMEvent
 from nonebot.adapters.onebot.v12 import GroupMessageEvent as V12GMEvent
 from nonebot.adapters.onebot.v12 import MessageEvent as V12MEvent
+from nonebot.adapters.red import Bot as RedBot
+from nonebot.adapters.red import MessageEvent as RedMEvent
 
 
 class UserInfo(TypedDict):
@@ -57,5 +59,17 @@ class V12User(User):
         else:
             info = await self.bot.get_user_info(user_id=self.user_id)
         name = info.get("user_displayname", "") or info.get("user_name", "")
+        gender = "unknown"
+        return UserInfo(name=name, gender=gender)
+
+
+@dataclass
+class RedUser(User):
+    bot: RedBot
+    event: RedMEvent
+    user_id: str
+
+    async def get_info(self) -> UserInfo:
+        name = self.event.sendNickName
         gender = "unknown"
         return UserInfo(name=name, gender=gender)

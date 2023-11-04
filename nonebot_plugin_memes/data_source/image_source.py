@@ -7,6 +7,8 @@ from nonebot.adapters.onebot.v11 import MessageEvent as V11MEvent
 from nonebot.adapters.onebot.v12 import Bot as V12Bot
 from nonebot.adapters.onebot.v12 import ChannelMessageEvent as V12CMEvent
 from nonebot.adapters.onebot.v12 import MessageEvent as V12MEvent
+from nonebot.adapters.red import Bot as RedBot
+from nonebot.adapters.red import MessageEvent as RedMEvent
 
 from ..exception import PlatformUnsupportError
 from ..utils import download_url
@@ -24,6 +26,16 @@ class ImageUrl(ImageSource):
 
     async def get_image(self) -> bytes:
         return await download_url(self.url)
+
+
+@dataclass
+class ImageMd5(ImageSource):
+    md5: str
+
+    async def get_image(self) -> bytes:
+        return await download_url(
+            f"https://gchat.qpic.cn/gchatpic_new/0/0-0-{self.md5.upper()}/0"
+        )
 
 
 @dataclass
@@ -69,9 +81,11 @@ class QQGuildAvatar(ImageSource):
 
 
 def user_avatar(
-    bot: Union[V11Bot, V12Bot], event: Union[V11MEvent, V12MEvent], user_id: str
+    bot: Union[V11Bot, V12Bot, RedBot],
+    event: Union[V11MEvent, V12MEvent, RedMEvent],
+    user_id: str,
 ) -> ImageSource:
-    if isinstance(bot, V11Bot):
+    if isinstance(bot, V11Bot) or isinstance(bot, RedBot):
         return QQAvatar(qq=user_id)
 
     assert isinstance(event, V12MEvent)
