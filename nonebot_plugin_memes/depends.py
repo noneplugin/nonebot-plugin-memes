@@ -258,7 +258,9 @@ def split_msg_red(meme: Meme):
                         users.append(RedUser(bot, event, int(user_id)))
 
                     elif text == "自己":
-                        image_sources.append(RedUser(bot, event, str(event.senderUin)))
+                        image_sources.append(
+                            user_avatar(bot, event, str(event.senderUin))
+                        )
                         users.append(RedUser(bot, event, event.senderUin))
 
                     elif text := unescape(text):
