@@ -7,7 +7,10 @@ from meme_generator.meme import Meme
 from nonebot.log import logger
 
 from .config import memes_config
-from .exception import NetworkError
+
+
+class NetworkError(Exception):
+    pass
 
 
 async def download_url(url: str) -> bytes:

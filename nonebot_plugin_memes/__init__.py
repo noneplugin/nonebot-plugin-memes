@@ -3,7 +3,7 @@ import random
 import traceback
 from io import BytesIO
 from itertools import chain
-from typing import Any, Dict, List, NoReturn, Type, Union
+from typing import Annotated, Any, Dict, List, NoReturn, Type
 
 from meme_generator.exception import (
     ArgMismatch,
@@ -15,50 +15,33 @@ from meme_generator.exception import (
 from meme_generator.meme import Meme, MemeParamsType
 from meme_generator.utils import TextProperties, render_meme_list
 from nonebot import on_command, on_message, require
-from nonebot.adapters.onebot.v11 import Bot as V11Bot
-from nonebot.adapters.onebot.v11 import GroupMessageEvent as V11GMEvent
-from nonebot.adapters.onebot.v11 import Message as V11Msg
-from nonebot.adapters.onebot.v11 import MessageEvent as V11MEvent
-from nonebot.adapters.onebot.v11 import MessageSegment as V11MsgSeg
-from nonebot.adapters.onebot.v11.permission import (
-    GROUP_ADMIN,
-    GROUP_OWNER,
-    PRIVATE_FRIEND,
-)
-from nonebot.adapters.onebot.v12 import Bot as V12Bot
-from nonebot.adapters.onebot.v12 import ChannelMessageEvent as V12CMEvent
-from nonebot.adapters.onebot.v12 import GroupMessageEvent as V12GMEvent
-from nonebot.adapters.onebot.v12 import Message as V12Msg
-from nonebot.adapters.onebot.v12 import MessageEvent as V12MEvent
-from nonebot.adapters.onebot.v12 import MessageSegment as V12MsgSeg
-from nonebot.adapters.onebot.v12.permission import PRIVATE
+from nonebot.adapters import Message
 from nonebot.exception import AdapterException
 from nonebot.log import logger
 from nonebot.matcher import Matcher
-from nonebot.params import CommandArg, Depends
-from nonebot.permission import SUPERUSER
-from nonebot.plugin import PluginMetadata
+from nonebot.params import CommandArg
+from nonebot.permission import SUPERUSER, Permission
+from nonebot.plugin import PluginMetadata, inherit_supported_adapters
 from nonebot.typing import T_Handler, T_State
 from nonebot.utils import run_sync
 from pypinyin import Style, pinyin
 
+require("nonebot_plugin_saa")
+require("nonebot_plugin_alconna")
+require("nonebot_plugin_session")
+require("nonebot_plugin_userinfo")
 require("nonebot_plugin_localstore")
 
 from nonebot_plugin_localstore import get_cache_dir
+from nonebot_plugin_saa import Image, MessageFactory
+from nonebot_plugin_session import EventSession, SessionId, SessionIdType, SessionLevel
+from nonebot_plugin_userinfo import ImageSource, UserInfo
 
 from .config import Config, memes_config
-from .data_source import ImageSource, User, UserInfo
-from .depends import (
-    IMAGE_SOURCES_KEY,
-    TEXTS_KEY,
-    USERS_KEY,
-    split_msg_v11,
-    split_msg_v12,
-)
-from .exception import NetworkError, PlatformUnsupportError
+from .depends import IMAGE_SOURCES_KEY, TEXTS_KEY, USER_INFOS_KEY, split_msg
 from .manager import ActionResult, MemeMode, meme_manager
 from .rule import command_rule, regex_rule
-from .utils import meme_info
+from .utils import NetworkError, meme_info
 
 __plugin_meta__ = PluginMetadata(
     name="表情包制作",
@@ -67,19 +50,37 @@ __plugin_meta__ = PluginMetadata(
     type="application",
     homepage="https://github.com/noneplugin/nonebot-plugin-memes",
     config=Config,
-    supported_adapters={"~onebot.v11", "~onebot.v12"},
+    supported_adapters=inherit_supported_adapters(
+        "nonebot_plugin_saa",
+        "nonebot_plugin_alconna",
+        "nonebot_plugin_session",
+        "nonebot_plugin_userinfo",
+    ),
     extra={
         "unique_name": "memes",
         "author": "meetwq <meetwq@gmail.com>",
-        "version": "0.4.7",
+        "version": "0.5.0",
     },
 )
 
 memes_cache_dir = get_cache_dir("nonebot_plugin_memes")
 
 
-PERM_EDIT = GROUP_ADMIN | GROUP_OWNER | PRIVATE_FRIEND | PRIVATE | SUPERUSER
+def _is_private(session: EventSession) -> bool:
+    return session.level == SessionLevel.LEVEL1
+
+
+PERM_EDIT = SUPERUSER | Permission(_is_private)
 PERM_GLOBAL = SUPERUSER
+
+
+try:
+    from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN, GROUP_OWNER
+
+    PERM_EDIT |= GROUP_ADMIN | GROUP_OWNER
+except ImportError:
+    pass
+
 
 help_cmd = on_command("表情包制作", aliases={"头像表情包", "文字表情包"}, block=True, priority=11)
 info_cmd = on_command("表情详情", aliases={"表情帮助", "表情示例"}, block=True, priority=11)
@@ -89,28 +90,11 @@ block_cmd_gl = on_command("全局禁用表情", block=True, priority=11, permiss
 unblock_cmd_gl = on_command("全局启用表情", block=True, priority=11, permission=PERM_GLOBAL)
 
 
-def get_user_id():
-    def dependency(
-        bot: Union[V11Bot, V12Bot], event: Union[V11MEvent, V12MEvent]
-    ) -> str:
-        if isinstance(event, V11MEvent):
-            cid = f"{bot.self_id}_{event.message_type}_"
-        else:
-            cid = f"{bot.self_id}_{event.detail_type}_"
-
-        if isinstance(event, V11GMEvent) or isinstance(event, V12GMEvent):
-            cid += str(event.group_id)
-        elif isinstance(event, V12CMEvent):
-            cid += f"{event.guild_id}_{event.channel_id}"
-        else:
-            cid += str(event.user_id)
-        return cid
-
-    return Depends(dependency)
+UserId = Annotated[str, SessionId(SessionIdType.GROUP, include_bot_type=False)]
 
 
 @help_cmd.handle()
-async def _(bot: Union[V11Bot, V12Bot], matcher: Matcher, user_id: str = get_user_id()):
+async def _(user_id: UserId):
     memes = sorted(
         meme_manager.memes,
         key=lambda meme: "".join(
@@ -140,23 +124,14 @@ async def _(bot: Union[V11Bot, V12Bot], matcher: Matcher, user_id: str = get_use
     else:
         img = BytesIO(meme_list_cache_file.read_bytes())
 
-    msg = "触发方式：“关键词 + 图片/文字”\n发送 “表情详情 + 关键词” 查看表情参数和预览\n目前支持的表情列表："
-
-    if isinstance(bot, V11Bot):
-        await matcher.finish(msg + V11MsgSeg.image(img))
-    else:
-        resp = await bot.upload_file(type="data", name="memes", data=img.getvalue())
-        file_id = resp["file_id"]
-        await matcher.finish(msg + V12MsgSeg.image(file_id))
+    msg = MessageFactory("触发方式：“关键词 + 图片/文字”\n发送 “表情详情 + 关键词” 查看表情参数和预览\n目前支持的表情列表：")
+    msg.append(Image(img))
+    await msg.send()
 
 
 @info_cmd.handle()
-async def _(
-    bot: Union[V11Bot, V12Bot],
-    matcher: Matcher,
-    msg: Union[V11Msg, V12Msg] = CommandArg(),
-):
-    meme_name = msg.extract_plain_text().strip()
+async def _(matcher: Matcher, arg: Message = CommandArg()):
+    meme_name = arg.extract_plain_text().strip()
     if not meme_name:
         matcher.block = False
         await matcher.finish()
@@ -168,21 +143,14 @@ async def _(
     info += "表情预览：\n"
     img = await meme.generate_preview()
 
-    if isinstance(bot, V11Bot):
-        await matcher.finish(info + V11MsgSeg.image(img))
-    else:
-        resp = await bot.upload_file(type="data", name="memes", data=img.getvalue())
-        file_id = resp["file_id"]
-        await matcher.finish(info + V12MsgSeg.image(file_id))
+    msg = MessageFactory(info)
+    msg.append(Image(img))
+    await msg.send()
 
 
 @block_cmd.handle()
-async def _(
-    matcher: Matcher,
-    msg: Union[V11Msg, V12Msg] = CommandArg(),
-    user_id: str = get_user_id(),
-):
-    meme_names = msg.extract_plain_text().strip().split()
+async def _(matcher: Matcher, user_id: UserId, arg: Message = CommandArg()):
+    meme_names = arg.extract_plain_text().strip().split()
     if not meme_names:
         matcher.block = False
         await matcher.finish()
@@ -200,12 +168,8 @@ async def _(
 
 
 @unblock_cmd.handle()
-async def _(
-    matcher: Matcher,
-    msg: Union[V11Msg, V12Msg] = CommandArg(),
-    user_id: str = get_user_id(),
-):
-    meme_names = msg.extract_plain_text().strip().split()
+async def _(matcher: Matcher, user_id: UserId, arg: Message = CommandArg()):
+    meme_names = arg.extract_plain_text().strip().split()
     if not meme_names:
         matcher.block = False
         await matcher.finish()
@@ -223,8 +187,8 @@ async def _(
 
 
 @block_cmd_gl.handle()
-async def _(matcher: Matcher, msg: Union[V11Msg, V12Msg] = CommandArg()):
-    meme_names = msg.extract_plain_text().strip().split()
+async def _(matcher: Matcher, arg: Message = CommandArg()):
+    meme_names = arg.extract_plain_text().strip().split()
     if not meme_names:
         matcher.block = False
         await matcher.finish()
@@ -242,8 +206,8 @@ async def _(matcher: Matcher, msg: Union[V11Msg, V12Msg] = CommandArg()):
 
 
 @unblock_cmd_gl.handle()
-async def _(matcher: Matcher, msg: Union[V11Msg, V12Msg] = CommandArg()):
-    meme_names = msg.extract_plain_text().strip().split()
+async def _(matcher: Matcher, arg: Message = CommandArg()):
+    meme_names = arg.extract_plain_text().strip().split()
     if not meme_names:
         matcher.block = False
         await matcher.finish()
@@ -261,32 +225,31 @@ async def _(matcher: Matcher, msg: Union[V11Msg, V12Msg] = CommandArg()):
 
 
 async def process(
-    bot: Union[V11Bot, V12Bot],
     matcher: Matcher,
     meme: Meme,
     image_sources: List[ImageSource],
     texts: List[str],
-    users: List[User],
+    user_infos: List[UserInfo],
     args: Dict[str, Any] = {},
 ):
     images: List[bytes] = []
-    user_infos: List[UserInfo] = []
 
     try:
         for image_source in image_sources:
             images.append(await image_source.get_image())
-    except PlatformUnsupportError as e:
-        await matcher.finish(f"当前平台 “{e.platform}” 暂不支持获取头像，请使用图片输入")
+    except NotImplementedError as e:
+        await matcher.finish(f"当前平台可能不支持获取图片")
     except (NetworkError, AdapterException):
         logger.warning(traceback.format_exc())
         await matcher.finish("图片下载出错，请稍后再试")
 
-    try:
-        for user in users:
-            user_infos.append(await user.get_info())
-        args["user_infos"] = user_infos
-    except (NetworkError, AdapterException):
-        logger.warning("用户信息获取失败\n" + traceback.format_exc())
+    args["user_infos"] = [
+        {
+            "name": user_info.user_displayname or user_info.user_name,
+            "gender": user_info.user_gender,
+        }
+        for user_info in user_infos
+    ]
 
     try:
         result = await meme(images=images, texts=texts, args=args)
@@ -300,26 +263,20 @@ async def process(
         logger.warning(traceback.format_exc())
         await matcher.finish("出错了，请稍后再试")
 
-    if isinstance(bot, V11Bot):
-        await matcher.finish(V11MsgSeg.image(result))
-    else:
-        resp = await bot.upload_file(type="data", name="memes", data=result.getvalue())
-        file_id = resp["file_id"]
-        await matcher.finish(V12MsgSeg.image(file_id))
+    await MessageFactory([Image(result)]).send()
 
 
 def handler(meme: Meme) -> T_Handler:
     async def handle(
-        bot: Union[V11Bot, V12Bot],
         state: T_State,
         matcher: Matcher,
-        user_id: str = get_user_id(),
+        user_id: UserId,
     ):
         if not meme_manager.check(user_id, meme.key):
             return
 
         raw_texts: List[str] = state[TEXTS_KEY]
-        users: List[User] = state[USERS_KEY]
+        user_infos: List[UserInfo] = state[USER_INFOS_KEY]
         image_sources: List[ImageSource] = state[IMAGE_SOURCES_KEY]
 
         texts: List[str] = []
@@ -367,7 +324,7 @@ def handler(meme: Meme) -> T_Handler:
             )
 
         matcher.stop_propagation()
-        await process(bot, matcher, meme, image_sources, texts, users, args)
+        await process(matcher, meme, image_sources, texts, user_infos, args)
 
     return handle
 
@@ -385,14 +342,11 @@ def create_matchers():
             )
 
         for matcher in matchers:
-            matcher.append_handler(handler(meme), parameterless=[split_msg_v11(meme)])
-            matcher.append_handler(handler(meme), parameterless=[split_msg_v12(meme)])
+            matcher.append_handler(handler(meme), parameterless=[split_msg(meme)])
 
-    async def random_handler(
-        bot: Union[V11Bot, V12Bot], state: T_State, matcher: Matcher
-    ):
+    async def random_handler(state: T_State, matcher: Matcher):
         texts: List[str] = state[TEXTS_KEY]
-        users: List[User] = state[USERS_KEY]
+        user_infos: List[UserInfo] = state[USER_INFOS_KEY]
         image_sources: List[ImageSource] = state[IMAGE_SOURCES_KEY]
 
         random_meme = random.choice(
@@ -413,16 +367,11 @@ def create_matchers():
                 )
             ]
         )
-        await process(bot, matcher, random_meme, image_sources, texts, users)
+        await process(matcher, random_meme, image_sources, texts, user_infos)
 
     random_matcher = on_message(command_rule(["随机表情"]), block=False, priority=12)
     fake_meme = Meme("_fake", _, MemeParamsType())
-    random_matcher.append_handler(
-        random_handler, parameterless=[split_msg_v11(fake_meme)]
-    )
-    random_matcher.append_handler(
-        random_handler, parameterless=[split_msg_v12(fake_meme)]
-    )
+    random_matcher.append_handler(random_handler, parameterless=[split_msg(fake_meme)])
 
 
 create_matchers()
