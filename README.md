@@ -22,12 +22,14 @@ _✨ [Nonebot2](https://github.com/nonebot/nonebot2) 表情包制作插件 ✨_
 
 </div>
 
-
-> 本插件 v0.4.x 版本为原 [头像表情包](https://github.com/noneplugin/nonebot-plugin-petpet) 与 [文字表情包](https://github.com/noneplugin/nonebot-plugin-memes/tree/v0.3.x) 整合而来，合并为 “表情包制作”
+> [!NOTE]
+> 
+> 本插件 v0.4.x 以上版本为原 [头像表情包](https://github.com/noneplugin/nonebot-plugin-petpet) 与 [文字表情包](https://github.com/noneplugin/nonebot-plugin-memes/tree/v0.3.x) 整合而来，合并为 “表情包制作”
 > 
 > 本插件负责处理聊天机器人相关逻辑，具体表情包制作相关资源文件和代码在 [表情包生成器 meme-generator](https://github.com/MeetWq/meme-generator) 中
 
-
+> [!NOTE]
+> 
 > 可使用 [nonebot-plugin-memes-api](https://github.com/noneplugin/nonebot-plugin-memes-api)（表情包制作 调用 api 版本），将 NoneBot 插件端与 `meme-generator` 分开部署
 >
 > `nonebot-plugin-memes-api` 与 `nonebot-plugin-memes` 功能上基本一致
@@ -54,9 +56,30 @@ pip install nonebot_plugin_memes
 
 需按照 [meme-generator 字体安装](https://github.com/MeetWq/meme-generator/blob/main/docs/install.md#字体安装) 自行安装字体
 
-<div align="left">
-  <img src="https://s2.loli.net/2023/03/10/Y81ACvu2pGLW4Qc.jpg" width="150" />
-</div>
+
+##### 字体显示不正常解决流程
+
+- 检查字体是否安装完整
+
+至少需要安装一种中文字体和 Emoji 字体，部分表情需要安装额外的字体，详情请参考 [meme-generator 字体安装](https://github.com/MeetWq/meme-generator/blob/main/docs/install.md#字体安装)
+
+- 删除 Matplotlib 字体缓存
+
+`meme-generator` 依赖 `matplotlib` 来寻找系统字体，`matplotlib` 会生成一个缓存文件，安装新的字体之后需要删掉该文件以重新扫描字体
+
+> 缓存文件位置：
+> - Windows: `C:\Users\<username>\.matplotlib\fontlist-xxx.json`
+> - Linux: `~/.cache/matplotlib/fontlist-xxx.json`
+> - Mac: `~/Library/Caches/matplotlib/fontlist-xxx.json`
+
+- 删除表情列表图片缓存
+
+插件会缓存生成的表情列表图片以避免重复生成，若因为字体没安装好等原因导致生成的图片不正常，需要删除缓存的图片
+
+> 缓存图片位置：
+> - Windows: `C:\Users\<username>\AppData\Local\nonebot2\Cache\nonebot_plugin_memes`
+> - Linux: `~/.cache/nonebot2/nonebot_plugin_memes`
+> - Mac: `~/Library/Caches/nonebot2/nonebot_plugin_memes`
 
 
 ### 配置项
@@ -107,17 +130,6 @@ pip install nonebot_plugin_memes
 
 发送 “表情包制作” 查看表情列表
 
-> **Note**
->
-> 插件会缓存生成的表情列表图片以避免重复生成
->
-> 若因为字体没安装好等原因导致生成的图片不正常，需要删除缓存的图片
->
-> 缓存路径：
-> - Windows: `C:\Users\<username>\AppData\Local\nonebot2\Cache\nonebot_plugin_memes`
-> - Linux: `~/.cache/nonebot2/nonebot_plugin_memes`
-> - Mac: `~/Library/Caches/nonebot2/nonebot_plugin_memes`
-
 
 #### 表情帮助
 
@@ -132,15 +144,21 @@ pip install nonebot_plugin_memes
 
 #### 表情包开关
 
-群主 / 管理员 / 超级用户 可以启用或禁用某些表情包
+“超级用户” 和 “管理员” 可以启用或禁用某些表情包
 
 发送 `启用表情/禁用表情 [表情名/表情关键词]`，如：`禁用表情 摸`
 
-超级用户 可以设置某个表情包的管控模式（黑名单/白名单）
+“超级用户” 可以设置某个表情包的管控模式（黑名单/白名单）
 
 发送 `全局启用表情 [表情名/表情关键词]` 可将表情设为黑名单模式；
 
 发送 `全局禁用表情 [表情名/表情关键词]` 可将表情设为白名单模式；
+
+> [!NOTE]
+> 
+> “超级用户” 可通过 [NoneBot SuperUsers](https://nonebot.dev/docs/appendices/config#superusers) 设置
+> 
+> “管理员” 目前包括：OneBot V11 适配器中的群主、管理员
 
 
 #### 表情使用
@@ -151,13 +169,23 @@ pip install nonebot_plugin_memes
 
 可使用 “@ + 用户id” 指定任意用户获取头像，如 “摸 @114514”
 
-可回复包含图片的消息作为图片输入
+可将回复中的消息作为文字和图片的输入
 
 示例：
 
 <div align="left">
   <img src="https://s2.loli.net/2023/03/10/UDTOuPnwk3emxv4.png" width="250" />
 </div>
+
+> [!NOTE]
+>
+> - 为避免误触发，当输入的 图片/文字 数量不符时，默认不会进行提示，可通过 `memes_prompt_params_error` 配置项进行设置
+>
+> - 为避免误触发，对于不需要图片输入的表情，默认需在关键词后加空格，如 “鲁迅说 我没有说过这句话”，可通过 `memes_command_force_whitespace` 配置项进行设置
+>
+> - 本插件通过 [nonebot-plugin-userinfo](https://github.com/noneplugin/nonebot-plugin-userinfo) 插件获取用户名和用户头像，具体平台支持范围可前往该插件查看
+>
+> - 本插件通过 [nonebot-plugin-alconna](https://github.com/nonebot/plugin-alconna) 来实现多适配器消息接收、获取图片输入、获取回复内容等，相关问题可前往该插件查看
 
 
 #### 随机表情
@@ -166,11 +194,9 @@ pip install nonebot_plugin_memes
 
 随机范围为 图片/文字 数量符合要求的表情
 
+### 相关插件
 
-**注意事项**
-
-- 为避免误触发，当输入的 图片/文字 数量不符时，不会进行提示，可事先通过 “表情详情” 查看所需的图文数
-- 为避免误触发，对于不需要图片输入的表情，需在关键词后加空格，如 “鲁迅说 我没有说过这句话”
-- 本插件已初步支持 OneBot V12，由于平台不同，部分平台可能不支持获取头像，可 ~~速速提交PR~~ 暂时使用图片输入
-- 同上，由于不同平台的用户id格式不同，“@ + 用户id” 的头像获取方式目前仅适用于部分平台，可 ~~速速提交PR~~ 暂时使用图片输入
-- 由于 OneBot V12 暂不支持获取回复消息，若使用 OneBot V12 适配器 可 ~~速速提交PR~~ 暂时使用图片输入
+- [nonebot-plugin-send-anything-anywhere](https://github.com/felinae98/nonebot-plugin-send-anything-anywhere) 一个帮助处理不同 adapter 消息的适配和发送的插件
+- [nonebot-plugin-alconna](https://github.com/nonebot/plugin-alconna) 强大的 Nonebot2 命令匹配拓展，支持富文本/多媒体解析，跨平台消息收发
+- [nonebot-plugin-session](https://github.com/noneplugin/nonebot-plugin-session) Nonebot2 会话信息提取与会话 id 定义插件
+- [nonebot-plugin-userinfo](https://github.com/noneplugin/nonebot-plugin-userinfo) Nonebot2 用户信息获取插件
