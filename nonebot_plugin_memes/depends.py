@@ -4,7 +4,8 @@ from meme_generator.meme import Meme
 from nonebot.adapters import Bot, Event, Message
 from nonebot.params import Depends
 from nonebot.typing import T_State
-from nonebot_plugin_alconna import At, Image, Reply, Text, UniMessage, image_fetch
+from nonebot_plugin_alconna import At, Image, Text, UniMessage, image_fetch
+from nonebot_plugin_alconna.uniseg.segment import reply_handle
 from nonebot_plugin_userinfo import ImageSource, UserInfo, get_user_info
 
 from .config import memes_config
@@ -39,18 +40,14 @@ def split_msg(meme: Meme):
         image_sources: List[ImageSource] = []
 
         msg: Message = state[MSG_KEY]
-        uni_msg = await UniMessage.generate(message=msg, event=event, bot=bot)
-
+        uni_msg = UniMessage()
+        if msg:
+            uni_msg = await UniMessage.generate(message=msg)
         uni_msg_with_reply = UniMessage()
-        for msg_seg in uni_msg:
-            if isinstance(msg_seg, Reply):
-                if isinstance(msg_seg.msg, Message):
-                    if uni_msg_reply := await UniMessage.generate(
-                        message=msg_seg.msg, event=event, bot=bot
-                    ):
-                        uni_msg_with_reply.extend(uni_msg_reply)
-            else:
-                uni_msg_with_reply.append(msg_seg)
+        if reply := await reply_handle(event, bot):
+            if isinstance(reply.msg, Message) and reply.msg:
+                uni_msg_with_reply = await UniMessage.generate(message=reply.msg)
+        uni_msg_with_reply.extend(uni_msg)
 
         for msg_seg in uni_msg_with_reply:
             if isinstance(msg_seg, At):
