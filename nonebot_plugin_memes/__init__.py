@@ -3,7 +3,7 @@ import random
 import traceback
 from io import BytesIO
 from itertools import chain
-from typing import Annotated, Any, Dict, List, NoReturn, Type
+from typing import Any, Dict, List, NoReturn, Type
 
 from meme_generator.exception import (
     ArgMismatch,
@@ -25,6 +25,7 @@ from nonebot.plugin import PluginMetadata, inherit_supported_adapters
 from nonebot.typing import T_Handler, T_State
 from nonebot.utils import run_sync
 from pypinyin import Style, pinyin
+from typing_extensions import Annotated
 
 require("nonebot_plugin_saa")
 require("nonebot_plugin_alconna")
@@ -59,7 +60,7 @@ __plugin_meta__ = PluginMetadata(
     extra={
         "unique_name": "memes",
         "author": "meetwq <meetwq@gmail.com>",
-        "version": "0.5.0",
+        "version": "0.5.1",
     },
 )
 
