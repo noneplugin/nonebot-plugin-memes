@@ -29,7 +29,7 @@ async def download_url(url: str) -> bytes:
 def split_text(text: str) -> List[str]:
     try:
         return shlex.split(text)
-    except:
+    except Exception:
         return text.split()
 
 

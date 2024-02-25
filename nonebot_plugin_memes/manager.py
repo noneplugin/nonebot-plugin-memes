@@ -130,13 +130,13 @@ class MemeManager:
             with self.__path.open("r", encoding="utf-8") as f:
                 try:
                     raw_list = yaml.safe_load(f)
-                except:
+                except Exception:
                     logger.warning("表情列表解析失败，将重新生成")
         try:
             meme_list = {
                 name: MemeConfig.parse_obj(config) for name, config in raw_list.items()
             }
-        except:
+        except Exception:
             meme_list = {}
             logger.warning("表情列表解析失败，将重新生成")
         self.__meme_list = {meme.key: MemeConfig() for meme in self.memes}
