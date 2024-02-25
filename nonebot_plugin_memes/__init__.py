@@ -83,12 +83,20 @@ except ImportError:
     pass
 
 
-help_cmd = on_command("表情包制作", aliases={"头像表情包", "文字表情包"}, block=True, priority=11)
-info_cmd = on_command("表情详情", aliases={"表情帮助", "表情示例"}, block=True, priority=11)
+help_cmd = on_command(
+    "表情包制作", aliases={"头像表情包", "文字表情包"}, block=True, priority=11
+)
+info_cmd = on_command(
+    "表情详情", aliases={"表情帮助", "表情示例"}, block=True, priority=11
+)
 block_cmd = on_command("禁用表情", block=True, priority=11, permission=PERM_EDIT)
 unblock_cmd = on_command("启用表情", block=True, priority=11, permission=PERM_EDIT)
-block_cmd_gl = on_command("全局禁用表情", block=True, priority=11, permission=PERM_GLOBAL)
-unblock_cmd_gl = on_command("全局启用表情", block=True, priority=11, permission=PERM_GLOBAL)
+block_cmd_gl = on_command(
+    "全局禁用表情", block=True, priority=11, permission=PERM_GLOBAL
+)
+unblock_cmd_gl = on_command(
+    "全局启用表情", block=True, priority=11, permission=PERM_GLOBAL
+)
 
 
 UserId = Annotated[str, SessionId(SessionIdType.GROUP, include_bot_type=False)]
@@ -125,7 +133,11 @@ async def _(user_id: UserId):
     else:
         img = BytesIO(meme_list_cache_file.read_bytes())
 
-    msg = MessageFactory("触发方式：“关键词 + 图片/文字”\n发送 “表情详情 + 关键词” 查看表情参数和预览\n目前支持的表情列表：")
+    msg = MessageFactory(
+        "触发方式：“关键词 + 图片/文字”\n"
+        "发送 “表情详情 + 关键词” 查看表情参数和预览\n"
+        "目前支持的表情列表："
+    )
     msg.append(Image(img))
     await msg.send()
 
@@ -238,8 +250,8 @@ async def process(
     try:
         for image_source in image_sources:
             images.append(await image_source.get_image())
-    except NotImplementedError as e:
-        await matcher.finish(f"当前平台可能不支持获取图片")
+    except NotImplementedError:
+        await matcher.finish("当前平台可能不支持获取图片")
     except (NetworkError, AdapterException):
         logger.warning(traceback.format_exc())
         await matcher.finish("图片下载出错，请稍后再试")
@@ -294,7 +306,7 @@ def handler(meme: Meme) -> T_Handler:
             try:
                 parse_result = meme.parse_args(raw_texts)
             except ArgParserExit:
-                await finish(f"参数解析错误")
+                await finish("参数解析错误")
             texts = parse_result["texts"]
             parse_result.pop("texts")
             args = parse_result

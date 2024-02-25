@@ -24,6 +24,19 @@ meme-generator = ">=0.0.7,<0.1.0"
 [tool.poetry.group.dev.dependencies]
 nonebot-adapter-onebot = "^2.2.3"
 
+[tool.pyright]
+pythonVersion = "3.8"
+pythonPlatform = "All"
+typeCheckingMode = "basic"
+
+[tool.ruff]
+line-length = 88
+target-version = "py38"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "UP", "C", "T", "PYI", "PT", "Q"]
+ignore = ["E402", "C901", "UP037"]
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
