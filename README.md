@@ -11,7 +11,7 @@ _✨ [Nonebot2](https://github.com/nonebot/nonebot2) 表情包制作插件 ✨_
 <p align="center">
   <img src="https://img.shields.io/github/license/noneplugin/nonebot-plugin-memes" alt="license">
   <img src="https://img.shields.io/badge/python-3.8+-blue.svg" alt="Python">
-  <img src="https://img.shields.io/badge/nonebot-2.0.0+-red.svg" alt="NoneBot">
+  <img src="https://img.shields.io/badge/nonebot-2.2.0+-red.svg" alt="NoneBot">
   <a href="https://pypi.org/project/nonebot-plugin-memes">
     <img src="https://badgen.net/pypi/v/nonebot-plugin-memes" alt="pypi">
   </a>
@@ -76,7 +76,9 @@ pip install nonebot_plugin_memes
 
 插件会缓存生成的表情列表图片以避免重复生成，若因为字体没安装好等原因导致生成的图片不正常，需要删除缓存的图片
 
-> 缓存图片位置：
+缓存图片存放在 [nonebot-plugin-localstore](https://github.com/nonebot/plugin-localstore) 插件定义的缓存目录下
+
+> 默认缓存目录位置：
 >
 > - Windows: `C:\Users\<username>\AppData\Local\nonebot2\Cache\nonebot_plugin_memes`
 > - Linux: `~/.cache/nonebot2/nonebot_plugin_memes`

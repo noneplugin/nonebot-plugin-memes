@@ -3,7 +3,7 @@ name: Update poetry.lock
 on:
   push:
     branches:
-      - "v0.4.x"
+      - "main"
     paths:
       - "pyproject.toml"
 
@@ -28,4 +28,4 @@ jobs:
         uses: actions-js/push@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: "v0.4.x"
+          branch: "main"
