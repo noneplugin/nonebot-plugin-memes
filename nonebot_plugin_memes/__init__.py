@@ -255,7 +255,7 @@ async def process(
     args["user_infos"] = [
         {
             "name": user_info.user_displayname or user_info.user_name,
-            "gender": user_info.user_gender,
+            "gender": str(user_info.user_gender),
         }
         for user_info in user_infos
     ]
