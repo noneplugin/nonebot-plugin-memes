@@ -27,14 +27,13 @@ from nonebot.utils import run_sync
 from pypinyin import Style, pinyin
 from typing_extensions import Annotated
 
-require("nonebot_plugin_saa")
 require("nonebot_plugin_alconna")
 require("nonebot_plugin_session")
 require("nonebot_plugin_userinfo")
 require("nonebot_plugin_localstore")
 
+from nonebot_plugin_alconna import Image, Text, UniMessage
 from nonebot_plugin_localstore import get_cache_dir
-from nonebot_plugin_saa import Image, MessageFactory
 from nonebot_plugin_session import EventSession, SessionId, SessionIdType, SessionLevel
 from nonebot_plugin_userinfo import ImageSource, UserInfo
 
@@ -52,7 +51,6 @@ __plugin_meta__ = PluginMetadata(
     homepage="https://github.com/noneplugin/nonebot-plugin-memes",
     config=Config,
     supported_adapters=inherit_supported_adapters(
-        "nonebot_plugin_saa",
         "nonebot_plugin_alconna",
         "nonebot_plugin_session",
         "nonebot_plugin_userinfo",
@@ -133,12 +131,11 @@ async def _(user_id: UserId):
     else:
         img = BytesIO(meme_list_cache_file.read_bytes())
 
-    msg = MessageFactory(
+    msg = Text(
         "触发方式：“关键词 + 图片/文字”\n"
         "发送 “表情详情 + 关键词” 查看表情参数和预览\n"
         "目前支持的表情列表："
-    )
-    msg.append(Image(img))
+    ) + Image(raw=img)
     await msg.send()
 
 
@@ -156,8 +153,7 @@ async def _(matcher: Matcher, arg: Message = CommandArg()):
     info += "表情预览：\n"
     img = await meme.generate_preview()
 
-    msg = MessageFactory(info)
-    msg.append(Image(img))
+    msg = Text(info) + Image(raw=img)
     await msg.send()
 
 
@@ -276,7 +272,8 @@ async def process(
         logger.warning(traceback.format_exc())
         await matcher.finish("出错了，请稍后再试")
 
-    await MessageFactory([Image(result)]).send()
+    msg = UniMessage.image(raw=result)
+    await msg.send()
 
 
 def handler(meme: Meme) -> T_Handler:
