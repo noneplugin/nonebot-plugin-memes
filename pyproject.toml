@@ -11,17 +11,17 @@ repository = "https://github.com/noneplugin/nonebot-plugin-memes"
 [tool.poetry.dependencies]
 python = "^3.8"
 nonebot2 = "^2.2.0"
-nonebot-plugin-alconna = ">=0.19.2,<1.0.0"
-nonebot-plugin-session = "^0.2.0"
-nonebot-plugin-userinfo = "^0.1.2"
-nonebot-plugin-localstore = "^0.5.0"
+nonebot-plugin-alconna = ">=0.37.0,<1.0.0"
+nonebot-plugin-session = "^0.3.0"
+nonebot-plugin-userinfo = "^0.2.0"
+nonebot-plugin-localstore = "^0.6.0"
 httpx = ">=0.20.0,<1.0.0"
 pypinyin = ">=0.44.0,<1.0.0"
-pil-utils = "^0.1.7"
-meme-generator = ">=0.0.7,<0.1.0"
+pil-utils = "^0.1.8"
+meme-generator = ">=0.0.15,<0.1.0"
 
 [tool.poetry.group.dev.dependencies]
-nonebot-adapter-onebot = "^2.2.3"
+nonebot-adapter-onebot = "^2.4.0"
 
 [tool.pyright]
 pythonVersion = "3.8"

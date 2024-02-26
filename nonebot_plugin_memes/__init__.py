@@ -304,6 +304,7 @@ def handler(meme: Meme) -> T_Handler:
             try:
                 parse_result = meme.parse_args(raw_texts)
             except ArgParserExit:
+                logger.warning(traceback.format_exc())
                 await finish("参数解析错误")
             texts = parse_result["texts"]
             parse_result.pop("texts")
