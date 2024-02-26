@@ -252,13 +252,14 @@ async def process(
         logger.warning(traceback.format_exc())
         await matcher.finish("图片下载出错，请稍后再试")
 
-    args["user_infos"] = [
-        {
-            "name": user_info.user_displayname or user_info.user_name,
-            "gender": str(user_info.user_gender),
-        }
-        for user_info in user_infos
-    ]
+    args_user_infos = []
+    for user_info in user_infos:
+        name = user_info.user_displayname or user_info.user_name
+        gender = str(user_info.user_gender)
+        if gender not in ("male", "female"):
+            gender = "unknown"
+        args_user_infos.append({"name": name, "gender": gender})
+    args["user_infos"] = args_user_infos
 
     try:
         result = await meme(images=images, texts=texts, args=args)
