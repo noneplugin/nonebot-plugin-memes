@@ -240,6 +240,7 @@ async def process(
     texts: List[str],
     user_infos: List[UserInfo],
     args: Dict[str, Any] = {},
+    show_info: bool = False,
 ):
     images: List[bytes] = []
 
@@ -273,7 +274,11 @@ async def process(
         logger.warning(traceback.format_exc())
         await matcher.finish("出错了，请稍后再试")
 
-    msg = UniMessage.image(raw=result)
+    msg = UniMessage()
+    if show_info:
+        keywords = "、".join([f'"{keyword}"' for keyword in meme.keywords])
+        msg += f"关键词：{keywords}"
+    msg += UniMessage.image(raw=result)
     await msg.send()
 
 
@@ -379,7 +384,14 @@ def create_matchers():
                 )
             ]
         )
-        await process(matcher, random_meme, image_sources, texts, user_infos)
+        await process(
+            matcher,
+            random_meme,
+            image_sources,
+            texts,
+            user_infos,
+            show_info=memes_config.memes_random_meme_show_info,
+        )
 
     random_matcher = on_message(command_rule(["随机表情"]), block=False, priority=12)
     fake_meme = Meme("_fake", _, MemeParamsType())

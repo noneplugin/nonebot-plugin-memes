@@ -140,6 +140,12 @@ DRIVER=~fastapi+~httpx+~websockets
 - 默认：`False`
 - 说明：在表情需要至少1段文字且没有输入文字时，是否使用默认文字（谨慎使用，容易误触发）
 
+#### `memes_random_meme_show_info`
+
+- 类型：`bool`
+- 默认：`False`
+- 说明：使用“随机表情”时是否同时发出表情关键词
+
 ### 使用
 
 **以下命令需要加 [NoneBot 命令前缀](https://nonebot.dev/docs/appendices/config#command-start-和-command-separator) (默认为`/`)，可自行添加空字符**
