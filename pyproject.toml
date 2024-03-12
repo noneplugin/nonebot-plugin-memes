@@ -11,7 +11,7 @@ repository = "https://github.com/noneplugin/nonebot-plugin-memes"
 [tool.poetry.dependencies]
 python = "^3.8"
 nonebot2 = "^2.2.0"
-nonebot-plugin-alconna = ">=0.38.0,<1.0.0"
+nonebot-plugin-alconna = ">=0.40.1,<1.0.0"
 nonebot-plugin-session = "^0.3.0"
 nonebot-plugin-userinfo = "^0.2.1"
 nonebot-plugin-localstore = "^0.6.0"
