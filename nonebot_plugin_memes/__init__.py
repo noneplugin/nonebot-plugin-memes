@@ -348,29 +348,38 @@ def handler(meme: Meme) -> T_Handler:
 
 def create_matchers():
     for meme in meme_manager.memes:
+        # 初始化一个空列表，用于存储当前meme相关的所有匹配器。
         matchers: List[Type[Matcher]] = []
+
+        # 如果当前meme定义了关键字，则创建一个基于命令的匹配器，非阻塞模式，优先级为12。
         if meme.keywords:
             matchers.append(
                 on_message(command_rule(meme.keywords), block=False, priority=12)
             )
+
+        # 如果当前meme定义了模式（正则表达式），则创建一个基于正则表达式的匹配器，非阻塞模式，优先级为13。
         if meme.patterns:
             matchers.append(
                 on_message(regex_rule(meme.patterns), block=False, priority=13)
             )
 
+        # 为每个创建的匹配器添加处理函数和参数。这里的处理函数和参数需要根据实际情况定义。
         for matcher in matchers:
             matcher.append_handler(handler(meme), parameterless=[split_msg(meme)])
 
+    # 定义一个异步处理函数，用于随机选择并处理meme。
     async def random_handler(state: T_State, matcher: Matcher):
+        # 从状态信息中提取文本列表、用户信息列表和图像源列表。
         texts: List[str] = state[TEXTS_KEY]
         user_infos: List[UserInfo] = state[USER_INFOS_KEY]
         image_sources: List[ImageSource] = state[IMAGE_SOURCES_KEY]
 
+        # 从符合条件的memes中随机选择一个meme进行处理。
         random_meme = random.choice(
             [
                 meme
                 for meme in meme_manager.memes
-                if (
+                if (    # 检查图像和文本的数量是否符合meme的参数要求。
                     (
                         meme.params_type.min_images
                         <= len(image_sources)
@@ -384,6 +393,8 @@ def create_matchers():
                 )
             ]
         )
+
+        # 调用process函数处理和响应选中的meme。
         await process(
             matcher,
             random_meme,
@@ -393,8 +404,11 @@ def create_matchers():
             show_info=memes_config.memes_random_meme_show_info,
         )
 
+    # 创建一个特殊的匹配器，用于响应“随机表情”命令，非阻塞模式，优先级为12。
     random_matcher = on_message(command_rule(["随机表情"]), block=False, priority=12)
+    # 创建一个假的meme对象作为处理随机表情命令的占位符。
     fake_meme = Meme("_fake", _, MemeParamsType())
+    # 为“随机表情”命令的匹配器添加处理函数，处理逻辑使用random_handler。
     random_matcher.append_handler(random_handler, parameterless=[split_msg(fake_meme)])
 
 
