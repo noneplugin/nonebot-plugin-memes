@@ -320,7 +320,6 @@ def handler(meme: Meme) -> T_Handler:
         # 如果图片数量超出最大数量，则从列表最后剔除
         if meme.params_type.max_images <= len(image_sources):
             image_sources = image_sources[:meme.params_type.max_images]
-            warn: str = f"图片数量超过最大范围{meme.params_type.max_images}，已剔除多余部分"
         if not (
             meme.params_type.min_images
             <= len(image_sources)
