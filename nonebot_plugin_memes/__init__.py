@@ -382,7 +382,8 @@ def create_matchers():
             [
                 meme
                 for meme in meme_manager.memes
-                if (    # 检查图像和文本的数量是否符合meme的参数要求。
+                if
+                (  # 检查图像和文本的数量是否符合meme的参数要求。
                     (
                         meme.params_type.min_images
                         <= len(image_sources)
