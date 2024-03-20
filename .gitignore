@@ -5,3 +5,6 @@ dist/
 node_modules/
 bot.py
 .env
+
+# 忽略虚拟环境
+.venv/
