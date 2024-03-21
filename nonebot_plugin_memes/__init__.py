@@ -317,9 +317,15 @@ def handler(meme: Meme) -> T_Handler:
         else:
             texts = raw_texts
 
-        # 如果图片数量超出最大数量，则从列表最后剔除
-        if meme.params_type.max_images <= len(image_sources):
+        # 如果图片数量超出最大数量 且 开启了 memes_prompt_params_error，则从列表最后剔除并发出警告
+        if meme.params_type.max_images <= len(image_sources) and memes_config.memes_prompt_params_error:
+            warn = UniMessage()
+            warn += f"参数解析错误，已自动剔除{
+                    len(image_sources) - meme.params_type.max_images
+                    }张图片"
+            await warn.send()
             image_sources = image_sources[: meme.params_type.max_images]
+
         if not (
             meme.params_type.min_images
             <= len(image_sources)
