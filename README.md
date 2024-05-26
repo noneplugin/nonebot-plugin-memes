@@ -64,13 +64,13 @@ DRIVER=~fastapi+~httpx+~websockets
 
 插件默认在启动时会检查 [meme-generator](https://github.com/MeetWq/meme-generator) 所需的图片资源
 
-需按照 [meme-generator 字体安装](https://github.com/MeetWq/meme-generator/blob/main/docs/install.md#字体安装) 自行安装字体
+需按照 [meme-generator 字体安装](https://github.com/MeetWq/meme-generator/wiki/本地安装#字体安装) 自行安装字体
 
 ##### 字体显示不正常解决流程
 
 - 检查字体是否安装完整
 
-至少需要安装一种中文字体和 Emoji 字体，部分表情需要安装额外的字体，详情请参考 [meme-generator 字体安装](https://github.com/MeetWq/meme-generator/blob/main/docs/install.md#字体安装)
+至少需要安装一种中文字体和 Emoji 字体，部分表情需要安装额外的字体，详情请参考 [meme-generator 字体安装](https://github.com/MeetWq/meme-generator/wiki/本地安装#字体安装)
 
 - 删除 Matplotlib 字体缓存
 
@@ -114,7 +114,7 @@ DRIVER=~fastapi+~httpx+~websockets
 
 - 类型：`List[str]`
 - 默认：`[]`
-- 说明：禁用的表情包列表，需填写表情的`key`，可在 [meme-generator 表情列表](https://github.com/MeetWq/meme-generator/blob/main/docs/memes.md) 中查看。若只是临时关闭，可以用下文中的“表情包开关”
+- 说明：禁用的表情包列表，需填写表情的`key`，可在 [meme-generator 表情列表](https://github.com/MeetWq/meme-generator/wiki/表情列表) 中查看。若只是临时关闭，可以用下文中的“表情包开关”
 
 #### `memes_check_resources_on_startup`
 
