@@ -27,6 +27,7 @@ nonebot-adapter-onebot = "^2.4.0"
 [tool.pyright]
 pythonVersion = "3.8"
 pythonPlatform = "All"
+defineConstant = { PYDANTIC_V2 = true }
 typeCheckingMode = "basic"
 
 [tool.ruff]

@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional
 import yaml
 from meme_generator.manager import get_memes
 from meme_generator.meme import Meme
-from nonebot.compat import model_dump, type_validate_python
+from nonebot.compat import PYDANTIC_V2, model_dump, type_validate_python
 from nonebot.log import logger
 from nonebot_plugin_localstore import get_config_file
 from pydantic import BaseModel
@@ -26,8 +26,16 @@ class MemeConfig(BaseModel):
     white_list: List[str] = []
     black_list: List[str] = []
 
-    class Config:
-        use_enum_values = True
+    if PYDANTIC_V2:
+        from pydantic import field_serializer
+
+        @field_serializer("mode")
+        def get_eunm_value(self, v: MemeMode, info) -> int:
+            return v.value
+    else:
+
+        class Config:
+            use_enum_values = True
 
 
 class ActionResult(IntEnum):
