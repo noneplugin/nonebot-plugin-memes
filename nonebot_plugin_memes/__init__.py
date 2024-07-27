@@ -3,7 +3,7 @@ import random
 import traceback
 from io import BytesIO
 from itertools import chain
-from typing import Any, Dict, List, NoReturn, Type
+from typing import Annotated, Any, NoReturn
 
 from meme_generator.exception import (
     ArgMismatch,
@@ -25,7 +25,6 @@ from nonebot.plugin import PluginMetadata, inherit_supported_adapters
 from nonebot.typing import T_Handler, T_State
 from nonebot.utils import run_sync
 from pypinyin import Style, pinyin
-from typing_extensions import Annotated
 
 require("nonebot_plugin_alconna")
 require("nonebot_plugin_session")
@@ -236,13 +235,13 @@ async def _(matcher: Matcher, arg: Message = CommandArg()):
 async def process(
     matcher: Matcher,
     meme: Meme,
-    image_sources: List[ImageSource],
-    texts: List[str],
-    user_infos: List[UserInfo],
-    args: Dict[str, Any] = {},
+    image_sources: list[ImageSource],
+    texts: list[str],
+    user_infos: list[UserInfo],
+    args: dict[str, Any] = {},
     show_info: bool = False,
 ):
-    images: List[bytes] = []
+    images: list[bytes] = []
 
     try:
         for image_source in image_sources:
@@ -291,12 +290,12 @@ def handler(meme: Meme) -> T_Handler:
         if not meme_manager.check(user_id, meme.key):
             return
 
-        raw_texts: List[str] = state[TEXTS_KEY]
-        user_infos: List[UserInfo] = state[USER_INFOS_KEY]
-        image_sources: List[ImageSource] = state[IMAGE_SOURCES_KEY]
+        raw_texts: list[str] = state[TEXTS_KEY]
+        user_infos: list[UserInfo] = state[USER_INFOS_KEY]
+        image_sources: list[ImageSource] = state[IMAGE_SOURCES_KEY]
 
-        texts: List[str] = []
-        args: Dict[str, Any] = {}
+        texts: list[str] = []
+        args: dict[str, Any] = {}
 
         async def finish(msg: str) -> NoReturn:
             logger.info(msg)
@@ -348,7 +347,7 @@ def handler(meme: Meme) -> T_Handler:
 
 def create_matchers():
     for meme in meme_manager.memes:
-        matchers: List[Type[Matcher]] = []
+        matchers: list[type[Matcher]] = []
         if meme.keywords:
             matchers.append(
                 on_message(command_rule(meme.keywords), block=False, priority=12)
@@ -362,9 +361,9 @@ def create_matchers():
             matcher.append_handler(handler(meme), parameterless=[split_msg(meme)])
 
     async def random_handler(state: T_State, matcher: Matcher):
-        texts: List[str] = state[TEXTS_KEY]
-        user_infos: List[UserInfo] = state[USER_INFOS_KEY]
-        image_sources: List[ImageSource] = state[IMAGE_SOURCES_KEY]
+        texts: list[str] = state[TEXTS_KEY]
+        user_infos: list[UserInfo] = state[USER_INFOS_KEY]
+        image_sources: list[ImageSource] = state[IMAGE_SOURCES_KEY]
 
         random_meme = random.choice(
             [

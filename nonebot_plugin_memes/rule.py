@@ -1,5 +1,5 @@
 import re
-from typing import List, Optional, Tuple
+from typing import Optional
 
 from nonebot import get_driver
 from nonebot.adapters import Event, Message, MessageSegment
@@ -15,14 +15,14 @@ command_start = memes_config.memes_command_start or list(
 )
 
 
-def command_rule(commands: List[str]) -> Rule:
+def command_rule(commands: list[str]) -> Rule:
     for command in commands:
         for start in command_start:
             TrieRule.add_prefix(f"{start}{command}", TRIE_VALUE(start, (command,)))
 
     def checker(
         state: T_State,
-        cmd: Optional[Tuple[str, ...]] = Command(),
+        cmd: Optional[tuple[str, ...]] = Command(),
         raw_cmd: str = RawCommand(),
         message: Message = EventMessage(),
     ) -> bool:
@@ -54,7 +54,7 @@ def command_rule(commands: List[str]) -> Rule:
     return Rule(checker)
 
 
-def regex_rule(patterns: List[str]) -> Rule:
+def regex_rule(patterns: list[str]) -> Rule:
     start = "|".join([re.escape(s) for s in command_start])
     pattern = "|".join([rf"(?:{p})" for p in patterns])
 

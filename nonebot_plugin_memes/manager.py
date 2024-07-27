@@ -1,7 +1,7 @@
 import re
 from enum import IntEnum
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 import yaml
 from meme_generator.manager import get_memes
@@ -23,8 +23,8 @@ class MemeMode(IntEnum):
 
 class MemeConfig(BaseModel):
     mode: MemeMode = MemeMode.BLACK
-    white_list: List[str] = []
-    black_list: List[str] = []
+    white_list: list[str] = []
+    black_list: list[str] = []
 
     if PYDANTIC_V2:
         from pydantic import field_serializer
@@ -47,7 +47,7 @@ class ActionResult(IntEnum):
 class MemeManager:
     def __init__(self, path: Path = config_path):
         self.__path = path
-        self.__meme_list: Dict[str, MemeConfig] = {}
+        self.__meme_list: dict[str, MemeConfig] = {}
         self.memes = list(
             filter(
                 lambda meme: meme.key not in memes_config.memes_disabled_list,
@@ -58,8 +58,8 @@ class MemeManager:
         self.__dump()
 
     def block(
-        self, user_id: str, meme_names: List[str] = []
-    ) -> Dict[str, ActionResult]:
+        self, user_id: str, meme_names: list[str] = []
+    ) -> dict[str, ActionResult]:
         results = {}
         for name in meme_names:
             meme = self.find(name)
@@ -76,8 +76,8 @@ class MemeManager:
         return results
 
     def unblock(
-        self, user_id: str, meme_names: List[str] = []
-    ) -> Dict[str, ActionResult]:
+        self, user_id: str, meme_names: list[str] = []
+    ) -> dict[str, ActionResult]:
         results = {}
         for name in meme_names:
             meme = self.find(name)
@@ -94,8 +94,8 @@ class MemeManager:
         return results
 
     def change_mode(
-        self, mode: MemeMode, meme_names: List[str] = []
-    ) -> Dict[str, ActionResult]:
+        self, mode: MemeMode, meme_names: list[str] = []
+    ) -> dict[str, ActionResult]:
         results = {}
         for name in meme_names:
             meme = self.find(name)
@@ -134,7 +134,7 @@ class MemeManager:
         return False
 
     def __load(self):
-        raw_list: Dict[str, Any] = {}
+        raw_list: dict[str, Any] = {}
         if self.__path.exists():
             with self.__path.open("r", encoding="utf-8") as f:
                 try:

@@ -1,6 +1,5 @@
 import asyncio
 import shlex
-from typing import List
 
 import httpx
 from meme_generator.meme import Meme
@@ -26,7 +25,7 @@ async def download_url(url: str) -> bytes:
     raise NetworkError(f"{url} 下载失败！")
 
 
-def split_text(text: str) -> List[str]:
+def split_text(text: str) -> list[str]:
     try:
         return shlex.split(text)
     except Exception:

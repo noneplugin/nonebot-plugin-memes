@@ -1,5 +1,3 @@
-from typing import List
-
 from meme_generator.meme import Meme
 from nonebot.adapters import Bot, Event, Message
 from nonebot.params import Depends
@@ -35,9 +33,9 @@ class AlcImage(ImageSource):
 
 def split_msg(meme: Meme):
     async def dependency(bot: Bot, event: Event, state: T_State):
-        texts: List[str] = []
-        user_infos: List[UserInfo] = []
-        image_sources: List[ImageSource] = []
+        texts: list[str] = []
+        user_infos: list[UserInfo] = []
+        image_sources: list[ImageSource] = []
 
         msg: Message = state[MSG_KEY]
         uni_msg = UniMessage()
