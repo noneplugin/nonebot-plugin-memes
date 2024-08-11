@@ -16,10 +16,10 @@ nonebot-plugin-session = "^0.3.0"
 nonebot-plugin-userinfo = "^0.2.1"
 nonebot-plugin-localstore = "^0.6.0"
 httpx = ">=0.20.0,<1.0.0"
+meme-generator = "^0.1.0"
 pypinyin = ">=0.44.0,<1.0.0"
 pyyaml = "^6.0"
-pil-utils = "^0.1.8"
-meme-generator = ">=0.0.15,<0.1.0"
+rapidfuzz = "^3.9.0"
 
 [tool.poetry.group.dev.dependencies]
 nonebot-adapter-onebot = "^2.4.0"

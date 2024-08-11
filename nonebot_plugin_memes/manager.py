@@ -1,4 +1,3 @@
-import re
 from enum import IntEnum
 from pathlib import Path
 from typing import Any, Optional
@@ -10,6 +9,7 @@ from nonebot.compat import PYDANTIC_V2, model_dump, type_validate_python
 from nonebot.log import logger
 from nonebot_plugin_localstore import get_config_file
 from pydantic import BaseModel
+from rapidfuzz import process
 
 from .config import memes_config
 
@@ -38,91 +38,86 @@ class MemeConfig(BaseModel):
             use_enum_values = True
 
 
-class ActionResult(IntEnum):
-    SUCCESS = 0
-    FAILED = 1
-    NOTFOUND = 2
-
-
 class MemeManager:
     def __init__(self, path: Path = config_path):
         self.__path = path
-        self.__meme_list: dict[str, MemeConfig] = {}
-        self.memes = list(
-            filter(
+        self.__meme_config: dict[str, MemeConfig] = {}
+        self.__meme_dict = {
+            meme.key: meme
+            for meme in filter(
                 lambda meme: meme.key not in memes_config.memes_disabled_list,
                 sorted(get_memes(), key=lambda meme: meme.key),
             )
-        )
+        }
+        self.__meme_names: dict[str, list[Meme]] = {}
+        self.__meme_tags: dict[str, list[Meme]] = {}
         self.__load()
         self.__dump()
+        self.__refresh_names()
+        self.__refresh_tags()
 
-    def block(
-        self, user_id: str, meme_names: list[str] = []
-    ) -> dict[str, ActionResult]:
-        results = {}
-        for name in meme_names:
-            meme = self.find(name)
-            if not meme:
-                results[name] = ActionResult.NOTFOUND
-                continue
-            config = self.__meme_list[meme.key]
-            if user_id not in config.black_list:
-                config.black_list.append(user_id)
-            if user_id in config.white_list:
-                config.white_list.remove(user_id)
-            results[name] = ActionResult.SUCCESS
+    def get_memes(self) -> list[Meme]:
+        return list(self.__meme_dict.values())
+
+    def block(self, user_id: str, meme_key: str):
+        config = self.__meme_config[meme_key]
+        if config.mode == MemeMode.BLACK and user_id not in config.black_list:
+            config.black_list.append(user_id)
+        if config.mode == MemeMode.WHITE and user_id in config.white_list:
+            config.white_list.remove(user_id)
         self.__dump()
-        return results
 
-    def unblock(
-        self, user_id: str, meme_names: list[str] = []
-    ) -> dict[str, ActionResult]:
-        results = {}
-        for name in meme_names:
-            meme = self.find(name)
-            if not meme:
-                results[name] = ActionResult.NOTFOUND
-                continue
-            config = self.__meme_list[meme.key]
-            if user_id not in config.white_list:
-                config.white_list.append(user_id)
-            if user_id in config.black_list:
-                config.black_list.remove(user_id)
-            results[name] = ActionResult.SUCCESS
+    def unblock(self, user_id: str, meme_key: str):
+        config = self.__meme_config[meme_key]
+        if config.mode == MemeMode.WHITE and user_id not in config.white_list:
+            config.white_list.append(user_id)
+        if config.mode == MemeMode.BLACK and user_id in config.black_list:
+            config.black_list.remove(user_id)
         self.__dump()
-        return results
 
-    def change_mode(
-        self, mode: MemeMode, meme_names: list[str] = []
-    ) -> dict[str, ActionResult]:
-        results = {}
-        for name in meme_names:
-            meme = self.find(name)
-            if not meme:
-                results[name] = ActionResult.NOTFOUND
-                continue
-            config = self.__meme_list[meme.key]
-            config.mode = mode
-            results[name] = ActionResult.SUCCESS
+    def change_mode(self, mode: MemeMode, meme_key: str):
+        config = self.__meme_config[meme_key]
+        config.mode = mode
         self.__dump()
-        return results
 
-    def find(self, meme_name: str) -> Optional[Meme]:
-        for meme in self.memes:
-            if meme_name.lower() == meme.key.lower():
-                return meme
-            for keyword in sorted(meme.keywords, reverse=True):
-                if meme_name.lower() == keyword.lower():
-                    return meme
-            for pattern in meme.patterns:
-                if re.fullmatch(pattern, meme_name, re.IGNORECASE):
-                    return meme
+    def find(self, meme_name: str) -> list[Meme]:
+        meme_name = meme_name.lower()
+        if meme_name in self.__meme_names:
+            return self.__meme_names[meme_name]
+        return []
+
+    def search(
+        self,
+        meme_name: str,
+        include_tags: bool = False,
+        limit: Optional[int] = None,
+        score_cutoff: float = 80.0,
+    ) -> list[Meme]:
+        meme_name = meme_name.lower()
+        meme_names = process.extract(
+            meme_name, self.__meme_names.keys(), limit=limit, score_cutoff=score_cutoff
+        )
+        logger.debug(meme_names)
+        result: dict[str, Meme] = {}
+        for name, _, _ in meme_names:
+            for meme in self.__meme_names[name]:
+                result[meme.key] = meme
+        if include_tags:
+            meme_tags = process.extract(
+                meme_name,
+                self.__meme_tags.keys(),
+                limit=limit,
+                score_cutoff=score_cutoff,
+            )
+            for tag, _, _ in meme_tags:
+                for meme in self.__meme_tags[tag]:
+                    result[meme.key] = meme
+        return list(result.values())
 
     def check(self, user_id: str, meme_key: str) -> bool:
-        if meme_key not in self.__meme_list:
+        if meme_key not in self.__meme_config:
             return False
-        config = self.__meme_list[meme_key]
+        config = self.__meme_config[meme_key]
         if config.mode == MemeMode.BLACK:
             if user_id in config.black_list:
                 return False
@@ -149,16 +144,47 @@ class MemeManager:
         except Exception:
             meme_list = {}
             logger.warning("表情列表解析失败，将重新生成")
-        self.__meme_list = {meme.key: MemeConfig() for meme in self.memes}
-        self.__meme_list.update(meme_list)
+        self.__meme_config = {
+            meme_key: MemeConfig() for meme_key in self.__meme_dict.keys()
+        }
+        self.__meme_config.update(meme_list)
 
     def __dump(self):
         self.__path.parent.mkdir(parents=True, exist_ok=True)
         meme_list = {
-            name: model_dump(config) for name, config in self.__meme_list.items()
+            name: model_dump(config) for name, config in self.__meme_config.items()
         }
         with self.__path.open("w", encoding="utf-8") as f:
             yaml.dump(meme_list, f, allow_unicode=True)
+
+    def __refresh_names(self):
+        self.__meme_names = {}
+
+        def add(key: str, meme: Meme):
+            key = key.lower()
+            if key not in self.__meme_names:
+                self.__meme_names[key] = []
+            self.__meme_names[key].append(meme)
+
+        for meme in self.__meme_dict.values():
+            add(meme.key, meme)
+            for keyword in meme.keywords:
+                add(keyword, meme)
+            for shortcut in meme.shortcuts:
+                add(shortcut.humanized or shortcut.key, meme)
+
+    def __refresh_tags(self):
+        self.__meme_tags = {}
+
+        def add(tag: str, meme: Meme):
+            tag = tag.lower()
+            if tag not in self.__meme_tags:
+                self.__meme_tags[tag] = []
+            self.__meme_tags[tag].append(meme)
+
+        for meme in self.__meme_dict.values():
+            for tag in meme.tags:
+                add(tag, meme)
 
 
 meme_manager = MemeManager()
