@@ -53,7 +53,7 @@ async def _(user_id: UserId, session: EventSession):
     label_hot_frequency = list_image_config.label_hot_frequency
 
     meme_generation_keys = await get_meme_generation_keys(
-        session, SessionIdType.GROUP, timedelta(days=1)
+        session, SessionIdType.GLOBAL, timedelta(days=1)
     )
 
     meme_list: list[tuple[Meme, MemeProperties]] = []
