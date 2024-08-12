@@ -1,5 +1,5 @@
 import hashlib
-from datetime import datetime
+from datetime import datetime, timedelta
 from io import BytesIO
 from itertools import chain
 
@@ -8,10 +8,12 @@ from meme_generator.utils import MemeProperties, render_meme_list
 from nonebot.utils import run_sync
 from nonebot_plugin_alconna import Image, Text, on_alconna
 from nonebot_plugin_localstore import get_cache_dir
+from nonebot_plugin_session import EventSession, SessionIdType
 from pypinyin import Style, pinyin
 
 from ..config import memes_config
 from ..manager import meme_manager
+from ..recorder import get_meme_generation_keys
 from .utils import UserId
 
 memes_cache_dir = get_cache_dir("nonebot_plugin_memes")
@@ -26,7 +28,7 @@ help_matcher = on_alconna(
 
 
 @help_matcher.handle()
-async def _(user_id: UserId):
+async def _(user_id: UserId, session: EventSession):
     memes = meme_manager.get_memes()
     list_image_config = memes_config.memes_list_image_config
 
@@ -48,15 +50,19 @@ async def _(user_id: UserId):
         memes = sorted(memes, key=lambda meme: meme.date_modified, reverse=sort_reverse)
 
     label_new_timedelta = list_image_config.label_new_timedelta
-    # label_hot_frequency = list_image_config.label_hot_frequency
+    label_hot_frequency = list_image_config.label_hot_frequency
+
+    meme_generation_keys = await get_meme_generation_keys(
+        session, SessionIdType.GROUP, timedelta(days=1)
+    )
 
     meme_list: list[tuple[Meme, MemeProperties]] = []
     for meme in memes:
         labels = []
         if datetime.now() - meme.date_created < label_new_timedelta:
             labels.append("new")
-        # if await get_meme_frequency(meme.key) >= label_hot_frequency:
-        #     labels.append("hot")
+        if meme_generation_keys.count(meme.key) >= label_hot_frequency:
+            labels.append("hot")
         disabled = not meme_manager.check(user_id, meme.key)
         meme_list.append((meme, MemeProperties(disabled=disabled, labels=labels)))
 

@@ -30,10 +30,12 @@ from nonebot_plugin_alconna import (
 )
 from nonebot_plugin_alconna.builtins.extensions.reply import ReplyMergeExtension
 from nonebot_plugin_alconna.uniseg.tools import image_fetch
+from nonebot_plugin_session import EventSession, Session
 from nonebot_plugin_userinfo import ImageSource, UserInfo, get_user_info
 
 from ..config import memes_config
 from ..manager import meme_manager
+from ..recorder import record_meme_generation
 from ..utils import NetworkError
 from .utils import UserId
 
@@ -42,6 +44,7 @@ alc_config.command_max_count += 1000
 
 async def process(
     matcher: Matcher,
+    session: Session,
     meme: Meme,
     image_sources: list[ImageSource],
     texts: list[str],
@@ -71,6 +74,7 @@ async def process(
 
     try:
         result = await run_sync(meme)(images=images, texts=texts, args=args)
+        await record_meme_generation(session, meme.key)
     except TextOverLength:
         await matcher.finish("文字长度过长")
     except ArgMismatch:
@@ -185,6 +189,7 @@ def create_matcher(meme: Meme):
         state: T_State,
         matcher: Matcher,
         user_id: UserId,
+        session: EventSession,
         alc_matches: AlcMatches,
     ):
         if not meme_manager.check(user_id, meme.key):
@@ -257,7 +262,7 @@ def create_matcher(meme: Meme):
             )
 
         matcher.stop_propagation()
-        await process(matcher, meme, image_sources, texts, user_infos, args)
+        await process(matcher, session, meme, image_sources, texts, user_infos, args)
 
 
 def create_matchers():
@@ -284,6 +289,7 @@ async def _(
     state: T_State,
     matcher: Matcher,
     user_id: UserId,
+    session: EventSession,
     alc_matches: AlcMatches,
 ):
     meme_params: list[T_MemeParams] = list(alc_matches.query(meme_params_key, ()))
@@ -310,6 +316,7 @@ async def _(
     random_meme = random.choice(available_memes)
     await process(
         matcher,
+        session,
         random_meme,
         image_sources,
         texts,
