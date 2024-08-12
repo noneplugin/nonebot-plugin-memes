@@ -154,6 +154,10 @@ DRIVER=~fastapi+~httpx+~websockets
     - 类型：`timedelta`
     - 默认：`timedelta(days=30)`
     - 说明：表情添加时间在该时间间隔以内时，添加 `new` 图标
+  - `label_hot_frequency`
+    - 类型：`int`
+    - 默认：`24`
+    - 说明：单位：次/天；表情调用频率超过该频率时，添加 `hot` 图标
 - `memes_list_image_config` 在 `.env` 文件中的设置示例如下：
 
 ```
@@ -163,7 +167,8 @@ memes_list_image_config='
   "sort_reverse": false,
   "text_template": "{keywords}",
   "add_category_icon": true,
-  "label_new_timedelta": "P30D"
+  "label_new_timedelta": "P30D",
+  "label_hot_frequency": 24
 }
 '
 ```
