@@ -21,6 +21,7 @@ help_matcher = on_alconna(
     aliases={"表情列表", "头像表情包", "文字表情包"},
     block=True,
     priority=11,
+    use_cmd_start=True,
 )
 
 

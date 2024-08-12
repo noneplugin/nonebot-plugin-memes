@@ -28,15 +28,16 @@ from nonebot_plugin_alconna import (
     UniMessage,
     on_alconna,
 )
-from nonebot_plugin_alconna.uniseg.tools import image_fetch, reply_fetch
+from nonebot_plugin_alconna.builtins.extensions.reply import ReplyMergeExtension
+from nonebot_plugin_alconna.uniseg.tools import image_fetch
 from nonebot_plugin_userinfo import ImageSource, UserInfo, get_user_info
 
 from ..config import memes_config
 from ..manager import meme_manager
-from ..utils import NetworkError, split_text
+from ..utils import NetworkError
 from .utils import UserId
 
-alc_config.command_max_count = 1000
+alc_config.command_max_count += 1000
 
 
 async def process(
@@ -108,20 +109,19 @@ class AlcImage(ImageSource):
         raise NotImplementedError("image fetch not implemented")
 
 
-async def split_msg(bot: Bot, event: Event, state: T_State, uni_msg: UniMessage):
-    uni_msg_with_reply = UniMessage()
-    if (reply := await reply_fetch(event, bot)) and reply.msg:
-        reply_msg = reply.msg
-        if isinstance(reply_msg, str):
-            reply_msg = event.get_message().__class__(reply_msg)
-        uni_msg_with_reply = UniMessage.generate_sync(message=reply_msg)
-    uni_msg_with_reply.extend(uni_msg)
+T_MemeParams = Union[Text, Image, At]
+meme_params_key = "meme_params"
+arg_meme_params = Args[meme_params_key, MultiVar(T_MemeParams, "*")]
 
+
+async def handle_params(
+    bot: Bot, event: Event, state: T_State, meme_params: list[T_MemeParams]
+):
     texts: list[str] = []
     image_sources: list[ImageSource] = []
     user_infos: list[UserInfo] = []
 
-    for msg_seg in uni_msg_with_reply:
+    for msg_seg in meme_params:
         if isinstance(msg_seg, At):
             if user_info := await get_user_info(bot, event, msg_seg.target):
                 if image_source := user_info.user_avatar:
@@ -134,31 +134,23 @@ async def split_msg(bot: Bot, event: Event, state: T_State, uni_msg: UniMessage)
             )
 
         elif isinstance(msg_seg, Text):
-            raw_text = msg_seg.text
-            for text in split_text(raw_text):
-                if text.startswith("@") and (user_id := text[1:]):
-                    if user_info := await get_user_info(bot, event, user_id):
-                        if image_source := user_info.user_avatar:
-                            image_sources.append(image_source)
-                        user_infos.append(user_info)
+            text = msg_seg.text
+            if text.startswith("@") and (user_id := text[1:]):
+                if user_info := await get_user_info(bot, event, user_id):
+                    if image_source := user_info.user_avatar:
+                        image_sources.append(image_source)
+                    user_infos.append(user_info)
 
-                elif text == "自己":
-                    if user_info := await get_user_info(
-                        bot, event, event.get_user_id()
-                    ):
-                        if image_source := user_info.user_avatar:
-                            image_sources.append(image_source)
-                        user_infos.append(user_info)
+            elif text == "自己":
+                if user_info := await get_user_info(bot, event, event.get_user_id()):
+                    if image_source := user_info.user_avatar:
+                        image_sources.append(image_source)
+                    user_infos.append(user_info)
 
-                elif text:
-                    texts.append(text)
+            elif text:
+                texts.append(text)
 
     return texts, image_sources, user_infos
-
-
-T_MemeParams = Union[Text, Image, At]
-meme_params_key = "meme_params"
-arg_meme_params = Args[meme_params_key, MultiVar(T_MemeParams, "*")]
 
 
 def create_matcher(meme: Meme):
@@ -176,6 +168,7 @@ def create_matcher(meme: Meme):
         block=False,
         priority=12,
         use_cmd_start=True,
+        extensions=[ReplyMergeExtension()],
     )
     for shortcut in meme.shortcuts:
         meme_matcher.shortcut(
@@ -195,7 +188,7 @@ def create_matcher(meme: Meme):
         alc_matches: AlcMatches,
     ):
         if not meme_manager.check(user_id, meme.key):
-            logger.debug(f"用户 {user_id} 表情 {meme.key} 被禁用")
+            logger.info(f"用户 {user_id} 表情 {meme.key} 被禁用")
             return
 
         args: dict[str, Any] = {}
@@ -206,8 +199,10 @@ def create_matcher(meme: Meme):
             else:
                 args[option] = option_result.value
 
-        uni_msg = UniMessage(alc_matches.query(meme_params_key, ()))
-        texts, image_sources, user_infos = await split_msg(bot, event, state, uni_msg)
+        meme_params: list[T_MemeParams] = list(alc_matches.query(meme_params_key, ()))
+        texts, image_sources, user_infos = await handle_params(
+            bot, event, state, meme_params
+        )
 
         # 当所需图片数为 2 且已指定图片数为 1 时，使用发送者的头像作为第一张图
         if meme.params_type.min_images == 2 and len(image_sources) == 1:
@@ -274,7 +269,11 @@ create_matchers()
 
 
 random_matcher = on_alconna(
-    Alconna("随机表情", arg_meme_params), block=False, priority=12
+    Alconna("随机表情", arg_meme_params),
+    block=False,
+    priority=12,
+    use_cmd_start=True,
+    extensions=[ReplyMergeExtension()],
 )
 
 
@@ -287,8 +286,10 @@ async def _(
     user_id: UserId,
     alc_matches: AlcMatches,
 ):
-    uni_msg = UniMessage(alc_matches.query(meme_params_key, ()))
-    texts, image_sources, user_infos = await split_msg(bot, event, state, uni_msg)
+    meme_params: list[T_MemeParams] = list(alc_matches.query(meme_params_key, ()))
+    texts, image_sources, user_infos = await handle_params(
+        bot, event, state, meme_params
+    )
 
     available_memes = [
         meme
