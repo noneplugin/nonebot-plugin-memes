@@ -154,10 +154,14 @@ DRIVER=~fastapi+~httpx+~websockets
     - 类型：`timedelta`
     - 默认：`timedelta(days=30)`
     - 说明：表情添加时间在该时间间隔以内时，添加 `new` 图标
-  - `label_hot_frequency`
+  - `label_hot_threshold`
     - 类型：`int`
-    - 默认：`24`
-    - 说明：单位：次/天；表情调用频率超过该频率时，添加 `hot` 图标
+    - 默认：`21`
+    - 说明：单位：次；表情在 `label_hot_days` 内的调用次数超过该阈值时，添加 `hot` 图标
+  - `label_hot_days`
+    - 类型：`int`
+    - 默认：`7`
+    - 说明：单位：天；表情调用次数统计周期
 - `memes_list_image_config` 在 `.env` 文件中的设置示例如下：
 
 ```
@@ -168,7 +172,8 @@ memes_list_image_config='
   "text_template": "{keywords}",
   "add_category_icon": true,
   "label_new_timedelta": "P30D",
-  "label_hot_frequency": 24
+  "label_hot_threshold": 21,
+  "label_hot_days": 7
 }
 '
 ```
@@ -234,6 +239,16 @@ memes_list_image_config='
 发送 “随机表情 + 图片/文字” 可随机制作表情
 
 随机范围为 图片/文字 数量符合要求的表情
+
+#### 表情调用统计
+
+发送 “[我的][全局]<时间段>表情调用统计 [表情名]” 获取表情调用次数统计图
+
+“我的”、“全局”、<时间段>、“表情名” 均为可选项
+
+<时间段> 的关键词有：日、本日、周、本周、月、本月、年、本年
+
+如：“我的今日表情调用统计 petpet”
 
 ### 相关插件
 
