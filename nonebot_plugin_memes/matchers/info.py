@@ -1,14 +1,23 @@
 from arclet.alconna import TextFormatter
-from meme_generator import Meme
 from nonebot.matcher import Matcher
 from nonebot.utils import run_sync
-from nonebot_plugin_alconna import Image, Text
+from nonebot_plugin_alconna import Alconna, Args, Image, Text, on_alconna
 
-from .utils import find_meme_and_handle
+from .utils import find_meme
+
+info_matcher = on_alconna(
+    Alconna("表情详情", Args["meme_name", str]),
+    aliases={"表情帮助", "表情示例"},
+    block=True,
+    priority=11,
+    use_cmd_start=True,
+)
 
 
-@find_meme_and_handle("表情详情", aliases={"表情帮助", "表情示例"})
-async def _(matcher: Matcher, user_id: str, meme: Meme):
+@info_matcher.handle()
+async def _(matcher: Matcher, meme_name: str):
+    meme = await find_meme(matcher, meme_name)
+
     keywords = "、".join([f'"{keyword}"' for keyword in meme.keywords])
     shortcuts = "、".join(
         [f'"{shortcut.humanized or shortcut.key}"' for shortcut in meme.shortcuts]
