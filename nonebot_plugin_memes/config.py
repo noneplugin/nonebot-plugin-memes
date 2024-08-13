@@ -13,7 +13,8 @@ class MemeListImageConfig(BaseModel):
     text_template: str = "{keywords}"
     add_category_icon: bool = True
     label_new_timedelta: timedelta = timedelta(days=30)
-    label_hot_frequency: int = 24
+    label_hot_threshold: int = 21
+    label_hot_days: int = 7
 
 
 class Config(BaseModel):

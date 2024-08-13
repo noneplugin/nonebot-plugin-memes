@@ -1,5 +1,5 @@
 import hashlib
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from io import BytesIO
 from itertools import chain
 
@@ -50,10 +50,13 @@ async def _(user_id: UserId, session: EventSession):
         memes = sorted(memes, key=lambda meme: meme.date_modified, reverse=sort_reverse)
 
     label_new_timedelta = list_image_config.label_new_timedelta
-    label_hot_frequency = list_image_config.label_hot_frequency
+    label_hot_threshold = list_image_config.label_hot_threshold
+    label_hot_days = list_image_config.label_hot_days
 
     meme_generation_keys = await get_meme_generation_keys(
-        session, SessionIdType.GLOBAL, timedelta(days=1)
+        session,
+        SessionIdType.GLOBAL,
+        time_start=datetime.now(timezone.utc) - timedelta(days=label_hot_days),
     )
 
     meme_list: list[tuple[Meme, MemeProperties]] = []
@@ -61,7 +64,7 @@ async def _(user_id: UserId, session: EventSession):
         labels = []
         if datetime.now() - meme.date_created < label_new_timedelta:
             labels.append("new")
-        if meme_generation_keys.count(meme.key) >= label_hot_frequency:
+        if meme_generation_keys.count(meme.key) >= label_hot_threshold:
             labels.append("hot")
         disabled = not meme_manager.check(user_id, meme.key)
         meme_list.append((meme, MemeProperties(disabled=disabled, labels=labels)))

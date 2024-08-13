@@ -97,7 +97,6 @@ class MemeManager:
         meme_names = process.extract(
             meme_name, self.__meme_names.keys(), limit=limit, score_cutoff=score_cutoff
         )
-        logger.debug(meme_names)
         result: dict[str, Meme] = {}
         for name, _, _ in meme_names:
             for meme in self.__meme_names[name]:

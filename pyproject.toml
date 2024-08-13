@@ -22,6 +22,8 @@ meme-generator = "^0.1.0"
 pypinyin = ">=0.44.0,<1.0.0"
 pyyaml = "^6.0"
 rapidfuzz = "^3.9.0"
+matplotlib = "^3.7.0"
+python-dateutil = "^2.8.2"
 
 [tool.poetry.group.dev.dependencies]
 nonebot-adapter-onebot = "^2.4.0"

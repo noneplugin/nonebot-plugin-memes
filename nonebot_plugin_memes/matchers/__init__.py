@@ -1,1 +1,1 @@
-from . import info, manage, search, help, command  # noqa
+from . import info, manage, search, help, command, statistics  # noqa
