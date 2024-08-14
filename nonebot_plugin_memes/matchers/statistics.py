@@ -205,6 +205,7 @@ async def _(
     key_counts: dict[str, int] = {}
     for key in meme_keys:
         key_counts[key] = key_counts.get(key, 0) + 1
+    key_counts = dict(sorted(key_counts.items(), key=lambda item: item[1]))
 
     if meme:
         title = (
