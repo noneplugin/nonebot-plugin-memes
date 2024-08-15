@@ -5,6 +5,7 @@ from typing import Any, NoReturn, Union
 from arclet.alconna import config as alc_config
 from meme_generator import Meme
 from meme_generator.exception import MemeGeneratorException
+from nonebot import get_driver
 from nonebot.adapters import Bot, Event
 from nonebot.compat import PYDANTIC_V2, ConfigDict
 from nonebot.exception import AdapterException
@@ -145,6 +146,11 @@ async def handle_params(
     return texts, image_sources, user_infos
 
 
+prefixes = list(get_driver().config.command_start)
+if (meme_prefixes := memes_config.memes_command_prefixes) is not None:
+    prefixes = meme_prefixes
+
+
 def create_matcher(meme: Meme):
     options = [
         opt.option()
@@ -155,11 +161,10 @@ def create_matcher(meme: Meme):
         )
     ]
     meme_matcher = on_alconna(
-        Alconna(meme.keywords[0], *options, arg_meme_params),
+        Alconna(prefixes, meme.keywords[0], *options, arg_meme_params),
         aliases=set(meme.keywords[1:]),
         block=False,
         priority=12,
-        use_cmd_start=True,
         extensions=[ReplyMergeExtension()],
     )
     for shortcut in meme.shortcuts:
