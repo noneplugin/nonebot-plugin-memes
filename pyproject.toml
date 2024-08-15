@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nonebot_plugin_memes"
-version = "0.7.5"
+version = "0.7.6"
 description = "Nonebot2 plugin for making memes"
 authors = ["meetwq <meetwq@gmail.com>"]
 license = "MIT"
@@ -18,7 +18,7 @@ nonebot-plugin-localstore = ">=0.6.0,<1.0.0"
 nonebot-plugin-orm = ">=0.7.0,<1.0.0"
 nonebot-plugin-session-orm = "^0.2.0"
 httpx = ">=0.20.0,<1.0.0"
-meme-generator = "^0.1.0"
+meme-generator = "^0.1.1"
 pypinyin = ">=0.44.0,<1.0.0"
 pyyaml = "^6.0"
 rapidfuzz = "^3.9.0"

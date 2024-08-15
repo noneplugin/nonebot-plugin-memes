@@ -72,13 +72,13 @@ trio = ["trio (>=0.23)"]
 
 [[package]]
 name = "arclet-alconna"
-version = "1.8.25"
+version = "1.8.26"
 description = "A High-performance, Generality, Humane Command Line Arguments Parser Library."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "arclet_alconna-1.8.25-py3-none-any.whl", hash = "sha256:5f269c547ed2071035c3c53c567f449fa4cbaeb956748c024d2887d73d4da332"},
-    {file = "arclet_alconna-1.8.25.tar.gz", hash = "sha256:99f009b2e02e8db6a9cbd6e4c86b6a513311be33307535f518eb5b693a4e2d8d"},
+    {file = "arclet_alconna-1.8.26-py3-none-any.whl", hash = "sha256:9726c31947efb2cf6786c4a7962f6824e3b2831bb5c45991f2660adfe3958818"},
+    {file = "arclet_alconna-1.8.26.tar.gz", hash = "sha256:8acbfc5892aea25772105581cc5e69e765ff4947ac53014ec7feeb5991e0a4e1"},
 ]
 
 [package.dependencies]
@@ -596,21 +596,21 @@ test = ["flufl.flake8", "importlib-resources (>=1.3)", "jaraco.test (>=5.4)", "p
 
 [[package]]
 name = "importlib-resources"
-version = "6.4.0"
+version = "6.4.2"
 description = "Read resources from Python packages"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "importlib_resources-6.4.0-py3-none-any.whl", hash = "sha256:50d10f043df931902d4194ea07ec57960f66a80449ff867bfe782b4c486ba78c"},
-    {file = "importlib_resources-6.4.0.tar.gz", hash = "sha256:cdb2b453b8046ca4e3798eb1d84f3cce1446a0e8e7b5ef4efb600f19fc398145"},
+    {file = "importlib_resources-6.4.2-py3-none-any.whl", hash = "sha256:8bba8c54a8a3afaa1419910845fa26ebd706dc716dd208d9b158b4b6966f5c5c"},
+    {file = "importlib_resources-6.4.2.tar.gz", hash = "sha256:6cbfbefc449cc6e2095dd184691b7a12a04f40bc75dd4c55d31c34f174cdf57a"},
 ]
 
 [package.dependencies]
 zipp = {version = ">=3.1.0", markers = "python_version < \"3.10\""}
 
 [package.extras]
-docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (<7.2.5)", "sphinx (>=3.5)", "sphinx-lint"]
-testing = ["jaraco.test (>=5.4)", "pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-mypy", "pytest-ruff (>=0.2.1)", "zipp (>=3.17)"]
+doc = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-lint"]
+test = ["jaraco.test (>=5.4)", "pytest (>=6,!=8.1.*)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-mypy", "pytest-ruff (>=0.2.1)", "zipp (>=3.17)"]
 
 [[package]]
 name = "kiwisolver"
@@ -932,13 +932,13 @@ files = [
 
 [[package]]
 name = "meme-generator"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python package for making fun pictures"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "meme_generator-0.1.0-py3-none-any.whl", hash = "sha256:d827b5ae8dfd218d2d12a785b6f51ef618f5d2d09ed8a61ca4e143bc976309c9"},
-    {file = "meme_generator-0.1.0.tar.gz", hash = "sha256:a1ac4ffb8b6e655e1e05baa946affdcb8ad2138242005799ff944e7b3403acd5"},
+    {file = "meme_generator-0.1.1-py3-none-any.whl", hash = "sha256:97423aa03fbd8aadd1ed780223dd6e0c74d4d6b27cf95baaaf87a123d2069c70"},
+    {file = "meme_generator-0.1.1.tar.gz", hash = "sha256:0d2a8c61bb082924ba23feb8adaa92ab1f2d5707b49058408e49f73b5f8930ef"},
 ]
 
 [package.dependencies]
@@ -1154,13 +1154,13 @@ typing-extensions = ">=4.0.0,<5.0.0"
 
 [[package]]
 name = "nonebot-plugin-alconna"
-version = "0.51.3"
+version = "0.51.4"
 description = "Alconna Adapter for Nonebot"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "nonebot_plugin_alconna-0.51.3-py3-none-any.whl", hash = "sha256:4451a494d9b1e997a2fbe669fda007e63f5e67af5b468072f0bd2204c8cee3d9"},
-    {file = "nonebot_plugin_alconna-0.51.3.tar.gz", hash = "sha256:e5d274cf005819da0829d07f300c72509284186ffedfd344677c15743dc49fa8"},
+    {file = "nonebot_plugin_alconna-0.51.4-py3-none-any.whl", hash = "sha256:9d31e537eb35e45a3753ad5d95dc0359f777269d6ce7e39fa74d515cad9a0981"},
+    {file = "nonebot_plugin_alconna-0.51.4.tar.gz", hash = "sha256:a43720a497c4fefb0da89e8d9996f8261bb0e92f70a991f2f4fd14c8ed628995"},
 ]
 
 [package.dependencies]
@@ -2680,4 +2680,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "ce49d80198b28c4aaf3974e2cc49a295f080a6ae750140cda6170163726affd9"
+content-hash = "f67bc614faf4103fd67bc46382f55554d3942696a3acf8d12ec921b90f05c5a0"

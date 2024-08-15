@@ -214,6 +214,6 @@ async def _(
         )
         output = await plot_duration_counts(duration_counts, title)
     else:
-        title = f"{humanized}表情调用统计"
+        title = f"{humanized}表情调用统计（总调用次数为 {sum(key_counts.values())}）"
         output = await plot_key_and_duration_counts(key_counts, duration_counts, title)
     await UniMessage.image(raw=output).send()

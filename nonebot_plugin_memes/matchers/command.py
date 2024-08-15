@@ -4,12 +4,7 @@ from typing import Any, NoReturn, Union
 
 from arclet.alconna import config as alc_config
 from meme_generator import Meme
-from meme_generator.exception import (
-    ArgMismatch,
-    MemeGeneratorException,
-    TextOrNameNotEnough,
-    TextOverLength,
-)
+from meme_generator.exception import MemeGeneratorException
 from nonebot.adapters import Bot, Event
 from nonebot.compat import PYDANTIC_V2, ConfigDict
 from nonebot.exception import AdapterException
@@ -75,15 +70,8 @@ async def process(
     try:
         result = await run_sync(meme)(images=images, texts=texts, args=args)
         await record_meme_generation(session, meme.key)
-    except TextOverLength:
-        await matcher.finish("文字长度过长")
-    except ArgMismatch:
-        await matcher.finish("参数解析错误")
-    except TextOrNameNotEnough:
-        await matcher.finish("文字或名字数量不足")
-    except MemeGeneratorException:
-        logger.warning(traceback.format_exc())
-        await matcher.finish("出错了，请稍后再试")
+    except MemeGeneratorException as e:
+        await matcher.finish(e.message)
 
     msg = UniMessage()
     if show_info:
