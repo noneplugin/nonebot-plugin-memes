@@ -94,6 +94,12 @@ DRIVER=~fastapi+~httpx+~websockets
 
 > 以下配置项可在 `.env.*` 文件中设置，具体参考 [NoneBot 配置方式](https://nonebot.dev/docs/appendices/config)
 
+#### `memes_command_prefixes`
+
+- 类型：`List[str] | None`
+- 默认：`None`
+- 说明：命令前缀（仅作用于制作表情的命令）；如果不设置默认使用 [NoneBot 命令前缀](https://nonebot.dev/docs/appendices/config#command-start-和-command-separator)
+
 #### `memes_disabled_list`
 
 - 类型：`List[str]`
