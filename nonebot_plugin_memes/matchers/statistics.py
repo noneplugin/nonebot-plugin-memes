@@ -15,7 +15,8 @@ from nonebot_plugin_alconna import (
 )
 from nonebot_plugin_session import EventSession, SessionIdType
 
-from ..plot import plot_duration_counts, plot_key_and_duration_counts
+from ..manager import meme_manager
+from ..plot import plot_duration_counts, plot_meme_and_duration_counts
 from ..recorder import get_meme_generation_records, get_meme_generation_times
 from ..utils import add_timezone
 from .utils import find_meme
@@ -171,6 +172,9 @@ async def _(
         meme_records = await get_meme_generation_records(
             session, id_type, time_start=start
         )
+        meme_records = [
+            record for record in meme_records if meme_manager.get_meme(record.meme_key)
+        ]
         meme_times = [record.time for record in meme_records]
         meme_keys = [record.meme_key for record in meme_records]
 
@@ -209,11 +213,17 @@ async def _(
 
     if meme:
         title = (
-            f"表情“{meme.key}”{humanized}调用统计"
+            f"表情“{'/'.join(meme.keywords)}”{humanized}调用统计"
             f"（总调用次数为 {key_counts.get(meme.key, 0)}）"
         )
         output = await plot_duration_counts(duration_counts, title)
     else:
         title = f"{humanized}表情调用统计（总调用次数为 {sum(key_counts.values())}）"
-        output = await plot_key_and_duration_counts(key_counts, duration_counts, title)
+        meme_counts: dict[str, int] = {}
+        for key, count in key_counts.items():
+            if meme := meme_manager.get_meme(key):
+                meme_counts["/".join(meme.keywords)] = count
+        output = await plot_meme_and_duration_counts(
+            meme_counts, duration_counts, title
+        )
     await UniMessage.image(raw=output).send()

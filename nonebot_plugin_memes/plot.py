@@ -26,11 +26,11 @@ matplotlib.rcParams["font.family"] = fallback_fonts
 
 
 @run_sync
-def plot_key_and_duration_counts(
-    key_counts: dict[str, int], duration_counts: dict[str, int], title: str
+def plot_meme_and_duration_counts(
+    meme_counts: dict[str, int], duration_counts: dict[str, int], title: str
 ) -> BytesIO:
-    up_x = list(key_counts.keys())
-    up_y = list(key_counts.values())
+    up_x = list(meme_counts.keys())
+    up_y = list(meme_counts.values())
     low_x = list(duration_counts.keys())
     low_y = list(duration_counts.values())
     up_height = len(up_x) * 0.3
