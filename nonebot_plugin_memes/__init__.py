@@ -9,7 +9,10 @@ require("nonebot_plugin_localstore")
 require("nonebot_plugin_session_orm")
 
 from . import matchers, migrations  # noqa
-from .config import Config
+from .config import Config, memes_config
+
+memes_prefixes = memes_config.memes_command_prefixes
+memes_prefix = memes_prefixes[0] if memes_prefixes else ""
 
 __plugin_meta__ = PluginMetadata(
     name="表情包制作",
@@ -28,7 +31,7 @@ __plugin_meta__ = PluginMetadata(
         "发送 全局启用表情 表情名/关键词 可将表情设为黑名单模式；\n"
         "发送 全局禁用表情 表情名/关键词 可将表情设为白名单模式；\n"
         "- 表情使用\n"
-        "发送 “关键词 + 图片/文字” 制作表情\n"
+        f"发送 “{memes_prefix}关键词 + 图片/文字” 制作表情\n"
         "可使用 “自己”、“@某人” 获取指定用户的头像作为图片\n"
         "可使用 “@ + 用户id” 指定任意用户获取头像，如 “摸 @114514”\n"
         "可将回复中的消息作为文字和图片的输入\n"
