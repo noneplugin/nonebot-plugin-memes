@@ -161,32 +161,26 @@ class MemeManager:
 
     def __refresh_names(self):
         self.__meme_names = {}
-
-        def add(key: str, meme: Meme):
-            key = key.lower()
-            if key not in self.__meme_names:
-                self.__meme_names[key] = []
-            self.__meme_names[key].append(meme)
-
         for meme in self.__meme_dict.values():
-            add(meme.key, meme)
+            names = set()
+            names.add(meme.key.lower())
             for keyword in meme.keywords:
-                add(keyword, meme)
+                names.add(keyword.lower())
             for shortcut in meme.shortcuts:
-                add(shortcut.humanized or shortcut.key, meme)
+                names.add((shortcut.humanized or shortcut.key).lower())
+            for name in names:
+                if name not in self.__meme_names:
+                    self.__meme_names[name] = []
+                self.__meme_names[name].append(meme)
 
     def __refresh_tags(self):
         self.__meme_tags = {}
-
-        def add(tag: str, meme: Meme):
-            tag = tag.lower()
-            if tag not in self.__meme_tags:
-                self.__meme_tags[tag] = []
-            self.__meme_tags[tag].append(meme)
-
         for meme in self.__meme_dict.values():
             for tag in meme.tags:
-                add(tag, meme)
+                tag = tag.lower()
+                if tag not in self.__meme_tags:
+                    self.__meme_tags[tag] = []
+                self.__meme_tags[tag].append(meme)
 
 
 meme_manager = MemeManager()
