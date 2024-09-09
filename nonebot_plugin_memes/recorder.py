@@ -37,7 +37,7 @@ async def record_meme_generation(session: Session, meme_key: str):
 
     record = MemeGenerationRecord(
         session_persist_id=session_persist_id,
-        time=datetime.now(timezone.utc),
+        time=remove_timezone(datetime.now(timezone.utc)),
         meme_key=meme_key,
     )
     async with get_session() as db_session:
