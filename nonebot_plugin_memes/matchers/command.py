@@ -7,7 +7,6 @@ from meme_generator import Meme
 from meme_generator.exception import MemeGeneratorException
 from nonebot import get_driver
 from nonebot.adapters import Bot, Event
-from nonebot.compat import PYDANTIC_V2, ConfigDict
 from nonebot.exception import AdapterException
 from nonebot.log import logger
 from nonebot.matcher import Matcher
@@ -27,8 +26,7 @@ from nonebot_plugin_alconna import (
 )
 from nonebot_plugin_alconna.builtins.extensions.reply import ReplyMergeExtension
 from nonebot_plugin_alconna.uniseg.tools import image_fetch
-from nonebot_plugin_session import EventSession, Session
-from nonebot_plugin_userinfo import ImageSource, UserInfo, get_user_info
+from nonebot_plugin_uninfo import Interface, QryItrface, Session, Uninfo, User
 
 from ..config import memes_config
 from ..manager import meme_manager
@@ -40,20 +38,26 @@ alc_config.command_max_count += 1000
 
 
 async def process(
+    bot: Bot,
+    event: Event,
+    state: T_State,
     matcher: Matcher,
     session: Session,
     meme: Meme,
-    image_sources: list[ImageSource],
+    images: list[Image],
     texts: list[str],
-    user_infos: list[UserInfo],
+    users: list[User],
     args: dict[str, Any] = {},
     show_info: bool = False,
 ):
-    images: list[bytes] = []
+    image_contents: list[bytes] = []
 
     try:
-        for image_source in image_sources:
-            images.append(await image_source.get_image())
+        for image in images:
+            result = await image_fetch(event, bot, state, image)
+            if not isinstance(result, bytes):
+                raise NotImplementedError
+            image_contents.append(result)
     except NotImplementedError:
         await matcher.finish("当前平台可能不支持获取图片")
     except (NetworkError, AdapterException):
@@ -61,16 +65,16 @@ async def process(
         await matcher.finish("图片下载出错，请稍后再试")
 
     args_user_infos = []
-    for user_info in user_infos:
-        name = user_info.user_displayname or user_info.user_name
-        gender = str(user_info.user_gender)
+    for user in users:
+        name = user.nick or user.name
+        gender = user.gender
         if gender not in ("male", "female"):
             gender = "unknown"
         args_user_infos.append({"name": name, "gender": gender})
     args["user_infos"] = args_user_infos
 
     try:
-        result = await run_sync(meme)(images=images, texts=texts, args=args)
+        result = await run_sync(meme)(images=image_contents, texts=texts, args=args)
         await record_meme_generation(session, meme.key)
     except MemeGeneratorException as e:
         await matcher.finish(e.message)
@@ -83,68 +87,76 @@ async def process(
     await msg.send()
 
 
-class AlcImage(ImageSource):
-    bot: Bot
-    event: Event
-    state: T_State
-    img: Image
-
-    if PYDANTIC_V2:
-        model_config: ConfigDict = ConfigDict(arbitrary_types_allowed=True)
-    else:
-
-        class Config:
-            arbitrary_types_allowed: bool = True
-
-    async def get_image(self) -> bytes:
-        result = await image_fetch(self.event, self.bot, self.state, self.img)
-        if isinstance(result, bytes):
-            return result
-        raise NotImplementedError("image fetch not implemented")
-
-
 T_MemeParams = Union[Text, Image, At]
 meme_params_key = "meme_params"
 arg_meme_params = Args[meme_params_key, MultiVar(T_MemeParams, "*")]
 
 
 async def handle_params(
-    bot: Bot, event: Event, state: T_State, meme_params: list[T_MemeParams]
+    matcher: Matcher,
+    session: Session,
+    interface: Interface,
+    meme_params: list[T_MemeParams],
 ):
     texts: list[str] = []
-    image_sources: list[ImageSource] = []
-    user_infos: list[UserInfo] = []
+    images: list[Image] = []
+    users: list[User] = []
 
     for msg_seg in meme_params:
         if isinstance(msg_seg, At):
-            if user_info := await get_user_info(bot, event, msg_seg.target):
-                if image_source := user_info.user_avatar:
-                    image_sources.append(image_source)
-                user_infos.append(user_info)
+            try:
+                user = None
+                if session.scene.type > 0:
+                    try:
+                        if member := await interface.get_member(
+                            session.scene.type, session.scene.id, msg_seg.target
+                        ):
+                            user = member.user
+                            if member.nick:
+                                user.nick = member.nick
+                    except (NotImplementedError, NetworkError, AdapterException):
+                        pass
+                if not user:
+                    user = await interface.get_user(msg_seg.target)
+                if user:
+                    if image_url := user.avatar:
+                        images.append(Image(url=image_url))
+                    users.append(user)
+            except NotImplementedError:
+                await matcher.finish("当前平台可能不支持获取用户信息")
+            except (NetworkError, AdapterException):
+                logger.warning(traceback.format_exc())
+                await matcher.finish("用户信息获取出错，请稍后再试")
 
         elif isinstance(msg_seg, Image):
-            image_sources.append(
-                AlcImage(bot=bot, event=event, state=state, img=msg_seg)
-            )
+            images.append(msg_seg)
 
         elif isinstance(msg_seg, Text):
             text = msg_seg.text
             if text.startswith("@") and (user_id := text[1:]):
-                if user_info := await get_user_info(bot, event, user_id):
-                    if image_source := user_info.user_avatar:
-                        image_sources.append(image_source)
-                    user_infos.append(user_info)
+                try:
+                    if user := await interface.get_user(user_id):
+                        if image_url := user.avatar:
+                            images.append(Image(url=image_url))
+                        users.append(user)
+                except NotImplementedError:
+                    await matcher.finish("当前平台可能不支持获取用户信息")
+                except (NetworkError, AdapterException):
+                    logger.warning(traceback.format_exc())
+                    await matcher.finish("用户信息获取出错，请检查用户 id 或稍后再试")
 
             elif text == "自己":
-                if user_info := await get_user_info(bot, event, event.get_user_id()):
-                    if image_source := user_info.user_avatar:
-                        image_sources.append(image_source)
-                    user_infos.append(user_info)
+                user = session.user
+                if image_url := user.avatar:
+                    images.append(Image(url=image_url))
+                if (member := session.member) and member.nick:
+                    user.nick = member.nick
+                users.append(user)
 
             elif text:
                 texts.append(text)
 
-    return texts, image_sources, user_infos
+    return texts, images, users
 
 
 prefixes = list(get_driver().config.command_start)
@@ -189,7 +201,8 @@ def create_matcher(meme: Meme):
         state: T_State,
         matcher: Matcher,
         user_id: UserId,
-        session: EventSession,
+        session: Uninfo,
+        interface: QryItrface,
         alc_matches: AlcMatches,
     ):
         if not meme_manager.check(user_id, meme.key):
@@ -205,25 +218,29 @@ def create_matcher(meme: Meme):
                 args[option] = option_result.value
 
         meme_params: list[T_MemeParams] = list(alc_matches.query(meme_params_key, ()))
-        texts, image_sources, user_infos = await handle_params(
-            bot, event, state, meme_params
+        texts, images, users = await handle_params(
+            matcher, session, interface, meme_params
         )
 
         # 当所需图片数为 2 且已指定图片数为 1 时，使用发送者的头像作为第一张图
-        if meme.params_type.min_images == 2 and len(image_sources) == 1:
-            if user_info := await get_user_info(bot, event, event.get_user_id()):
-                if image_source := user_info.user_avatar:
-                    image_sources.insert(0, image_source)
-                user_infos.insert(0, user_info)
+        if meme.params_type.min_images == 2 and len(images) == 1:
+            user = session.user
+            if image_url := user.avatar:
+                images.insert(0, Image(url=image_url))
+            if (member := session.member) and member.nick:
+                user.nick = member.nick
+            users.insert(0, user)
 
         # 当所需图片数为 1 且没有已指定图片时，使用发送者的头像
         if memes_config.memes_use_sender_when_no_image and (
-            meme.params_type.min_images == 1 and len(image_sources) == 0
+            meme.params_type.min_images == 1 and len(images) == 0
         ):
-            if user_info := await get_user_info(bot, event, event.get_user_id()):
-                if image_source := user_info.user_avatar:
-                    image_sources.append(image_source)
-                user_infos.append(user_info)
+            user = session.user
+            if image_url := user.avatar:
+                images.append(Image(url=image_url))
+            if (member := session.member) and member.nick:
+                user.nick = member.nick
+            users.append(user)
 
         # 当所需文字数 >0 且没有输入文字时，使用默认文字
         if memes_config.memes_use_default_when_no_text and (
@@ -239,9 +256,7 @@ def create_matcher(meme: Meme):
             await matcher.finish()
 
         if not (
-            meme.params_type.min_images
-            <= len(image_sources)
-            <= meme.params_type.max_images
+            meme.params_type.min_images <= len(images) <= meme.params_type.max_images
         ):
             await finish(
                 f"输入图片数量不符，图片数量应为 {meme.params_type.min_images}"
@@ -262,7 +277,9 @@ def create_matcher(meme: Meme):
             )
 
         matcher.stop_propagation()
-        await process(matcher, session, meme, image_sources, texts, user_infos, args)
+        await process(
+            bot, event, state, matcher, session, meme, images, texts, users, args
+        )
 
 
 def create_matchers():
@@ -289,24 +306,19 @@ async def _(
     state: T_State,
     matcher: Matcher,
     user_id: UserId,
-    session: EventSession,
+    session: Uninfo,
+    interface: QryItrface,
     alc_matches: AlcMatches,
 ):
     meme_params: list[T_MemeParams] = list(alc_matches.query(meme_params_key, ()))
-    texts, image_sources, user_infos = await handle_params(
-        bot, event, state, meme_params
-    )
+    texts, images, users = await handle_params(matcher, session, interface, meme_params)
 
     available_memes = [
         meme
         for meme in meme_manager.get_memes()
         if meme_manager.check(user_id, meme.key)
         and (
-            (
-                meme.params_type.min_images
-                <= len(image_sources)
-                <= meme.params_type.max_images
-            )
+            (meme.params_type.min_images <= len(images) <= meme.params_type.max_images)
             and (meme.params_type.min_texts <= len(texts) <= meme.params_type.max_texts)
         )
     ]
@@ -315,11 +327,14 @@ async def _(
 
     random_meme = random.choice(available_memes)
     await process(
+        bot,
+        event,
+        state,
         matcher,
         session,
         random_meme,
-        image_sources,
+        images,
         texts,
-        user_infos,
+        users,
         show_info=memes_config.memes_random_meme_show_info,
     )

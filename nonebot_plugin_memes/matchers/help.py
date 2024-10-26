@@ -8,12 +8,12 @@ from meme_generator.utils import MemeProperties, render_meme_list
 from nonebot.utils import run_sync
 from nonebot_plugin_alconna import Image, Text, on_alconna
 from nonebot_plugin_localstore import get_cache_dir
-from nonebot_plugin_session import EventSession, SessionIdType
+from nonebot_plugin_uninfo import Uninfo
 from pypinyin import Style, pinyin
 
 from ..config import memes_config
 from ..manager import meme_manager
-from ..recorder import get_meme_generation_keys
+from ..recorder import SessionIdType, get_meme_generation_keys
 from .utils import UserId
 
 memes_cache_dir = get_cache_dir("nonebot_plugin_memes")
@@ -28,7 +28,7 @@ help_matcher = on_alconna(
 
 
 @help_matcher.handle()
-async def _(user_id: UserId, session: EventSession):
+async def _(user_id: UserId, session: Uninfo):
     memes = meme_manager.get_memes()
     list_image_config = memes_config.memes_list_image_config
 

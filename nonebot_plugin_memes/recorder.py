@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from enum import Enum
 from typing import Optional
 
 from nonebot_plugin_orm import Model, get_session
-from nonebot_plugin_session import Session, SessionIdType
-from nonebot_plugin_session_orm import SessionModel, get_session_persist_id
+from nonebot_plugin_uninfo import Session
+from nonebot_plugin_uninfo.orm import SessionModel, get_session_persist_id
 from sqlalchemy import ColumnElement, String, select
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -45,6 +46,13 @@ async def record_meme_generation(session: Session, meme_key: str):
         await db_session.commit()
 
 
+class SessionIdType(Enum):
+    GLOBAL = 0
+    USER = 1
+    GROUP = 2
+    GROUP_USER = 3
+
+
 def filter_statement(
     session: Session,
     id_type: SessionIdType,
@@ -53,8 +61,21 @@ def filter_statement(
     time_start: Optional[datetime] = None,
     time_stop: Optional[datetime] = None,
 ) -> list[ColumnElement[bool]]:
+    filter_scene = True
+    filter_user = True
+    if id_type == SessionIdType.GLOBAL:
+        filter_scene = False
+        filter_user = False
+    elif id_type == SessionIdType.GROUP:
+        filter_user = False
+    elif id_type == SessionIdType.USER:
+        filter_scene = False
+
     whereclause = SessionModel.filter_statement(
-        session, id_type, include_bot_type=False
+        session,
+        filter_adapter=False,
+        filter_scene=filter_scene,
+        filter_user=filter_user,
     )
     if meme_key:
         whereclause.append(MemeGenerationRecord.meme_key == meme_key)
