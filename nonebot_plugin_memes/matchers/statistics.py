@@ -13,11 +13,15 @@ from nonebot_plugin_alconna import (
     on_alconna,
     store_true,
 )
-from nonebot_plugin_session import EventSession, SessionIdType
+from nonebot_plugin_uninfo import Uninfo
 
 from ..manager import meme_manager
 from ..plot import plot_duration_counts, plot_meme_and_duration_counts
-from ..recorder import get_meme_generation_records, get_meme_generation_times
+from ..recorder import (
+    SessionIdType,
+    get_meme_generation_records,
+    get_meme_generation_times,
+)
 from ..utils import add_timezone
 from .utils import find_meme
 
@@ -98,7 +102,7 @@ statistics_matcher.shortcut(
 @statistics_matcher.handle()
 async def _(
     matcher: Matcher,
-    session: EventSession,
+    session: Uninfo,
     meme_name: Optional[str] = None,
     query_global: Query[bool] = AlconnaQuery("global.value", False),
     query_my: Query[bool] = AlconnaQuery("my.value", False),
