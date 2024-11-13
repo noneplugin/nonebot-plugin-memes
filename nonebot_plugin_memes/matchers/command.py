@@ -18,6 +18,7 @@ from nonebot_plugin_alconna import (
     Alconna,
     Args,
     At,
+    CommandMeta,
     Image,
     MultiVar,
     Text,
@@ -161,7 +162,13 @@ def create_matcher(meme: Meme):
         )
     ]
     meme_matcher = on_alconna(
-        Alconna(prefixes, meme.keywords[0], *options, arg_meme_params),
+        Alconna(
+            prefixes,
+            meme.keywords[0],
+            *options,
+            arg_meme_params,
+            meta=CommandMeta(keep_crlf=True),
+        ),
         aliases=set(meme.keywords[1:]),
         block=False,
         priority=12,
