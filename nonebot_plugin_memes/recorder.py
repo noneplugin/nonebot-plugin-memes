@@ -19,7 +19,7 @@ class MemeGenerationRecord(Model):
     __table_args__ = {"extend_existing": True}
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    session_persist_id: Mapped[int]
+    uninfo_persist_id: Mapped[int]
     """ 会话持久化id """
     time: Mapped[datetime]
     """ 调用时间\n\n存放 UTC 时间 """
@@ -34,10 +34,10 @@ class MemeRecord:
 
 
 async def record_meme_generation(session: Session, meme_key: str):
-    session_persist_id = await get_session_persist_id(session)
+    uninfo_persist_id = await get_session_persist_id(session)
 
     record = MemeGenerationRecord(
-        session_persist_id=session_persist_id,
+        uninfo_persist_id=uninfo_persist_id,
         time=remove_timezone(datetime.now(timezone.utc)),
         meme_key=meme_key,
     )
@@ -100,7 +100,7 @@ async def get_meme_generation_records(
     statement = (
         select(MemeGenerationRecord.time, MemeGenerationRecord.meme_key)
         .where(*whereclause)
-        .join(SessionModel, SessionModel.id == MemeGenerationRecord.session_persist_id)
+        .join(SessionModel, SessionModel.id == MemeGenerationRecord.uninfo_persist_id)
     )
     async with get_session() as db_session:
         results = (await db_session.execute(statement)).all()
@@ -121,7 +121,7 @@ async def get_meme_generation_times(
     statement = (
         select(MemeGenerationRecord.time)
         .where(*whereclause)
-        .join(SessionModel, SessionModel.id == MemeGenerationRecord.session_persist_id)
+        .join(SessionModel, SessionModel.id == MemeGenerationRecord.uninfo_persist_id)
     )
     async with get_session() as db_session:
         results = (await db_session.scalars(statement)).all()
@@ -141,7 +141,7 @@ async def get_meme_generation_keys(
     statement = (
         select(MemeGenerationRecord.meme_key)
         .where(*whereclause)
-        .join(SessionModel, SessionModel.id == MemeGenerationRecord.session_persist_id)
+        .join(SessionModel, SessionModel.id == MemeGenerationRecord.uninfo_persist_id)
     )
     async with get_session() as db_session:
         results = (await db_session.scalars(statement)).all()
