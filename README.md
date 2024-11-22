@@ -66,17 +66,7 @@ DRIVER=~fastapi+~httpx+~websockets
 
 - 检查字体是否安装完整
 
-至少需要安装一种中文字体和 Emoji 字体，部分表情需要安装额外的字体，详情请参考 [meme-generator 字体安装](https://github.com/MeetWq/meme-generator/wiki/本地安装#字体安装)
-
-- 删除 Matplotlib 字体缓存
-
-`meme-generator` 依赖 `matplotlib` 来寻找系统字体，`matplotlib` 会生成一个缓存文件，安装新的字体之后需要删掉该文件以重新扫描字体
-
-> 缓存文件位置：
->
-> - Windows: `C:\Users\<username>\.matplotlib\fontlist-xxx.json`
-> - Linux: `~/.cache/matplotlib/fontlist-xxx.json`
-> - Mac: `~/Library/Caches/matplotlib/fontlist-xxx.json`
+需要**手动安装字体**到系统中，详情请参考 [meme-generator 字体安装](https://github.com/MeetWq/meme-generator/wiki/本地安装#字体安装)
 
 - 删除表情列表图片缓存
 
