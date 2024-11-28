@@ -12,13 +12,14 @@ from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
+from nonebot.log import logger
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 
 revision: str = "0be9a1f9a444"
 down_revision: str | Sequence[str] | None = "a0749ed48096"
 branch_labels: str | Sequence[str] | None = None
-depends_on: str | Sequence[str] | None = "6f1edf4c1af7"
+depends_on: str | Sequence[str] | None = "14175fde8186"
 
 
 def upgrade(name: str = "") -> None:
@@ -38,9 +39,11 @@ def upgrade(name: str = "") -> None:
     try:
         from nonebot_session_to_uninfo import check_tables, get_id_map
     except ImportError:
-        raise ValueError("请安装 `nonebot-session-to-uninfo` 以完成迁移")
+        raise ValueError("请安装 `nonebot-session-to-uninfo` 以迁移数据")
 
     check_tables()
+
+    logger.warning("memes: 正在迁移数据，请不要关闭程序...")
 
     with Session(conn) as db_session:
         session_ids = list(
@@ -57,6 +60,8 @@ def upgrade(name: str = "") -> None:
                 .values(uninfo_persist_id=uninfo_id)
             )
         db_session.commit()
+
+    logger.warning("memes: 数据迁移完成！")
     # ### end Alembic commands ###
 
 
