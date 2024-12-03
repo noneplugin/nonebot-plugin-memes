@@ -1,10 +1,17 @@
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Optional
+from enum import Enum
+from typing import Optional, Union
 
 from nonebot_plugin_orm import Model, get_session
-from nonebot_plugin_session import Session, SessionIdType
-from nonebot_plugin_session_orm import SessionModel, get_session_persist_id
+from nonebot_plugin_uninfo import Session, SupportScope
+from nonebot_plugin_uninfo.orm import (
+    BotModel,
+    SceneModel,
+    SessionModel,
+    UserModel,
+    get_session_persist_id,
+)
 from sqlalchemy import ColumnElement, String, select
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -14,7 +21,7 @@ from .utils import remove_timezone
 class MemeGenerationRecord(Model):
     """表情调用记录"""
 
-    __tablename__ = "nonebot_plugin_memes_memegenerationrecord"
+    __tablename__ = "nonebot_plugin_memes_memegenerationrecord_v2"
     __table_args__ = {"extend_existing": True}
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -45,6 +52,17 @@ async def record_meme_generation(session: Session, meme_key: str):
         await db_session.commit()
 
 
+class SessionIdType(Enum):
+    GLOBAL = 0
+    USER = 1
+    GROUP = 2
+    GROUP_USER = 3
+
+
+def scope_value(scope: Union[str, SupportScope]) -> str:
+    return scope.value if isinstance(scope, SupportScope) else scope
+
+
 def filter_statement(
     session: Session,
     id_type: SessionIdType,
@@ -53,9 +71,26 @@ def filter_statement(
     time_start: Optional[datetime] = None,
     time_stop: Optional[datetime] = None,
 ) -> list[ColumnElement[bool]]:
-    whereclause = SessionModel.filter_statement(
-        session, id_type, include_bot_type=False
-    )
+    filter_scene = True
+    filter_user = True
+    if id_type == SessionIdType.GLOBAL:
+        filter_scene = False
+        filter_user = False
+    elif id_type == SessionIdType.GROUP:
+        filter_user = False
+    elif id_type == SessionIdType.USER:
+        filter_scene = False
+
+    whereclause: list[ColumnElement[bool]] = []
+    whereclause.append(BotModel.self_id == session.self_id)
+    whereclause.append(BotModel.scope == scope_value(session.scope))
+
+    if filter_scene:
+        whereclause.append(SceneModel.scene_id == session.scene.id)
+        whereclause.append(SceneModel.scene_type == session.scene.type.value)
+    if filter_user:
+        whereclause.append(UserModel.user_id == session.user.id)
+
     if meme_key:
         whereclause.append(MemeGenerationRecord.meme_key == meme_key)
     if time_start:
@@ -80,6 +115,9 @@ async def get_meme_generation_records(
         select(MemeGenerationRecord.time, MemeGenerationRecord.meme_key)
         .where(*whereclause)
         .join(SessionModel, SessionModel.id == MemeGenerationRecord.session_persist_id)
+        .join(BotModel, BotModel.id == SessionModel.bot_persist_id)
+        .join(SceneModel, SceneModel.id == SessionModel.scene_persist_id)
+        .join(UserModel, UserModel.id == SessionModel.user_persist_id)
     )
     async with get_session() as db_session:
         results = (await db_session.execute(statement)).all()
@@ -101,6 +139,9 @@ async def get_meme_generation_times(
         select(MemeGenerationRecord.time)
         .where(*whereclause)
         .join(SessionModel, SessionModel.id == MemeGenerationRecord.session_persist_id)
+        .join(BotModel, BotModel.id == SessionModel.bot_persist_id)
+        .join(SceneModel, SceneModel.id == SessionModel.scene_persist_id)
+        .join(UserModel, UserModel.id == SessionModel.user_persist_id)
     )
     async with get_session() as db_session:
         results = (await db_session.scalars(statement)).all()
@@ -121,6 +162,9 @@ async def get_meme_generation_keys(
         select(MemeGenerationRecord.meme_key)
         .where(*whereclause)
         .join(SessionModel, SessionModel.id == MemeGenerationRecord.session_persist_id)
+        .join(BotModel, BotModel.id == SessionModel.bot_persist_id)
+        .join(SceneModel, SceneModel.id == SessionModel.scene_persist_id)
+        .join(UserModel, UserModel.id == SessionModel.user_persist_id)
     )
     async with get_session() as db_session:
         results = (await db_session.scalars(statement)).all()

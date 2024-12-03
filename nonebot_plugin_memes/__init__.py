@@ -3,12 +3,11 @@ from nonebot.plugin import PluginMetadata, inherit_supported_adapters
 
 require("nonebot_plugin_alconna")
 require("nonebot_plugin_waiter")
-require("nonebot_plugin_session")
-require("nonebot_plugin_userinfo")
+require("nonebot_plugin_uninfo")
 require("nonebot_plugin_localstore")
-require("nonebot_plugin_session_orm")
+require("nonebot_plugin_orm")
 
-from . import matchers, migrations  # noqa
+from . import matchers as matchers
 from .config import Config, memes_config
 
 memes_prefixes = memes_config.memes_command_prefixes
@@ -48,9 +47,6 @@ __plugin_meta__ = PluginMetadata(
     homepage="https://github.com/noneplugin/nonebot-plugin-memes",
     config=Config,
     supported_adapters=inherit_supported_adapters(
-        "nonebot_plugin_alconna",
-        "nonebot_plugin_session",
-        "nonebot_plugin_userinfo",
+        "nonebot_plugin_alconna", "nonebot_plugin_uninfo"
     ),
-    extra={"orm_version_location": migrations},
 )
