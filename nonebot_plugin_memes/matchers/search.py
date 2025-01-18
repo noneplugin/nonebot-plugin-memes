@@ -1,4 +1,3 @@
-from meme_generator import Meme, search_memes
 from nonebot.adapters import Event
 from nonebot.matcher import Matcher
 from nonebot_plugin_alconna import Alconna, Args, on_alconna
@@ -17,12 +16,7 @@ search_matcher = on_alconna(
 
 @search_matcher.handle()
 async def _(matcher: Matcher, meme_name: str):
-    searched_meme_keys = search_memes(meme_name, include_tags=True)
-    searched_memes: list[Meme] = []
-    for key in searched_meme_keys:
-        if meme := meme_manager.get_meme(key):
-            searched_memes.append(meme)
-
+    searched_memes = meme_manager.search(meme_name, include_tags=True)
     if not searched_memes:
         await matcher.finish("没有找到相关表情！")
 

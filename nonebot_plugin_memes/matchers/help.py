@@ -4,15 +4,12 @@ from meme_generator import MemeProperties, MemeSortBy, render_meme_list
 from nonebot.log import logger
 from nonebot.utils import run_sync
 from nonebot_plugin_alconna import Image, Text, on_alconna
-from nonebot_plugin_localstore import get_cache_dir
 from nonebot_plugin_uninfo import Uninfo
 
 from ..config import memes_config
 from ..manager import meme_manager
 from ..recorder import SessionIdType, get_meme_generation_keys
 from .utils import UserId
-
-memes_cache_dir = get_cache_dir("nonebot_plugin_memes")
 
 help_matcher = on_alconna(
     "表情包制作",

@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 import yaml
-from meme_generator import Meme, get_memes
+from meme_generator import Meme, get_memes, search_memes
 from nonebot.compat import PYDANTIC_V2, model_dump, type_validate_python
 from nonebot.log import logger
 from nonebot_plugin_localstore import get_config_file
@@ -84,6 +84,11 @@ class MemeManager:
         if meme_name in self.__meme_names:
             return self.__meme_names[meme_name]
         return []
+
+    def search(self, meme_name: str, include_tags: bool = False) -> list[Meme]:
+        meme_keys = search_memes(meme_name, include_tags=include_tags)
+        meme_keys = [key for key in meme_keys if key in self.__meme_dict]
+        return [self.__meme_dict[key] for key in meme_keys]
 
     def check(self, user_id: str, meme_key: str) -> bool:
         if meme_key not in self.__meme_config:
