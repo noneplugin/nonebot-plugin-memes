@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from meme_generator import Meme
+from meme_generator import Meme, search_memes
 from nonebot.adapters import Event
 from nonebot.matcher import Matcher
 from nonebot.params import Depends
@@ -22,11 +22,17 @@ async def find_meme(matcher: Matcher, meme_name: str) -> Meme:
     found_num = len(found_memes)
 
     if found_num == 0:
-        if searched_memes := meme_manager.search(meme_name, limit=5):
+        searched_meme_keys = search_memes(meme_name)[:5]
+        searched_memes: list[Meme] = []
+        for key in searched_meme_keys:
+            if meme := meme_manager.get_meme(key):
+                searched_memes.append(meme)
+
+        if searched_memes:
             await matcher.finish(
                 f"表情 {meme_name} 不存在，你可能在找：\n"
                 + "\n".join(
-                    f"* {meme.key} ({'/'.join(meme.keywords)})"
+                    f"* {meme.key} ({'/'.join(meme.info.keywords)})"
                     for meme in searched_memes
                 )
             )
@@ -39,7 +45,7 @@ async def find_meme(matcher: Matcher, meme_name: str) -> Meme:
     await matcher.send(
         f"找到 {found_num} 个表情，请发送编号选择：\n"
         + "\n".join(
-            f"{i + 1}. {meme.key} ({'/'.join(meme.keywords)})"
+            f"{i + 1}. {meme.key} ({'/'.join(meme.info.keywords)})"
             for i, meme in enumerate(found_memes)
         )
     )
